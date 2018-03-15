@@ -1,0 +1,16 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    "node": "current"
+                },
+                "useBuiltIns": "usage"
+            }
+        ]
+    ],
+    "plugins": [
+        "@babel/plugin-syntax-object-rest-spread"
+    ]
+}

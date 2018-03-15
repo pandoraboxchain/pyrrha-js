@@ -1,0 +1,31 @@
+{
+  "name": "pyrrha-js",
+  "version": "1.0.0",
+  "description": "Pandora Pyrrha functions and utilities library for JavaScript-based applications",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx babel ./src --out-dir ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pandoraboxchain/pyrrha-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pandoraboxchain/pyrrha-js/issues"
+  },
+  "homepage": "https://github.com/pandoraboxchain/pyrrha-js",
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0-beta.41"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.41",
+    "@babel/core": "^7.0.0-beta.41",
+    "@babel/plugin-syntax-object-rest-spread": "^7.0.0-beta.41",
+    "@babel/preset-env": "^7.0.0-beta.41",
+    "eslint": "^4.18.2"
+  },
+  "author": "Kostiantyn Smyrnov <kostysh@gmail.com>",
+  "license": "MIT"
+}
