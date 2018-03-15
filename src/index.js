@@ -17,6 +17,7 @@ import pjsError, {
 
 import * as kernels from './kernels';
 import * as datasets from './datasets';
+import * as jobs from './jobs';
 
 /** Pjs class */
 class Pjs {
@@ -28,6 +29,7 @@ class Pjs {
 
         this._addMembers('kernels', kernels);
         this._addMembers('datasets', datasets);
+        this._addMembers('jobs', jobs);
     }
 
     /**

@@ -135,11 +135,11 @@ export const fetchKernel = async (address = '', config = {}) => {
         const complexity = await fetchComplexity(address, config);
 
         return {
-            address: address,
-            ipfsAddress: ipfsAddress,
-            dataDim: dataDim,
-            currentPrice: currentPrice,
-            complexity: complexity
+            address,
+            ipfsAddress,
+            dataDim,
+            currentPrice,
+            complexity
         };
     } catch(err) {
         return Promise.reject(err);
