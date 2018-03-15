@@ -130,7 +130,7 @@ export const fetchActiveJobAddress = async (address, config = {}) => {
  * @param {Object} config Librray config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object}
  */
-export const getWorkerById = async (id, config = {}) => {
+export const fetchWorkerById = async (id, config = {}) => {
     
     try {
 
@@ -181,7 +181,7 @@ export const fetAll = async (config = {}) => {
             
             try {
 
-                const worker = await getWorkerById(i, config);
+                const worker = await fetchWorkerById(i, config);
 
                 records.push({
                     id: i,
