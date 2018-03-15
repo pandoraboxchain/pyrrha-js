@@ -11,7 +11,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetAll = exports.getWorkerById = exports.fetchActiveJobAddress = exports.fetchReputation = exports.fetchState = exports.fetchAddressById = exports.fetchCount = void 0;
+exports.fetAll = exports.fetchWorkerById = exports.fetchActiveJobAddress = exports.fetchReputation = exports.fetchState = exports.fetchAddressById = exports.fetchCount = void 0;
 
 var _errors = _interopRequireWildcard(require("./helpers/errors"));
 
@@ -133,7 +133,7 @@ const fetchActiveJobAddress = async (address, config = {}) => {
 
 exports.fetchActiveJobAddress = fetchActiveJobAddress;
 
-const getWorkerById = async (id, config = {}) => {
+const fetchWorkerById = async (id, config = {}) => {
   try {
     const address = await fetchAddressById(id, config);
     const currentState = await fetchState(address, config);
@@ -168,7 +168,7 @@ const getWorkerById = async (id, config = {}) => {
  */
 
 
-exports.getWorkerById = getWorkerById;
+exports.fetchWorkerById = fetchWorkerById;
 
 const fetAll = async (config = {}) => {
   let records = [];
@@ -179,7 +179,7 @@ const fetAll = async (config = {}) => {
 
     for (let i = 0; i < count; i++) {
       try {
-        const worker = await getWorkerById(i, config);
+        const worker = await fetchWorkerById(i, config);
         records.push({
           id: i,
           ...worker
