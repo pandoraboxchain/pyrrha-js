@@ -169,7 +169,7 @@ export const fetchWorkerById = async (id, config = {}) => {
  * @param {Object} config Librray config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
-export const fetAll = async (config = {}) => {
+export const fetchAll = async (config = {}) => {
     let records = [];
     let error = [];
 
