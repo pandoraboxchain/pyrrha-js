@@ -156,12 +156,12 @@ const fetchDataset = async (address = '', config = {}) => {
     const samplesCount = await fetchSamplesCount(address, config);
     const batchesCount = await fetchBatchesCount(address, config);
     return {
-      address: address,
-      ipfsAddress: ipfsAddress,
-      dataDim: dataDim,
-      currentPrice: currentPrice,
-      samplesCount: samplesCount,
-      batchesCount: batchesCount
+      address,
+      ipfsAddress,
+      dataDim,
+      currentPrice,
+      samplesCount,
+      batchesCount
     };
   } catch (err) {
     return Promise.reject(err);
