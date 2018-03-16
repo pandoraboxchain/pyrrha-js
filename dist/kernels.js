@@ -11,7 +11,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchAll = exports.fetchKernel = exports.fetchComplexity = exports.fetchCurrentPrice = exports.fetchDataDim = exports.fetchIpfsAddress = exports.fetchAddressById = void 0;
+exports.eventKernelAdded = exports.fetchAll = exports.fetchKernel = exports.fetchComplexity = exports.fetchCurrentPrice = exports.fetchDataDim = exports.fetchIpfsAddress = exports.fetchAddressById = void 0;
 
 var _errors = _interopRequireWildcard(require("./helpers/errors"));
 
@@ -193,5 +193,42 @@ const fetchAll = async (config = {}) => {
     error
   };
 };
+/**
+ * Handle event KernelAdded
+ * 
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+
 
 exports.fetchAll = fetchAll;
+
+const eventKernelAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
+    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'PandoraMarket');
+  }
+
+  if (!config.addresses || !config.addresses.market) {
+    throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
+  }
+
+  const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+  mar.events.KernelAdded({
+    fromBlock: 0
+  }).on('data', async res => {
+    try {
+      const kernel = await fetchKernel(res.args.kernel, config);
+      storeCallback({
+        address: res.args.kernel,
+        kernel,
+        status: 'created',
+        event: 'PandoraMarket.KernelAdded'
+      });
+    } catch (err) {
+      errorCallback(err);
+    }
+  }).on('error', errorCallback);
+};
+
+exports.eventKernelAdded = eventKernelAdded;

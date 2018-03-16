@@ -11,7 +11,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchAll = exports.fetchDataset = exports.fetchBatchesCount = exports.fetchSamplesCount = exports.fetchCurrentPrice = exports.fetchDataDim = exports.fetchIpfsAddress = exports.fetchAddressById = void 0;
+exports.eventDatasetAdded = exports.fetchAll = exports.fetchDataset = exports.fetchBatchesCount = exports.fetchSamplesCount = exports.fetchCurrentPrice = exports.fetchDataDim = exports.fetchIpfsAddress = exports.fetchAddressById = void 0;
 
 var _errors = _interopRequireWildcard(require("./helpers/errors"));
 
@@ -215,5 +215,42 @@ const fetchAll = async (config = {}) => {
     error
   };
 };
+/**
+ * Handle event DatasetAdded
+ * 
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+
 
 exports.fetchAll = fetchAll;
+
+const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
+    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'PandoraMarket');
+  }
+
+  if (!config.addresses || !config.addresses.market) {
+    throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
+  }
+
+  const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+  mar.events.DatasetAdded({
+    fromBlock: 0
+  }).on('data', async res => {
+    try {
+      const dataset = await fetchDataset(res.args.dataset, config);
+      storeCallback({
+        address: res.args.dataset,
+        dataset,
+        status: 'created',
+        event: 'PandoraMarket.DatasetAdded'
+      });
+    } catch (err) {
+      errorCallback(err);
+    }
+  }).on('error', errorCallback);
+};
+
+exports.eventDatasetAdded = eventDatasetAdded;

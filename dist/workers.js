@@ -11,7 +11,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchAll = exports.fetchWorkerById = exports.fetchActiveJobAddress = exports.fetchReputation = exports.fetchState = exports.fetchAddressById = exports.fetchCount = void 0;
+exports.eventWorkerNodeStateChanged = exports.eventWorkerNodeCreated = exports.fetchAll = exports.fetchWorkerById = exports.fetchWorker = exports.fetchActiveJobAddress = exports.fetchReputation = exports.fetchState = exports.fetchAddressById = exports.fetchCount = void 0;
 
 var _errors = _interopRequireWildcard(require("./helpers/errors"));
 
@@ -123,9 +123,9 @@ const fetchActiveJobAddress = async (address, config = {}) => {
   return String(activeJob, 10);
 };
 /**
- * Get worker by the worker's id
+ * Get worker by the worker's address
  * 
- * @param {integer} id 
+ * @param {string} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object}
  */
@@ -133,9 +133,8 @@ const fetchActiveJobAddress = async (address, config = {}) => {
 
 exports.fetchActiveJobAddress = fetchActiveJobAddress;
 
-const fetchWorkerById = async (id, config = {}) => {
+const fetchWorker = async (address, config = {}) => {
   try {
-    const address = await fetchAddressById(id, config);
     const currentState = await fetchState(address, config);
     const reputation = await fetchReputation(address, config);
     let activeJob = await fetchActiveJobAddress(address, config);
@@ -149,12 +148,34 @@ const fetchWorkerById = async (id, config = {}) => {
     }
 
     return {
-      id: id,
       address,
       currentState,
       reputation,
       currentJob: activeJob,
       currentJobStatus: jobState
+    };
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+/**
+ * Get worker by the worker's id
+ * 
+ * @param {integer} id 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object}
+ */
+
+
+exports.fetchWorker = fetchWorker;
+
+const fetchWorkerById = async (id, config = {}) => {
+  try {
+    const address = await fetchAddressById(id, config);
+    const worker = await fetchWorker(address, config);
+    return {
+      id: id,
+      ...worker
     };
   } catch (err) {
     return Promise.reject(err);
@@ -202,5 +223,77 @@ const fetchAll = async (config = {}) => {
     error
   };
 };
+/**
+ * Handle event WorkerNodeCreated
+ * 
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+
 
 exports.fetchAll = fetchAll;
+
+const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
+    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
+  }
+
+  if (!config.addresses || !config.addresses.pandora) {
+    throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
+  }
+
+  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  pan.events.WorkerNodeCreated({
+    fromBlock: 0
+  }).on('data', async res => {
+    try {
+      const worker = await fetchWorker(res.args.workerNode, config);
+      storeCallback({
+        address: res.args.workerNode,
+        worker,
+        status: 'created',
+        event: 'Pandora.WorkerNodeCreated'
+      });
+    } catch (err) {
+      errorCallback(err);
+    }
+  }).on('error', errorCallback);
+};
+/**
+ * Handle event StateChanged for WorkerNode
+ * 
+ * @param {string} address
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object} 
+ */
+
+
+exports.eventWorkerNodeCreated = eventWorkerNodeCreated;
+
+const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
+    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
+  }
+
+  const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
+  wor.events.StateChanged({
+    fromBlock: 0
+  }).on('data', async res => {
+    try {
+      const worker = await fetchWorker(res.args.workerNode, config);
+      storeCallback({
+        address: res.args.workerNode,
+        worker,
+        status: 'changed',
+        event: 'WorkerNode.StateChanged'
+      });
+    } catch (err) {
+      errorCallback(err);
+    }
+  }).on('error', errorCallback);
+};
+
+exports.eventWorkerNodeStateChanged = eventWorkerNodeStateChanged;
