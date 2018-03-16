@@ -14,10 +14,18 @@ import pjsError, {
     ADDRESS_REQUIRED
 } from './helpers/errors';
 
+import {
+    fetchIpfsAddress as fetchIpfsAddressByKernelAddress
+} from './kernels';
+
+import {
+    fetchDataset as fetchDatasetByDatasetAddress
+} from './datasets';
+
 /**
  * Get active job count from Pandora contract
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
 export const fetchActiveCount = async (config = {}) => {
@@ -41,7 +49,7 @@ export const fetchActiveCount = async (config = {}) => {
  * Get worker by the worker's id
  * 
  * @param {integer} id 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 export const fetchAddressById = async (id, config = {}) => {
@@ -65,7 +73,7 @@ export const fetchAddressById = async (id, config = {}) => {
  * Get job state from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {integer} 
  */
 export const fetchState = async (address, config = {}) => {
@@ -85,7 +93,7 @@ export const fetchState = async (address, config = {}) => {
  * Get job kernel from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string} 
  */
 export const fetchKernel = async (address, config = {}) => {
@@ -105,7 +113,7 @@ export const fetchKernel = async (address, config = {}) => {
  * Get job dataset from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string} 
  */
 export const fetchDataset = async (address, config = {}) => {
@@ -125,7 +133,7 @@ export const fetchDataset = async (address, config = {}) => {
  * Get job batches count from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
 export const fetchBatches = async (address, config = {}) => {
@@ -145,7 +153,7 @@ export const fetchBatches = async (address, config = {}) => {
  * Get job progress from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
 export const fetchProgress = async (address, config = {}) => {
@@ -165,7 +173,7 @@ export const fetchProgress = async (address, config = {}) => {
  * Get job's ipfsResults from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string[]} 
  */
 export const fetchIpfsResults = async (address, config = {}) => {
@@ -185,7 +193,7 @@ export const fetchIpfsResults = async (address, config = {}) => {
  * Get job by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object} 
  */
 export const fetchJob = async (address, config = {}) => {
@@ -217,7 +225,7 @@ export const fetchJob = async (address, config = {}) => {
 /**
  * Get all jobs
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object[]} 
  */
 export const fetchAll = async (config = {}) => {
@@ -257,4 +265,103 @@ export const fetchAll = async (config = {}) => {
         records,
         error
     };
+};
+
+/**
+ * Get job store
+ * 
+ * @param {string} address 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object} 
+ */
+export const fetchJobStore = async (address, config = {}) => {
+
+    try {
+
+        const job = await fetchJob(address, config);
+        const kernel = await fetchIpfsAddressByKernelAddress(job.kernel, config);
+        const dataset = await fetchDatasetByDatasetAddress(job.dataset, config);
+        
+        return {
+            job,
+            kernel,
+            dataset
+        };
+    } catch(err) {
+        return Promise.reject(err);
+    }
+};
+
+/**
+ * Handle event CognitiveJobCreated
+ * 
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
+    }
+
+    if (!config.addresses || !config.addresses.pandora) {
+        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
+    }
+
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    pan.events.CognitiveJobCreated({
+        fromBlock: 0
+    })
+        .on('data', async res => {
+
+            try {
+
+                const store = await fetchJobStore(res.args.cognitiveJob);
+                storeCallback({
+                    address: res.args.cognitiveJob,
+                    store,
+                    status: 'created'
+                });
+            } catch(err) {
+                errorCallback(err);
+            }            
+        })
+        .on('error', errorCallback);
+};
+
+/**
+ * Handle event StateChanged for CognitiveJob
+ * 
+ * @param {string} address
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object} 
+ */
+export const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
+    }
+
+    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+    cog.events.StateChanged({
+        fromBlock: 0
+    })
+        .on('data', async res => {
+
+            try {
+
+                const store = await fetchJobStore(res.args.cognitiveJob);
+                storeCallback({
+                    address: res.args.cognitiveJob,
+                    store,
+                    status: 'changed'
+                });
+            } catch(err) {
+                errorCallback(err);
+            }
+        })
+        .on('error', errorCallback);
 };

@@ -18,7 +18,7 @@ import pjsError, {
  * Get Dataset address by kernel id
  * 
  * @param {number} id
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 export const fetchAddressById = async (id, config = {}) => {
@@ -42,7 +42,7 @@ export const fetchAddressById = async (id, config = {}) => {
  * Get IPFS address from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
@@ -62,7 +62,7 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
  * Get data dim from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchDataDim = async (address = '', config = {}) => {
@@ -82,7 +82,7 @@ export const fetchDataDim = async (address = '', config = {}) => {
  * Get current price from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchCurrentPrice = async (address = '', config = {}) => {
@@ -102,7 +102,7 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
  * Get data samples count from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchSamplesCount = async (address = '', config = {}) => {
@@ -122,7 +122,7 @@ export const fetchSamplesCount = async (address = '', config = {}) => {
  * Get data batches count from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchBatchesCount = async (address = '', config = {}) => {
@@ -142,7 +142,7 @@ export const fetchBatchesCount = async (address = '', config = {}) => {
  * Get dataset by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
 export const fetchDataset = async (address = '', config = {}) => {
@@ -171,7 +171,7 @@ export const fetchDataset = async (address = '', config = {}) => {
 /**
  * Get all datasets
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
 export const fetchAll = async (config = {}) => {
@@ -216,4 +216,42 @@ export const fetchAll = async (config = {}) => {
         records,
         error
     };
+};
+
+/**
+ * Handle event DatasetAdded
+ * 
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+export const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
+    }
+
+    if (!config.addresses || !config.addresses.market) {
+        throw pjsError(ADDRESS_REQUIRED, 'Market');
+    }
+
+    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    mar.events.DatasetAdded({
+        fromBlock: 0
+    })
+        .on('data', async res => {
+
+            try {
+
+                const dataset = await fetchDataset(res.args.dataset, config);
+                storeCallback({
+                    address: res.args.dataset,
+                    dataset,
+                    status: 'created'
+                });
+            } catch(err) {
+                errorCallback(err);
+            }            
+        })
+        .on('error', errorCallback);
 };

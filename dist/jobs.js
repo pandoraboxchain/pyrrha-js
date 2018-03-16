@@ -11,16 +11,20 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchAll = exports.fetchJob = exports.fetchIpfsResults = exports.fetchProgress = exports.fetchBatches = exports.fetchDataset = exports.fetchKernel = exports.fetchState = exports.fetchAddressById = exports.fetchActiveCount = void 0;
+exports.eventCognitiveJobStateChanged = exports.eventCognitiveJobCreated = exports.fetchJobStore = exports.fetchAll = exports.fetchJob = exports.fetchIpfsResults = exports.fetchProgress = exports.fetchBatches = exports.fetchDataset = exports.fetchKernel = exports.fetchState = exports.fetchAddressById = exports.fetchActiveCount = void 0;
 
 var _errors = _interopRequireWildcard(require("./helpers/errors"));
+
+var _kernels = require("./kernels");
+
+var _datasets = require("./datasets");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 /**
  * Get active job count from Pandora contract
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
 const fetchActiveCount = async (config = {}) => {
@@ -40,7 +44,7 @@ const fetchActiveCount = async (config = {}) => {
  * Get worker by the worker's id
  * 
  * @param {integer} id 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 
@@ -64,7 +68,7 @@ const fetchAddressById = async (id, config = {}) => {
  * Get job state from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {integer} 
  */
 
@@ -84,7 +88,7 @@ const fetchState = async (address, config = {}) => {
  * Get job kernel from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string} 
  */
 
@@ -104,7 +108,7 @@ const fetchKernel = async (address, config = {}) => {
  * Get job dataset from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string} 
  */
 
@@ -124,7 +128,7 @@ const fetchDataset = async (address, config = {}) => {
  * Get job batches count from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
 
@@ -144,7 +148,7 @@ const fetchBatches = async (address, config = {}) => {
  * Get job progress from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
 
@@ -164,7 +168,7 @@ const fetchProgress = async (address, config = {}) => {
  * Get job's ipfsResults from Cognitive Job contract by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string[]} 
  */
 
@@ -184,7 +188,7 @@ const fetchIpfsResults = async (address, config = {}) => {
  * Get job by the job address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object} 
  */
 
@@ -216,7 +220,7 @@ const fetchJob = async (address, config = {}) => {
 /**
  * Get all jobs
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object[]} 
  */
 
@@ -257,5 +261,100 @@ const fetchAll = async (config = {}) => {
     error
   };
 };
+/**
+ * Get job store
+ * 
+ * @param {string} address 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object} 
+ */
+
 
 exports.fetchAll = fetchAll;
+
+const fetchJobStore = async (address, config = {}) => {
+  try {
+    const job = await fetchJob(address, config);
+    const kernel = await (0, _kernels.fetchIpfsAddress)(job.kernel, config);
+    const dataset = await (0, _datasets.fetchDataset)(job.dataset, config);
+    return {
+      job,
+      kernel,
+      dataset
+    };
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+/**
+ * Handle event CognitiveJobCreated
+ * 
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+
+
+exports.fetchJobStore = fetchJobStore;
+
+const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
+    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
+  }
+
+  if (!config.addresses || !config.addresses.pandora) {
+    throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
+  }
+
+  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  pan.events.CognitiveJobCreated({
+    fromBlock: 0
+  }).on('data', async res => {
+    try {
+      const store = await fetchJobStore(res.args.cognitiveJob);
+      storeCallback({
+        address: res.args.cognitiveJob,
+        store,
+        status: 'created'
+      });
+    } catch (err) {
+      errorCallback(err);
+    }
+  }).on('error', errorCallback);
+};
+/**
+ * Handle event StateChanged for CognitiveJob
+ * 
+ * @param {string} address
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object} 
+ */
+
+
+exports.eventCognitiveJobCreated = eventCognitiveJobCreated;
+
+const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
+    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
+  }
+
+  const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+  cog.events.StateChanged({
+    fromBlock: 0
+  }).on('data', async res => {
+    try {
+      const store = await fetchJobStore(res.args.cognitiveJob);
+      storeCallback({
+        address: res.args.cognitiveJob,
+        store,
+        status: 'changed'
+      });
+    } catch (err) {
+      errorCallback(err);
+    }
+  }).on('error', errorCallback);
+};
+
+exports.eventCognitiveJobStateChanged = eventCognitiveJobStateChanged;

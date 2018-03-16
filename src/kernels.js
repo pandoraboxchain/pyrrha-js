@@ -18,7 +18,7 @@ import pjsError, {
  * Get Kernel address by kernel id
  * 
  * @param {number} id
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 export const fetchAddressById = async (id, config) => {
@@ -42,7 +42,7 @@ export const fetchAddressById = async (id, config) => {
  * Get IPFS address from Kernel contract by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
@@ -62,7 +62,7 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
  * Get data dim from Kernel contract by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchDataDim = async (address = '', config = {}) => {
@@ -82,7 +82,7 @@ export const fetchDataDim = async (address = '', config = {}) => {
  * Get current price from Kernel contract by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchCurrentPrice = async (address = '', config = {}) => {
@@ -102,7 +102,7 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
  * Get complexity from Kernel contract by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchComplexity = async (address = '', config = {}) => {
@@ -122,7 +122,7 @@ export const fetchComplexity = async (address = '', config = {}) => {
  * Get Kernel by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
 export const fetchKernel = async (address = '', config = {}) => {
@@ -149,7 +149,7 @@ export const fetchKernel = async (address = '', config = {}) => {
 /**
  * Get all kernels
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
 export const fetchAll = async (config = {}) => {
@@ -195,4 +195,42 @@ export const fetchAll = async (config = {}) => {
         records,
         error
     };
+};
+
+/**
+ * Handle event KernelAdded
+ * 
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+export const eventKernelAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
+    }
+
+    if (!config.addresses || !config.addresses.market) {
+        throw pjsError(ADDRESS_REQUIRED, 'Market');
+    }
+
+    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    mar.events.KernelAdded({
+        fromBlock: 0
+    })
+        .on('data', async res => {
+
+            try {
+
+                const kernel = await fetchKernel(res.args.kernel, config);
+                storeCallback({
+                    address: res.args.kernel,
+                    kernel,
+                    status: 'created'
+                });
+            } catch(err) {
+                errorCallback(err);
+            }            
+        })
+        .on('error', errorCallback);
 };

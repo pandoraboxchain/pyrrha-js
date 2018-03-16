@@ -21,7 +21,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
  * Get Dataset address by kernel id
  * 
  * @param {number} id
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 const fetchAddressById = async (id, config = {}) => {
@@ -41,7 +41,7 @@ const fetchAddressById = async (id, config = {}) => {
  * Get IPFS address from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 
@@ -61,7 +61,7 @@ const fetchIpfsAddress = async (address = '', config = {}) => {
  * Get data dim from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -81,7 +81,7 @@ const fetchDataDim = async (address = '', config = {}) => {
  * Get current price from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -101,7 +101,7 @@ const fetchCurrentPrice = async (address = '', config = {}) => {
  * Get data samples count from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -121,7 +121,7 @@ const fetchSamplesCount = async (address = '', config = {}) => {
  * Get data batches count from Dataset contract by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -141,7 +141,7 @@ const fetchBatchesCount = async (address = '', config = {}) => {
  * Get dataset by the dataset address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
 
@@ -170,7 +170,7 @@ const fetchDataset = async (address = '', config = {}) => {
 /**
  * Get all datasets
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
 

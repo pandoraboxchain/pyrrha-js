@@ -21,7 +21,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
  * Get Kernel address by kernel id
  * 
  * @param {number} id
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 const fetchAddressById = async (id, config) => {
@@ -41,7 +41,7 @@ const fetchAddressById = async (id, config) => {
  * Get IPFS address from Kernel contract by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 
@@ -61,7 +61,7 @@ const fetchIpfsAddress = async (address = '', config = {}) => {
  * Get data dim from Kernel contract by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -81,7 +81,7 @@ const fetchDataDim = async (address = '', config = {}) => {
  * Get current price from Kernel contract by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -101,7 +101,7 @@ const fetchCurrentPrice = async (address = '', config = {}) => {
  * Get complexity from Kernel contract by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -121,7 +121,7 @@ const fetchComplexity = async (address = '', config = {}) => {
  * Get Kernel by the kernel address
  * 
  * @param {string} address
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
 
@@ -148,7 +148,7 @@ const fetchKernel = async (address = '', config = {}) => {
 /**
  * Get all kernels
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
 

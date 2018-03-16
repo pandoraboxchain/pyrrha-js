@@ -19,7 +19,7 @@ import { fetchState as fetchJobState } from './jobs';
 /**
  * Get worker nodes count from Pandora contract
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
 export const fetchCount = async (config = {}) => {
@@ -43,7 +43,7 @@ export const fetchCount = async (config = {}) => {
  * Get worker address from Pandora contract by the worker Id
  * 
  * @param {integer} id Worker Id
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string} 
  */
 export const fetchAddressById = async (id, config = {}) => {
@@ -67,7 +67,7 @@ export const fetchAddressById = async (id, config = {}) => {
  * Get worker state from Worker contract by the worker address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchState = async (address, config = {}) => {
@@ -87,7 +87,7 @@ export const fetchState = async (address, config = {}) => {
  * Get worker reputation from Worker contract by the worker address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchReputation = async (address, config = {}) => {
@@ -107,7 +107,7 @@ export const fetchReputation = async (address, config = {}) => {
  * Get worker's active job from Worker contract by the worker address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 export const fetchActiveJobAddress = async (address, config = {}) => {
@@ -124,17 +124,16 @@ export const fetchActiveJobAddress = async (address, config = {}) => {
 };
 
 /**
- * Get worker by the worker's id
+ * Get worker by the worker's address
  * 
- * @param {integer} id 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {string} address
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object}
  */
-export const fetchWorkerById = async (id, config = {}) => {
+export const fetchWorker = async (address, config = {}) => {
     
     try {
 
-        const address = await fetchAddressById(id, config);
         const currentState = await fetchState(address, config);
         const reputation = await fetchReputation(address, config);
 
@@ -151,7 +150,6 @@ export const fetchWorkerById = async (id, config = {}) => {
         }
 
         return {
-            id: id,
             address,
             currentState,
             reputation,
@@ -164,9 +162,32 @@ export const fetchWorkerById = async (id, config = {}) => {
 };
 
 /**
+ * Get worker by the worker's id
+ * 
+ * @param {integer} id 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object}
+ */
+export const fetchWorkerById = async (id, config = {}) => {
+    
+    try {
+
+        const address = await fetchAddressById(id, config);
+        const worker = await fetchWorker(address, config);
+
+        return {
+            id: id,
+            ...worker
+        };
+    } catch(err) {
+        return Promise.reject(err);
+    }
+};
+
+/**
  * Get all workers
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchAll = async (config = {}) => {
@@ -204,4 +225,78 @@ export const fetchAll = async (config = {}) => {
         records,
         error
     };
+};
+
+/**
+ * Handle event WorkerNodeCreated
+ * 
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
+    }
+
+    if (!config.addresses || !config.addresses.pandora) {
+        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
+    }
+
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    pan.events.WorkerNodeCreated({
+        fromBlock: 0
+    })
+        .on('data', async res => {
+
+            try {
+
+                const worker = await fetchWorker(res.args.workerNode, config);
+                storeCallback({
+                    address: res.args.workerNode,
+                    worker,
+                    status: 'created'
+                });
+            } catch(err) {
+                errorCallback(err);
+            }            
+        })
+        .on('error', errorCallback);
+};
+
+/**
+ * Handle event StateChanged for WorkerNode
+ * 
+ * @param {string} address
+ * @param {Function} storeCallback 
+ * @param {Function} errorCallback
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object} 
+ */
+export const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
+    }
+
+    const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
+    wor.events.StateChanged({
+        fromBlock: 0
+    })
+        .on('data', async res => {
+
+            try {
+
+                const worker = await fetchWorker(res.args.workerNode, config);
+                storeCallback({
+                    address: res.args.workerNode,
+                    worker,
+                    status: 'changed'
+                });
+            } catch(err) {
+                errorCallback(err);
+            }
+        })
+        .on('error', errorCallback);
 };

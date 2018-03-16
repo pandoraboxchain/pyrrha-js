@@ -22,7 +22,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 /**
  * Get worker nodes count from Pandora contract
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
 const fetchCount = async (config = {}) => {
@@ -42,7 +42,7 @@ const fetchCount = async (config = {}) => {
  * Get worker address from Pandora contract by the worker Id
  * 
  * @param {integer} id Worker Id
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string} 
  */
 
@@ -66,7 +66,7 @@ const fetchAddressById = async (id, config = {}) => {
  * Get worker state from Worker contract by the worker address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -86,7 +86,7 @@ const fetchState = async (address, config = {}) => {
  * Get worker reputation from Worker contract by the worker address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
@@ -106,7 +106,7 @@ const fetchReputation = async (address, config = {}) => {
  * Get worker's active job from Worker contract by the worker address
  * 
  * @param {string} address 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
 
@@ -126,7 +126,7 @@ const fetchActiveJobAddress = async (address, config = {}) => {
  * Get worker by the worker's id
  * 
  * @param {integer} id 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object}
  */
 
@@ -163,7 +163,7 @@ const fetchWorkerById = async (id, config = {}) => {
 /**
  * Get all workers
  * 
- * @param {Object} config Librray config (provided by the proxy but can be overridden)
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
 
