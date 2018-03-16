@@ -247,7 +247,8 @@ export const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () =
                 storeCallback({
                     address: res.args.dataset,
                     dataset,
-                    status: 'created'
+                    status: 'created',
+                    event: 'PandoraMarket.DatasetAdded'
                 });
             } catch(err) {
                 errorCallback(err);

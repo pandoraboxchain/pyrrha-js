@@ -256,7 +256,8 @@ export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback =
                 storeCallback({
                     address: res.args.workerNode,
                     worker,
-                    status: 'created'
+                    status: 'created',
+                    event: 'Pandora.WorkerNodeCreated'
                 });
             } catch(err) {
                 errorCallback(err);
@@ -274,7 +275,7 @@ export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback =
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object} 
  */
-export const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+export const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
 
     if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
@@ -292,7 +293,8 @@ export const eventCognitiveJobStateChanged = (address, storeCallback = () => {},
                 storeCallback({
                     address: res.args.workerNode,
                     worker,
-                    status: 'changed'
+                    status: 'changed',
+                    event: 'WorkerNode.StateChanged'
                 });
             } catch(err) {
                 errorCallback(err);

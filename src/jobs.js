@@ -321,7 +321,8 @@ export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback
                 storeCallback({
                     address: res.args.cognitiveJob,
                     store,
-                    status: 'created'
+                    status: 'created',
+                    event: 'Pandora.CognitiveJobCreated'
                 });
             } catch(err) {
                 errorCallback(err);
@@ -357,7 +358,8 @@ export const eventCognitiveJobStateChanged = (address, storeCallback = () => {},
                 storeCallback({
                     address: res.args.cognitiveJob,
                     store,
-                    status: 'changed'
+                    status: 'changed',
+                    event: 'CognitiveJob.StateChanged'
                 });
             } catch(err) {
                 errorCallback(err);

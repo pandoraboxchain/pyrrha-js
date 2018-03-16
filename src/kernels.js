@@ -226,7 +226,8 @@ export const eventKernelAdded = (storeCallback = () => {}, errorCallback = () =>
                 storeCallback({
                     address: res.args.kernel,
                     kernel,
-                    status: 'created'
+                    status: 'created',
+                    event: 'PandoraMarket.KernelAdded'
                 });
             } catch(err) {
                 errorCallback(err);
