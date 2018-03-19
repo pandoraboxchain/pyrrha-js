@@ -11,7 +11,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.eventCognitiveJobStateChanged = exports.eventCognitiveJobCreated = exports.fetchJobStore = exports.fetchAll = exports.fetchJob = exports.fetchIpfsResults = exports.fetchProgress = exports.fetchBatches = exports.fetchDataset = exports.fetchKernel = exports.fetchState = exports.fetchAddressById = exports.fetchActiveCount = void 0;
+exports.eventCognitiveJobStateChanged = exports.eventCognitiveJobCreated = exports.create = exports.fetchJobStore = exports.fetchAll = exports.fetchJob = exports.fetchIpfsResults = exports.fetchProgress = exports.fetchBatches = exports.fetchDataset = exports.fetchKernel = exports.fetchState = exports.fetchAddressById = exports.fetchActiveCount = void 0;
 
 var _errors = _interopRequireWildcard(require("./helpers/errors"));
 
@@ -28,6 +28,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
  * @returns {Promise} A Promise object represents the {number} 
  */
 const fetchActiveCount = async (config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
   }
@@ -52,6 +56,10 @@ const fetchActiveCount = async (config = {}) => {
 exports.fetchActiveCount = fetchActiveCount;
 
 const fetchAddressById = async (id, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
   }
@@ -76,6 +84,10 @@ const fetchAddressById = async (id, config = {}) => {
 exports.fetchAddressById = fetchAddressById;
 
 const fetchState = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
@@ -96,6 +108,10 @@ const fetchState = async (address, config = {}) => {
 exports.fetchState = fetchState;
 
 const fetchKernel = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
@@ -116,6 +132,10 @@ const fetchKernel = async (address, config = {}) => {
 exports.fetchKernel = fetchKernel;
 
 const fetchDataset = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
@@ -136,6 +156,10 @@ const fetchDataset = async (address, config = {}) => {
 exports.fetchDataset = fetchDataset;
 
 const fetchBatches = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
@@ -156,6 +180,10 @@ const fetchBatches = async (address, config = {}) => {
 exports.fetchBatches = fetchBatches;
 
 const fetchProgress = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
@@ -176,6 +204,10 @@ const fetchProgress = async (address, config = {}) => {
 exports.fetchProgress = fetchProgress;
 
 const fetchIpfsResults = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
@@ -287,6 +319,37 @@ const fetchJobStore = async (address, config = {}) => {
   }
 };
 /**
+ * Create cognitive job contract
+ * 
+ * @param {String} kernelAddress 
+ * @param {String} datasetAddress 
+ * @param {String} from
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} Promise object resolved to add status (boolean)
+ */
+
+
+exports.fetchJobStore = fetchJobStore;
+
+const create = (web3, kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
+  if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
+    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
+  }
+
+  if (!config.addresses || !config.addresses.pandora) {
+    throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
+  }
+
+  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  pan.methods.createCognitiveJob(kernelAddress, datasetAddress).send({
+    from
+  }).on('error', reject).on('receipt', receipt => resolve(receipt.contractAddress));
+});
+/**
  * Handle event CognitiveJobCreated
  * 
  * @param {Function} storeCallback 
@@ -295,9 +358,13 @@ const fetchJobStore = async (address, config = {}) => {
  */
 
 
-exports.fetchJobStore = fetchJobStore;
+exports.create = create;
 
 const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
   }
@@ -337,6 +404,10 @@ const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () =
 exports.eventCognitiveJobCreated = eventCognitiveJobCreated;
 
 const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }

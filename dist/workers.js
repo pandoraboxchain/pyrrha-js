@@ -26,6 +26,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
  * @returns {Promise} A Promise object represents the {number} 
  */
 const fetchCount = async (config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
   }
@@ -50,6 +54,10 @@ const fetchCount = async (config = {}) => {
 exports.fetchCount = fetchCount;
 
 const fetchAddressById = async (id, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
   }
@@ -74,6 +82,10 @@ const fetchAddressById = async (id, config = {}) => {
 exports.fetchAddressById = fetchAddressById;
 
 const fetchState = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
   }
@@ -94,6 +106,10 @@ const fetchState = async (address, config = {}) => {
 exports.fetchState = fetchState;
 
 const fetchReputation = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
   }
@@ -114,6 +130,10 @@ const fetchReputation = async (address, config = {}) => {
 exports.fetchReputation = fetchReputation;
 
 const fetchActiveJobAddress = async (address, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
   }
@@ -235,6 +255,10 @@ const fetchAll = async (config = {}) => {
 exports.fetchAll = fetchAll;
 
 const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
   }
@@ -274,6 +298,10 @@ const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => 
 exports.eventWorkerNodeCreated = eventWorkerNodeCreated;
 
 const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+  if (!config.web3) {
+    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+  }
+
   if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
   }

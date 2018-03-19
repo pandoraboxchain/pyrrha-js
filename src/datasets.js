@@ -11,8 +11,11 @@
 
 import pjsError, {
     CONTRACT_REQUIRED,
-    ADDRESS_REQUIRED
+    ADDRESS_REQUIRED,
+    WEB3_REQUIRED,
+    WEB3_METAMASK_REQUIRED
 } from './helpers/errors';
+import * as web3Helpers from './helpers/web3';
 
 /**
  * Get Dataset address by kernel id
@@ -22,6 +25,10 @@ import pjsError, {
  * @returns {Promise} A Promise object represents the {string}
  */
 export const fetchAddressById = async (id, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
@@ -47,6 +54,10 @@ export const fetchAddressById = async (id, config = {}) => {
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
 
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
     if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Dataset');
     }
@@ -66,6 +77,10 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchDataDim = async (address = '', config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Dataset');
@@ -87,6 +102,10 @@ export const fetchDataDim = async (address = '', config = {}) => {
  */
 export const fetchCurrentPrice = async (address = '', config = {}) => {
 
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
     if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Dataset');
     }
@@ -107,6 +126,10 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
  */
 export const fetchSamplesCount = async (address = '', config = {}) => {
 
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
     if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Dataset');
     }
@@ -126,6 +149,10 @@ export const fetchSamplesCount = async (address = '', config = {}) => {
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchBatchesCount = async (address = '', config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Dataset');
@@ -219,6 +246,79 @@ export const fetchAll = async (config = {}) => {
 };
 
 /**
+ * Deploy Datset contract to the network
+ * 
+ * @param {string} datasetIpfsHash 
+ * @param {Object} options { publisher, dimension, complexity, price } 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} Promise object resolved to contract address
+ */
+export const deploy = async (datasetIpfsHash, { publisher, dimension, complexity, price }, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
+    if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'Dataset');
+    }
+
+    try {
+        const args = [config.web3.utils.toHex(datasetIpfsHash), dimension, complexity, price];
+        
+        // Estimate required amount of gas
+        const gas = await web3Helpers.estimateGas(config.web3, config.contracts.Dataset.bytecode, args, config);
+
+        // Create and deploy kernel contract
+        const kernelContractAddress = await web3Helpers.deployContract(config.contracts.Kernel, {
+            args,
+            from: publisher,
+            gas: Number.parseInt(gas * 1.5, 10)
+        }, config);
+
+        return kernelContractAddress;
+    } catch(err) {
+        return Promise.reject(err);
+    }
+};
+
+/**
+ * Add dataset to market
+ * 
+ * @param {String} datasetContractAddress 
+ * @param {String} publisherAddress 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} Promise object resolved to {string} contractAddress
+ */
+export const addToMarket = (datasetContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
+    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
+    }
+
+    if (!config.addresses || !config.addresses.market) {
+        throw pjsError(ADDRESS_REQUIRED, 'Market');
+    }
+
+    if (!config.web3.currentProvider.isMetaMask) {
+        throw pjsError(WEB3_METAMASK_REQUIRED);
+    }
+
+    const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    market.methods
+        .addDataset(datasetContractAddress)
+        .send({
+            from: publisherAddress
+        })
+        .on('error', reject)
+        .on('receipt', receipt => resolve(receipt.contractAddress));
+});
+
+/**
  * Handle event DatasetAdded
  * 
  * @param {Function} storeCallback 
@@ -226,6 +326,10 @@ export const fetchAll = async (config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
 export const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');

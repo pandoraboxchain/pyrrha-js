@@ -11,7 +11,8 @@
 
 import pjsError, {
     CONTRACT_REQUIRED,
-    ADDRESS_REQUIRED
+    ADDRESS_REQUIRED,
+    WEB3_REQUIRED
 } from './helpers/errors';
 
 import {
@@ -29,6 +30,10 @@ import {
  * @returns {Promise} A Promise object represents the {number} 
  */
 export const fetchActiveCount = async (config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
@@ -54,6 +59,10 @@ export const fetchActiveCount = async (config = {}) => {
  */
 export const fetchAddressById = async (id, config = {}) => {
 
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
     if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
@@ -78,6 +87,10 @@ export const fetchAddressById = async (id, config = {}) => {
  */
 export const fetchState = async (address, config = {}) => {
 
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
     if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
     }
@@ -97,6 +110,10 @@ export const fetchState = async (address, config = {}) => {
  * @returns {Promise} A Promise object represents the {string} 
  */
 export const fetchKernel = async (address, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
     
     if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
@@ -117,6 +134,10 @@ export const fetchKernel = async (address, config = {}) => {
  * @returns {Promise} A Promise object represents the {string} 
  */
 export const fetchDataset = async (address, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
     
     if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
@@ -137,6 +158,10 @@ export const fetchDataset = async (address, config = {}) => {
  * @returns {Promise} A Promise object represents the {number} 
  */
 export const fetchBatches = async (address, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
     
     if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
@@ -157,6 +182,10 @@ export const fetchBatches = async (address, config = {}) => {
  * @returns {Promise} A Promise object represents the {number} 
  */
 export const fetchProgress = async (address, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
     
     if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
@@ -177,6 +206,10 @@ export const fetchProgress = async (address, config = {}) => {
  * @returns {Promise} A Promise object represents the {string[]} 
  */
 export const fetchIpfsResults = async (address, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
     
     if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
@@ -293,6 +326,39 @@ export const fetchJobStore = async (address, config = {}) => {
 };
 
 /**
+ * Create cognitive job contract
+ * 
+ * @param {String} kernelAddress 
+ * @param {String} datasetAddress 
+ * @param {String} from
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} Promise object resolved to add status (boolean)
+ */
+export const create = (web3, kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
+    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
+        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
+    }
+
+    if (!config.addresses || !config.addresses.pandora) {
+        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
+    }
+
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    pan.methods
+        .createCognitiveJob(kernelAddress, datasetAddress)
+        .send({
+            from
+        })
+        .on('error', reject)
+        .on('receipt', receipt => resolve(receipt.contractAddress));
+});
+
+/**
  * Handle event CognitiveJobCreated
  * 
  * @param {Function} storeCallback 
@@ -300,6 +366,10 @@ export const fetchJobStore = async (address, config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
 export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
@@ -341,6 +411,10 @@ export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback
  * @returns {Promise} A Promise object represents the {Object} 
  */
 export const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');

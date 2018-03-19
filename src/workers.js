@@ -11,7 +11,8 @@
 
 import pjsError, {
     CONTRACT_REQUIRED,
-    ADDRESS_REQUIRED
+    ADDRESS_REQUIRED,
+    WEB3_REQUIRED
 } from './helpers/errors';
 
 import { fetchState as fetchJobState } from './jobs';
@@ -23,6 +24,10 @@ import { fetchState as fetchJobState } from './jobs';
  * @returns {Promise} A Promise object represents the {number} 
  */
 export const fetchCount = async (config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
     
     if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
@@ -48,6 +53,10 @@ export const fetchCount = async (config = {}) => {
  */
 export const fetchAddressById = async (id, config = {}) => {
 
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
     if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
@@ -72,6 +81,10 @@ export const fetchAddressById = async (id, config = {}) => {
  */
 export const fetchState = async (address, config = {}) => {
 
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
     if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
     }
@@ -92,6 +105,10 @@ export const fetchState = async (address, config = {}) => {
  */
 export const fetchReputation = async (address, config = {}) => {
 
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
+
     if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
     }
@@ -111,6 +128,10 @@ export const fetchReputation = async (address, config = {}) => {
  * @returns {Promise} A Promise object represents the {string}
  */
 export const fetchActiveJobAddress = async (address, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
     
     if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
@@ -235,6 +256,10 @@ export const fetchAll = async (config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
 export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+    
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
@@ -276,6 +301,10 @@ export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback =
  * @returns {Promise} A Promise object represents the {Object} 
  */
 export const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+
+    if (!config.web3) {
+        throw pjsError(WEB3_REQUIRED);
+    }
 
     if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
