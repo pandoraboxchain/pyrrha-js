@@ -334,7 +334,7 @@ const fetchJobStore = async (address, config = {}) => {
 
 exports.fetchJobStore = fetchJobStore;
 
-const create = (web3, kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
+const create = (kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }

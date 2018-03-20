@@ -334,7 +334,7 @@ export const fetchJobStore = async (address, config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to add status (boolean)
  */
-export const create = (web3, kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
+export const create = (kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
 
     if (!config.web3) {
         throw pjsError(WEB3_REQUIRED);

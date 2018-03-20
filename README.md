@@ -3,7 +3,6 @@ Pandora Pyrrha functions and utilities library for JavaScript-based applications
 
 ## Initialisation and usage
 ```javascript
-import Web3 from 'web3';
 import Kernel from '../contracts/Kernel.json';
 import Dataset from '../contracts/Dataset.json';
 import Pjs from 'pyrrha-js';
@@ -12,7 +11,16 @@ import Pjs from 'pyrrha-js';
 const web3 = new Web3(window.web3.currentProvider || '<protocol>://<host>:<port>');
 
 const pjs = new Pjs({
-    web3: web3
+    eth: {
+        protocol: 'http',
+        host: 'localhost',
+        port: 8545
+    },
+    ipfs: {
+        protocol: 'http',
+        host: 'localhost',
+        port: 5001
+    },
     contracts: {
         Kernel,
         Dataset 
@@ -23,9 +31,7 @@ const pjs = new Pjs({
     }
 });
 
-const fetchKernels = async () => {
-    return await pjs.kernels.fetchAll();
-};
-
-console.log(fetchKernels());
+pjs.kernels.fetchAll()
+    .then(console.log)
+    .catch(console.error);
 ```
