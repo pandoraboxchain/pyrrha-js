@@ -45,7 +45,7 @@ const estimateGas = async (bytecode, args, config = {}) => {
 
 exports.estimateGas = estimateGas;
 
-const deployContract = (web3, contract, {
+const deployContract = (contract, {
   args,
   from,
   gas

@@ -39,7 +39,7 @@ export const estimateGas = async (bytecode, args, config = {}) => {
  * @param {Object} options { args, from, gas } 
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deployContract = (web3, contract, { args, from, gas }, config = {}) => new Promise((resolve, reject) => {
+export const deployContract = (contract, { args, from, gas }, config = {}) => new Promise((resolve, reject) => {
     
     if (!config.web3) {
         throw pjsError(WEB3_REQUIRED);

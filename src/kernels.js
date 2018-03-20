@@ -242,7 +242,7 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
         const args = [config.web3.utils.toHex(kernelIpfsHash), dimension, complexity, price];
         
         // Estimate required amount of gas
-        const gas = await web3Helpers.estimateGas(config.web3, config.contracts.Kernel.bytecode, args, config);
+        const gas = await web3Helpers.estimateGas(config.contracts.Kernel.bytecode, args, config);
 
         // Create and deploy kernel contract
         const kernelContractAddress = await web3Helpers.deployContract(config.contracts.Kernel, {

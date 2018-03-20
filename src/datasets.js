@@ -249,11 +249,11 @@ export const fetchAll = async (config = {}) => {
  * Deploy Datset contract to the network
  * 
  * @param {string} datasetIpfsHash 
- * @param {Object} options { publisher, dimension, complexity, price } 
+ * @param {Object} options { publisher, dimension, samples, price } 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (datasetIpfsHash, { publisher, dimension, complexity, price }, config = {}) => {
+export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price }, config = {}) => {
 
     if (!config.web3) {
         throw pjsError(WEB3_REQUIRED);
@@ -264,19 +264,19 @@ export const deploy = async (datasetIpfsHash, { publisher, dimension, complexity
     }
 
     try {
-        const args = [config.web3.utils.toHex(datasetIpfsHash), dimension, complexity, price];
+        const args = [config.web3.utils.toHex(datasetIpfsHash), dimension, samples, batchesCount, price];
         
         // Estimate required amount of gas
-        const gas = await web3Helpers.estimateGas(config.web3, config.contracts.Dataset.bytecode, args, config);
+        const gas = await web3Helpers.estimateGas(config.contracts.Dataset.bytecode, args, config);
 
-        // Create and deploy kernel contract
-        const kernelContractAddress = await web3Helpers.deployContract(config.contracts.Kernel, {
+        // Create and deploy dataset contract
+        const datasetContractAddress = await web3Helpers.deployContract(config.contracts.Dataset, {
             args,
             from: publisher,
             gas: Number.parseInt(gas * 1.5, 10)
         }, config);
 
-        return kernelContractAddress;
+        return datasetContractAddress;
     } catch(err) {
         return Promise.reject(err);
     }

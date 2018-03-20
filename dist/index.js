@@ -119,6 +119,8 @@ class Pjs {
 
       this._addMembers('ipfs', ipfs);
     }
+
+    this._addApiMembers();
   } // direct apis references
 
 
