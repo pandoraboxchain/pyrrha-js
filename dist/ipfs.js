@@ -11,7 +11,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.submitJson = exports.submitFile = exports.add = exports.loadFile = exports.api = void 0;
+exports.submitJson = exports.submitFile = exports.add = exports.loadFile = void 0;
 
 var _errors = _interopRequireWildcard(require("./helpers/errors"));
 
@@ -20,25 +20,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 /**
  * Load file from web browser fs
  * 
- * @returns {Object}
- */
-const api = (config = {}) => {
-  if (!config.ipfs) {
-    throw (0, _errors.default)(_errors.IPFS_REQUIRED);
-  }
-
-  return config.ipfs;
-};
-/**
- * Load file from web browser fs
- * 
  * @param {File} file 
  * @returns {Promise}
  */
-
-
-exports.api = api;
-
 const loadFile = file => {
   const reader = new FileReader();
   return new Promise((resolve, reject) => {
