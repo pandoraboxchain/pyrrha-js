@@ -14,7 +14,6 @@ import ipfsAPI from 'ipfs-api';
 
 import pjsPackage from '../package.json';
 import pjsError, {
-    WEB3_REQUIRED,
     WEB3_NOT_CONNECTED
 } from './helpers/errors';
 

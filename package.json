@@ -1,12 +1,13 @@
 {
   "name": "pyrrha-js",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Pandora Pyrrha functions and utilities library for JavaScript-based applications",
   "private": true,
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx babel ./src --out-dir ./dist"
+    "build:babel": "npx rimraf ./dist &&  && npx babel ./src --out-dir ./dist",
+    "build:webpack": "npx rimraf ./dist &&  npx webpack --progress -p --output-path ./dist --output-filename index.js --output-library pyrrha --optimize-minimize true"
   },
   "repository": {
     "type": "git",
@@ -22,14 +23,17 @@
     "ipfs-api": "^18.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.42",
     "@babel/core": "^7.0.0-beta.42",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.42",
     "@babel/plugin-syntax-object-rest-spread": "^7.0.0-beta.42",
-    "@babel/preset-env": "^7.0.0-beta.42",
     "@babel/preset-es2015": "^7.0.0-beta.42",
-    "eslint": "^4.18.2"
+    "babel-loader": "^8.0.0-beta.2",
+    "eslint": "^4.18.2",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12"
   },
+  "sideEffects": false,
   "author": "Kostiantyn Smyrnov <kostysh@gmail.com>",
   "license": "MIT"
 }
