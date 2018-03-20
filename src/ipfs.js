@@ -15,20 +15,6 @@ import pjsError, {
 /**
  * Load file from web browser fs
  * 
- * @returns {Object}
- */
-export const api = (config = {}) => {
-    
-    if (!config.ipfs) {
-        throw pjsError(IPFS_REQUIRED);
-    }
-
-    return config.ipfs;
-};
-
-/**
- * Load file from web browser fs
- * 
  * @param {File} file 
  * @returns {Promise}
  */

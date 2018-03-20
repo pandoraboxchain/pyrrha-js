@@ -44,24 +44,14 @@ class Pjs {
             throw pjsError(WEB3_NOT_CONNECTED);
         }
 
-        return value;
+        this.config.web3 = value;
     }
 
     // ipfs setter
     set _ipfs(value) {
 
         // @todo Add ipfs connection validation
-        return value;
-    }
-
-    // web3 getter
-    get web3() {
-
-        if (!this._web3) {
-            throw pjsError(WEB3_REQUIRED);
-        }
-
-        return this._web3;
+        this.config.ipfs = value;
     }
 
     /** Options example
@@ -95,13 +85,23 @@ class Pjs {
      */
     constructor(options = {}) {
         this.version = pjsPackage.version;
+        this.config = {};
 
         if (options.eth) {
 
-            this._contracts = options.contracts || {};// @todo Validate minimum "reqiored" contracts set 
-            this._addresses = options.addresses || {};// @todo Validate addresses "required" option
+            this.config.contracts = options.contracts || {};// @todo Validate minimum "required" contracts set 
+            this.config.addresses = options.addresses || {};// @todo Validate addresses "required" option
 
-            this._web3 = this._connectWeb3Provider(options);
+            if (window && window.web3 && 
+                window.web3.currentProvider && 
+                window.web3.currentProvider.isMetaMask) {
+                
+                this._web3 = new Pjs.Web3(window.web3.currentProvider);            
+            } else {
+    
+                this._web3 = new Pjs.Web3(`${options.eth.protocol || 'http'}://${options.eth.Host || 'localhost'}:${options.eth.port || ''}`);
+            }
+
             this._addMembers('kernels', kernels);
             this._addMembers('datasets', datasets);
             this._addMembers('jobs', jobs);
@@ -110,50 +110,59 @@ class Pjs {
 
         if (options.ipfs) {
 
-            this._ipfs = this._connectIpfs(options);
+            this._ipfs = Pjs.ipfsAPI(
+                options.ipfs.host, 
+                options.ipfs.port, 
+                { 
+                    protocol: options.ipfs.protocol
+                }
+            );
+
             this._addMembers('ipfs', ipfs);
         }
     }
 
-    /**
-     * Web3 connection helper
-     * 
-     * @param {Object} config
-     * @returns {Web3} Web3 instance
-     * @memberof Pjs
-     */
-    _connectWeb3Provider(options) {
+    // direct apis references
+    _addApiMembers() {
 
-        if (window && window.web3 && 
-            window.web3.currentProvider && 
-            window.web3.currentProvider.isMetaMask) {
-            
-            this._web3 = new Pjs.Web3(window.web3.currentProvider);            
-        } else {
+        Object.defineProperty(this, 'api', {
+            value: {},
+            writable: false,
+            enumerable: false,
+            configurable: false
+        });
 
-            this._web3 = new Pjs.Web3(`${options.eth.protocol || 'http'}://${options.eth.Host || 'localhost'}:${options.eth.port || ''}`);
+        if (this.config.web3) {
+
+            let web3 = new Proxy(this.config.web3, {
+                get: function(target, property, receiver) {
+                    return Reflect.get(target, property, receiver);
+                }
+            });
+
+            Object.defineProperty(this.api, 'web3', {
+                value: web3,
+                writable: false,
+                enumerable: false,
+                configurable: false
+            });
         }
-                
-        return this._web3;
-    }
 
-    /**
-     * IPFS connection helper
-     * 
-     * @param {Object} config
-     * @returns {ipfsAPI} ipfsAPI instance
-     * @memberof Pjs
-     */
-    _connectIpfs(options) {
-        this.ipfs = Pjs.ipfsAPI(
-            options.ipfs.host, 
-            options.ipfs.port, 
-            { 
-                protocol: options.ipfs.protocol
-            }
-        );
+        if (this.config.ipfs) {
 
-        return this._ipfs;
+            let ipfs = new Proxy(this.config.ipfs, {
+                get: function(target, property, receiver) {
+                    return Reflect.get(target, property, receiver);
+                }
+            });
+
+            Object.defineProperty(this.api, 'ipfs', {
+                value: ipfs,
+                writable: false,
+                enumerable: false,
+                configurable: false
+            });
+        }
     }
 
     // Populate library methods
@@ -176,12 +185,7 @@ class Pjs {
                     apply: function(target, that, args) {
                         
                         // add config object to every methods calls
-                        args.push({
-                            web3: self._web3,
-                            ipfs: self._ipfs,
-                            contracts: self._contracts,
-                            addresses: self._addresses
-                        });
+                        args.push(self.config);
 
                         return Reflect.apply(target, self, args);
                     }
