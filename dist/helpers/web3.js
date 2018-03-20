@@ -24,7 +24,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
  * @param {Array} args Contract arguments
  * @returns {Number} hex
  */
-const estimateGas = async (bytecode, args, config = {}) => {
+var estimateGas = async function estimateGas(bytecode, args) {
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -45,26 +47,30 @@ const estimateGas = async (bytecode, args, config = {}) => {
 
 exports.estimateGas = estimateGas;
 
-const deployContract = (contract, {
-  args,
-  from,
-  gas
-}, config = {}) => new Promise((resolve, reject) => {
-  if (!config.web3) {
-    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
-  }
+var deployContract = function deployContract(contract, _ref) {
+  var args = _ref.args,
+      from = _ref.from,
+      gas = _ref.gas;
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  return new Promise(function (resolve, reject) {
+    if (!config.web3) {
+      throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+    }
 
-  if (!config.web3.currentProvider.isMetaMask) {
-    throw (0, _errors.default)(_errors.WEB3_METAMASK_REQUIRED);
-  }
+    if (!config.web3.currentProvider.isMetaMask) {
+      throw (0, _errors.default)(_errors.WEB3_METAMASK_REQUIRED);
+    }
 
-  new config.web3.eth.Contract(contract.abi).deploy({
-    data: contract.bytecode,
-    arguments: args
-  }).send({
-    from,
-    gas
-  }).on('error', reject).on('receipt', receipt => resolve(receipt.contractAddress));
-});
+    new config.web3.eth.Contract(contract.abi).deploy({
+      data: contract.bytecode,
+      arguments: args
+    }).send({
+      from: from,
+      gas: gas
+    }).on('error', reject).on('receipt', function (receipt) {
+      return resolve(receipt.contractAddress);
+    });
+  });
+};
 
 exports.deployContract = deployContract;

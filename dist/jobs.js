@@ -31,7 +31,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
-const fetchActiveCount = async (config = {}) => {
+var fetchActiveCount = async function fetchActiveCount() {
+  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -44,8 +46,8 @@ const fetchActiveCount = async (config = {}) => {
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
   }
 
-  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
-  const count = await pan.methods.activeJobsCount().call();
+  var pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  var count = await pan.methods.activeJobsCount().call();
   return Number.parseInt(count, 10);
 };
 /**
@@ -59,7 +61,9 @@ const fetchActiveCount = async (config = {}) => {
 
 exports.fetchActiveCount = fetchActiveCount;
 
-const fetchAddressById = async (id, config = {}) => {
+var fetchAddressById = async function fetchAddressById(id) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -72,8 +76,8 @@ const fetchAddressById = async (id, config = {}) => {
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
   }
 
-  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
-  const jobAddress = await pan.methods.activeJobs(id).call();
+  var pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  var jobAddress = await pan.methods.activeJobs(id).call();
   return String(jobAddress);
 };
 /**
@@ -87,7 +91,9 @@ const fetchAddressById = async (id, config = {}) => {
 
 exports.fetchAddressById = fetchAddressById;
 
-const fetchState = async (address, config = {}) => {
+var fetchState = async function fetchState(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -96,8 +102,8 @@ const fetchState = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
 
-  const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-  const state = await cog.methods.currentState().call();
+  var cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+  var state = await cog.methods.currentState().call();
   return Number.parseInt(state, 10);
 };
 /**
@@ -111,7 +117,9 @@ const fetchState = async (address, config = {}) => {
 
 exports.fetchState = fetchState;
 
-const fetchKernel = async (address, config = {}) => {
+var fetchKernel = async function fetchKernel(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -120,8 +128,8 @@ const fetchKernel = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
 
-  const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-  const kernel = await cog.methods.kernel().call();
+  var cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+  var kernel = await cog.methods.kernel().call();
   return String(kernel);
 };
 /**
@@ -135,7 +143,9 @@ const fetchKernel = async (address, config = {}) => {
 
 exports.fetchKernel = fetchKernel;
 
-const fetchDataset = async (address, config = {}) => {
+var fetchDataset = async function fetchDataset(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -144,8 +154,8 @@ const fetchDataset = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
 
-  const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-  const dataset = await cog.methods.dataset().call();
+  var cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+  var dataset = await cog.methods.dataset().call();
   return String(dataset);
 };
 /**
@@ -159,7 +169,9 @@ const fetchDataset = async (address, config = {}) => {
 
 exports.fetchDataset = fetchDataset;
 
-const fetchBatches = async (address, config = {}) => {
+var fetchBatches = async function fetchBatches(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -168,8 +180,8 @@ const fetchBatches = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
 
-  const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-  const batches = await cog.methods.batches().call();
+  var cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+  var batches = await cog.methods.batches().call();
   return Number.parseInt(batches, 10);
 };
 /**
@@ -183,7 +195,9 @@ const fetchBatches = async (address, config = {}) => {
 
 exports.fetchBatches = fetchBatches;
 
-const fetchProgress = async (address, config = {}) => {
+var fetchProgress = async function fetchProgress(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -192,8 +206,8 @@ const fetchProgress = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
 
-  const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-  const progress = await cog.methods.progress().call();
+  var cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+  var progress = await cog.methods.progress().call();
   return Number.parseInt(progress, 10);
 };
 /**
@@ -207,7 +221,9 @@ const fetchProgress = async (address, config = {}) => {
 
 exports.fetchProgress = fetchProgress;
 
-const fetchIpfsResults = async (address, config = {}) => {
+var fetchIpfsResults = async function fetchIpfsResults(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -216,8 +232,8 @@ const fetchIpfsResults = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
 
-  const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-  const ipfsResults = await cog.methods.ipfsResults().call();
+  var cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+  var ipfsResults = await cog.methods.ipfsResults().call();
   return ipfsResults;
 };
 /**
@@ -231,14 +247,16 @@ const fetchIpfsResults = async (address, config = {}) => {
 
 exports.fetchIpfsResults = fetchIpfsResults;
 
-const fetchJob = async (address, config = {}) => {
+var fetchJob = async function fetchJob(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   try {
-    const state = await fetchState(address, config);
-    const kernel = await fetchKernel(address, config);
-    const dataset = await fetchDataset(address, config);
-    const batches = await fetchBatches(address, config);
-    const progress = await fetchProgress(address, config);
-    const ipfsResults = await fetchIpfsResults(address, config);
+    var state = await fetchState(address, config);
+    var kernel = await fetchKernel(address, config);
+    var dataset = await fetchDataset(address, config);
+    var batches = await fetchBatches(address, config);
+    var progress = await fetchProgress(address, config);
+    var ipfsResults = await fetchIpfsResults(address, config);
     return {
       address: address,
       jobStatus: state,
@@ -263,24 +281,25 @@ const fetchJob = async (address, config = {}) => {
 
 exports.fetchJob = fetchJob;
 
-const fetchAll = async (config = {}) => {
-  let records = [];
-  let error = [];
+var fetchAll = async function fetchAll() {
+  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var records = [];
+  var error = [];
 
   try {
-    const count = await fetchActiveCount(config);
+    var count = await fetchActiveCount(config);
 
-    for (let i = 0; i < count; i++) {
-      const address = await fetchAddressById(i, config);
+    for (var i = 0; i < count; i++) {
+      var address = await fetchAddressById(i, config);
 
       try {
-        const job = await fetchJob(address, config);
+        var job = await fetchJob(address, config);
         records.push(_objectSpread({
           id: i
         }, job));
       } catch (err) {
         error.push({
-          address,
+          address: address,
           message: err.message
         });
       }
@@ -292,8 +311,8 @@ const fetchAll = async (config = {}) => {
   }
 
   return {
-    records,
-    error
+    records: records,
+    error: error
   };
 };
 /**
@@ -307,15 +326,17 @@ const fetchAll = async (config = {}) => {
 
 exports.fetchAll = fetchAll;
 
-const fetchJobStore = async (address, config = {}) => {
+var fetchJobStore = async function fetchJobStore(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   try {
-    const job = await fetchJob(address, config);
-    const kernel = await (0, _kernels.fetchIpfsAddress)(job.kernel, config);
-    const dataset = await (0, _datasets.fetchDataset)(job.dataset, config);
+    var job = await fetchJob(address, config);
+    var kernel = await (0, _kernels.fetchIpfsAddress)(job.kernel, config);
+    var dataset = await (0, _datasets.fetchDataset)(job.dataset, config);
     return {
-      job,
-      kernel,
-      dataset
+      job: job,
+      kernel: kernel,
+      dataset: dataset
     };
   } catch (err) {
     return Promise.reject(err);
@@ -334,24 +355,29 @@ const fetchJobStore = async (address, config = {}) => {
 
 exports.fetchJobStore = fetchJobStore;
 
-const create = (kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
-  if (!config.web3) {
-    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
-  }
+var create = function create(kernelAddress, datasetAddress, from) {
+  var config = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  return new Promise(function (resolve, reject) {
+    if (!config.web3) {
+      throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+    }
 
-  if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
-    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
-  }
+    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
+      throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Pandora');
+    }
 
-  if (!config.addresses || !config.addresses.pandora) {
-    throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
-  }
+    if (!config.addresses || !config.addresses.pandora) {
+      throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
+    }
 
-  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
-  pan.methods.createCognitiveJob(kernelAddress, datasetAddress).send({
-    from
-  }).on('error', reject).on('receipt', receipt => resolve(receipt.contractAddress));
-});
+    var pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    pan.methods.createCognitiveJob(kernelAddress, datasetAddress).send({
+      from: from
+    }).on('error', reject).on('receipt', function (receipt) {
+      return resolve(receipt.contractAddress);
+    });
+  });
+};
 /**
  * Handle event CognitiveJobCreated
  * 
@@ -363,7 +389,11 @@ const create = (kernelAddress, datasetAddress, from, config = {}) => new Promise
 
 exports.create = create;
 
-const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+var eventCognitiveJobCreated = function eventCognitiveJobCreated() {
+  var storeCallback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+  var errorCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -376,15 +406,15 @@ const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () =
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
   }
 
-  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  var pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
   pan.events.CognitiveJobCreated({
     fromBlock: 0
-  }).on('data', async res => {
+  }).on('data', async function (res) {
     try {
-      const store = await fetchJobStore(res.args.cognitiveJob);
+      var store = await fetchJobStore(res.args.cognitiveJob);
       storeCallback({
         address: res.args.cognitiveJob,
-        store,
+        store: store,
         status: 'created',
         event: 'Pandora.CognitiveJobCreated'
       });
@@ -406,7 +436,11 @@ const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () =
 
 exports.eventCognitiveJobCreated = eventCognitiveJobCreated;
 
-const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+var eventCognitiveJobStateChanged = function eventCognitiveJobStateChanged(address) {
+  var storeCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var errorCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+  var config = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -415,15 +449,15 @@ const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorC
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'CognitiveJob');
   }
 
-  const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+  var cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
   cog.events.StateChanged({
     fromBlock: 0
-  }).on('data', async res => {
+  }).on('data', async function (res) {
     try {
-      const store = await fetchJobStore(res.args.cognitiveJob);
+      var store = await fetchJobStore(res.args.cognitiveJob);
       storeCallback({
         address: res.args.cognitiveJob,
-        store,
+        store: store,
         status: 'changed',
         event: 'CognitiveJob.StateChanged'
       });

@@ -27,6 +27,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.42",
     "@babel/plugin-syntax-object-rest-spread": "^7.0.0-beta.42",
     "@babel/preset-env": "^7.0.0-beta.42",
+    "@babel/preset-es2015": "^7.0.0-beta.42",
     "eslint": "^4.18.2"
   },
   "author": "Kostiantyn Smyrnov <kostysh@gmail.com>",

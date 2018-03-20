@@ -30,7 +30,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
-const fetchAddressById = async (id, config) => {
+var fetchAddressById = async function fetchAddressById(id, config) {
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -43,8 +43,8 @@ const fetchAddressById = async (id, config) => {
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
   }
 
-  const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
-  const kernelContract = await mar.methods.kernels(id).call();
+  var mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+  var kernelContract = await mar.methods.kernels(id).call();
   return kernelContract;
 };
 /**
@@ -58,7 +58,10 @@ const fetchAddressById = async (id, config) => {
 
 exports.fetchAddressById = fetchAddressById;
 
-const fetchIpfsAddress = async (address = '', config = {}) => {
+var fetchIpfsAddress = async function fetchIpfsAddress() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -67,8 +70,8 @@ const fetchIpfsAddress = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Kernel');
   }
 
-  const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
-  const ipfsAddress = await ker.methods.ipfsAddress().call();
+  var ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
+  var ipfsAddress = await ker.methods.ipfsAddress().call();
   return String(ipfsAddress);
 };
 /**
@@ -82,7 +85,10 @@ const fetchIpfsAddress = async (address = '', config = {}) => {
 
 exports.fetchIpfsAddress = fetchIpfsAddress;
 
-const fetchDataDim = async (address = '', config = {}) => {
+var fetchDataDim = async function fetchDataDim() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -91,8 +97,8 @@ const fetchDataDim = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Kernel');
   }
 
-  const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
-  const dataDim = await ker.methods.dataDim().call();
+  var ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
+  var dataDim = await ker.methods.dataDim().call();
   return Number.parseInt(dataDim, 10);
 };
 /**
@@ -106,7 +112,10 @@ const fetchDataDim = async (address = '', config = {}) => {
 
 exports.fetchDataDim = fetchDataDim;
 
-const fetchCurrentPrice = async (address = '', config = {}) => {
+var fetchCurrentPrice = async function fetchCurrentPrice() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -115,8 +124,8 @@ const fetchCurrentPrice = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Kernel');
   }
 
-  const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
-  const currentPrice = await ker.methods.currentPrice().call();
+  var ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
+  var currentPrice = await ker.methods.currentPrice().call();
   return Number.parseInt(currentPrice, 10);
 };
 /**
@@ -130,7 +139,10 @@ const fetchCurrentPrice = async (address = '', config = {}) => {
 
 exports.fetchCurrentPrice = fetchCurrentPrice;
 
-const fetchComplexity = async (address = '', config = {}) => {
+var fetchComplexity = async function fetchComplexity() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -139,8 +151,8 @@ const fetchComplexity = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Kernel');
   }
 
-  const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
-  const complexity = await ker.methods.complexity().call();
+  var ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
+  var complexity = await ker.methods.complexity().call();
   return Number.parseInt(complexity, 10);
 };
 /**
@@ -154,18 +166,21 @@ const fetchComplexity = async (address = '', config = {}) => {
 
 exports.fetchComplexity = fetchComplexity;
 
-const fetchKernel = async (address = '', config = {}) => {
+var fetchKernel = async function fetchKernel() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   try {
-    const ipfsAddress = await fetchIpfsAddress(address, config);
-    const dataDim = await fetchDataDim(address, config);
-    const currentPrice = await fetchCurrentPrice(address, config);
-    const complexity = await fetchComplexity(address, config);
+    var ipfsAddress = await fetchIpfsAddress(address, config);
+    var dataDim = await fetchDataDim(address, config);
+    var currentPrice = await fetchCurrentPrice(address, config);
+    var complexity = await fetchComplexity(address, config);
     return {
-      address,
-      ipfsAddress,
-      dataDim,
-      currentPrice,
-      complexity
+      address: address,
+      ipfsAddress: ipfsAddress,
+      dataDim: dataDim,
+      currentPrice: currentPrice,
+      complexity: complexity
     };
   } catch (err) {
     return Promise.reject(err);
@@ -181,22 +196,23 @@ const fetchKernel = async (address = '', config = {}) => {
 
 exports.fetchKernel = fetchKernel;
 
-const fetchAll = async (config = {}) => {
-  let id = 0;
-  let records = [];
-  let error = [];
+var fetchAll = async function fetchAll() {
+  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var id = 0;
+  var records = [];
+  var error = [];
 
   try {
     // @todo Add method getKernelsCount to the PandoraMarket contract for avoid iterating with "try catch"
     while (true) {
-      const kernelAddress = await fetchAddressById(id++, config); // can be 0x0
+      var kernelAddress = await fetchAddressById(id++, config); // can be 0x0
 
       if (+kernelAddress === 0) {
         break;
       }
 
       try {
-        const kernelObj = await fetchKernel(kernelAddress, config);
+        var kernelObj = await fetchKernel(kernelAddress, config);
         records.push(_objectSpread({
           id: id
         }, kernelObj));
@@ -214,8 +230,8 @@ const fetchAll = async (config = {}) => {
   }
 
   return {
-    records,
-    error
+    records: records,
+    error: error
   };
 };
 /**
@@ -230,12 +246,13 @@ const fetchAll = async (config = {}) => {
 
 exports.fetchAll = fetchAll;
 
-const deploy = async (kernelIpfsHash, {
-  publisher,
-  dimension,
-  complexity,
-  price
-}, config = {}) => {
+var deploy = async function deploy(kernelIpfsHash, _ref) {
+  var publisher = _ref.publisher,
+      dimension = _ref.dimension,
+      complexity = _ref.complexity,
+      price = _ref.price;
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -245,12 +262,12 @@ const deploy = async (kernelIpfsHash, {
   }
 
   try {
-    const args = [config.web3.utils.toHex(kernelIpfsHash), dimension, complexity, price]; // Estimate required amount of gas
+    var args = [config.web3.utils.toHex(kernelIpfsHash), dimension, complexity, price]; // Estimate required amount of gas
 
-    const gas = await web3Helpers.estimateGas(config.contracts.Kernel.bytecode, args, config); // Create and deploy kernel contract
+    var gas = await web3Helpers.estimateGas(config.contracts.Kernel.bytecode, args, config); // Create and deploy kernel contract
 
-    const kernelContractAddress = await web3Helpers.deployContract(config.contracts.Kernel, {
-      args,
+    var kernelContractAddress = await web3Helpers.deployContract(config.contracts.Kernel, {
+      args: args,
       from: publisher,
       gas: Number.parseInt(gas * 1.5, 10)
     }, config);
@@ -271,28 +288,33 @@ const deploy = async (kernelIpfsHash, {
 
 exports.deploy = deploy;
 
-const addToMarket = (kernelContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
-  if (!config.web3) {
-    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
-  }
+var addToMarket = function addToMarket(kernelContractAddress, publisherAddress) {
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  return new Promise(function (resolve, reject) {
+    if (!config.web3) {
+      throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+    }
 
-  if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
-    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'PandoraMarket');
-  }
+    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
+      throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'PandoraMarket');
+    }
 
-  if (!config.addresses || !config.addresses.market) {
-    throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
-  }
+    if (!config.addresses || !config.addresses.market) {
+      throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
+    }
 
-  if (!config.web3.currentProvider.isMetaMask) {
-    throw (0, _errors.default)(_errors.WEB3_METAMASK_REQUIRED);
-  }
+    if (!config.web3.currentProvider.isMetaMask) {
+      throw (0, _errors.default)(_errors.WEB3_METAMASK_REQUIRED);
+    }
 
-  const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
-  market.methods.addKernel(kernelContractAddress).send({
-    from: publisherAddress
-  }).on('error', reject).on('receipt', receipt => resolve(receipt.contractAddress));
-});
+    var market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    market.methods.addKernel(kernelContractAddress).send({
+      from: publisherAddress
+    }).on('error', reject).on('receipt', function (receipt) {
+      return resolve(receipt.contractAddress);
+    });
+  });
+};
 /**
  * Handle event KernelAdded
  * 
@@ -304,7 +326,11 @@ const addToMarket = (kernelContractAddress, publisherAddress, config = {}) => ne
 
 exports.addToMarket = addToMarket;
 
-const eventKernelAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+var eventKernelAdded = function eventKernelAdded() {
+  var storeCallback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+  var errorCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -317,15 +343,15 @@ const eventKernelAdded = (storeCallback = () => {}, errorCallback = () => {}, co
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
   }
 
-  const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+  var mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
   mar.events.KernelAdded({
     fromBlock: 0
-  }).on('data', async res => {
+  }).on('data', async function (res) {
     try {
-      const kernel = await fetchKernel(res.args.kernel, config);
+      var kernel = await fetchKernel(res.args.kernel, config);
       storeCallback({
         address: res.args.kernel,
-        kernel,
+        kernel: kernel,
         status: 'created',
         event: 'PandoraMarket.KernelAdded'
       });

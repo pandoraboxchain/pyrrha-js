@@ -30,7 +30,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
-const fetchAddressById = async (id, config = {}) => {
+var fetchAddressById = async function fetchAddressById(id) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -43,8 +45,8 @@ const fetchAddressById = async (id, config = {}) => {
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
   }
 
-  const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
-  const datasetContract = await mar.methods.datasets(id).call();
+  var mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+  var datasetContract = await mar.methods.datasets(id).call();
   return datasetContract;
 };
 /**
@@ -58,7 +60,10 @@ const fetchAddressById = async (id, config = {}) => {
 
 exports.fetchAddressById = fetchAddressById;
 
-const fetchIpfsAddress = async (address = '', config = {}) => {
+var fetchIpfsAddress = async function fetchIpfsAddress() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -67,8 +72,8 @@ const fetchIpfsAddress = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Dataset');
   }
 
-  const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
-  const ipfsAddress = await dat.methods.ipfsAddress().call();
+  var dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
+  var ipfsAddress = await dat.methods.ipfsAddress().call();
   return String(ipfsAddress);
 };
 /**
@@ -82,7 +87,10 @@ const fetchIpfsAddress = async (address = '', config = {}) => {
 
 exports.fetchIpfsAddress = fetchIpfsAddress;
 
-const fetchDataDim = async (address = '', config = {}) => {
+var fetchDataDim = async function fetchDataDim() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -91,8 +99,8 @@ const fetchDataDim = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Dataset');
   }
 
-  const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
-  const dataDim = await dat.methods.dataDim().call();
+  var dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
+  var dataDim = await dat.methods.dataDim().call();
   return Number.parseInt(dataDim, 10);
 };
 /**
@@ -106,7 +114,10 @@ const fetchDataDim = async (address = '', config = {}) => {
 
 exports.fetchDataDim = fetchDataDim;
 
-const fetchCurrentPrice = async (address = '', config = {}) => {
+var fetchCurrentPrice = async function fetchCurrentPrice() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -115,8 +126,8 @@ const fetchCurrentPrice = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Dataset');
   }
 
-  const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
-  const currentPrice = await dat.methods.currentPrice().call();
+  var dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
+  var currentPrice = await dat.methods.currentPrice().call();
   return Number.parseInt(currentPrice, 10);
 };
 /**
@@ -130,7 +141,10 @@ const fetchCurrentPrice = async (address = '', config = {}) => {
 
 exports.fetchCurrentPrice = fetchCurrentPrice;
 
-const fetchSamplesCount = async (address = '', config = {}) => {
+var fetchSamplesCount = async function fetchSamplesCount() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -139,8 +153,8 @@ const fetchSamplesCount = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Dataset');
   }
 
-  const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
-  const samplesCount = await dat.methods.samplesCount().call();
+  var dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
+  var samplesCount = await dat.methods.samplesCount().call();
   return Number.parseInt(samplesCount, 10);
 };
 /**
@@ -154,7 +168,10 @@ const fetchSamplesCount = async (address = '', config = {}) => {
 
 exports.fetchSamplesCount = fetchSamplesCount;
 
-const fetchBatchesCount = async (address = '', config = {}) => {
+var fetchBatchesCount = async function fetchBatchesCount() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -163,8 +180,8 @@ const fetchBatchesCount = async (address = '', config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'Dataset');
   }
 
-  const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
-  const batchesCount = await dat.methods.batchesCount().call();
+  var dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
+  var batchesCount = await dat.methods.batchesCount().call();
   return Number.parseInt(batchesCount, 10);
 };
 /**
@@ -178,20 +195,23 @@ const fetchBatchesCount = async (address = '', config = {}) => {
 
 exports.fetchBatchesCount = fetchBatchesCount;
 
-const fetchDataset = async (address = '', config = {}) => {
+var fetchDataset = async function fetchDataset() {
+  var address = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   try {
-    const ipfsAddress = await fetchIpfsAddress(address, config);
-    const dataDim = await fetchDataDim(address, config);
-    const currentPrice = await fetchCurrentPrice(address, config);
-    const samplesCount = await fetchSamplesCount(address, config);
-    const batchesCount = await fetchBatchesCount(address, config);
+    var ipfsAddress = await fetchIpfsAddress(address, config);
+    var dataDim = await fetchDataDim(address, config);
+    var currentPrice = await fetchCurrentPrice(address, config);
+    var samplesCount = await fetchSamplesCount(address, config);
+    var batchesCount = await fetchBatchesCount(address, config);
     return {
-      address,
-      ipfsAddress,
-      dataDim,
-      currentPrice,
-      samplesCount,
-      batchesCount
+      address: address,
+      ipfsAddress: ipfsAddress,
+      dataDim: dataDim,
+      currentPrice: currentPrice,
+      samplesCount: samplesCount,
+      batchesCount: batchesCount
     };
   } catch (err) {
     return Promise.reject(err);
@@ -207,22 +227,23 @@ const fetchDataset = async (address = '', config = {}) => {
 
 exports.fetchDataset = fetchDataset;
 
-const fetchAll = async (config = {}) => {
-  let id = 0;
-  let records = [];
-  let error = [];
+var fetchAll = async function fetchAll() {
+  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var id = 0;
+  var records = [];
+  var error = [];
 
   try {
     // @todo Add method getDatasetsCount to the PandoraMarket contract for avoid iterating with "while"
     while (true) {
-      const datasetAddress = await fetchAddressById(id++, config); // can be 0x0
+      var datasetAddress = await fetchAddressById(id++, config); // can be 0x0
 
       if (+datasetAddress === 0) {
         break;
       }
 
       try {
-        const datasetObj = await fetchDataset(datasetAddress, config);
+        var datasetObj = await fetchDataset(datasetAddress, config);
         records.push(_objectSpread({
           id: id
         }, datasetObj));
@@ -240,8 +261,8 @@ const fetchAll = async (config = {}) => {
   }
 
   return {
-    records,
-    error
+    records: records,
+    error: error
   };
 };
 /**
@@ -256,12 +277,13 @@ const fetchAll = async (config = {}) => {
 
 exports.fetchAll = fetchAll;
 
-const deploy = async (datasetIpfsHash, batchesCount, {
-  publisher,
-  dimension,
-  samples,
-  price
-}, config = {}) => {
+var deploy = async function deploy(datasetIpfsHash, batchesCount, _ref) {
+  var publisher = _ref.publisher,
+      dimension = _ref.dimension,
+      samples = _ref.samples,
+      price = _ref.price;
+  var config = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -271,12 +293,12 @@ const deploy = async (datasetIpfsHash, batchesCount, {
   }
 
   try {
-    const args = [config.web3.utils.toHex(datasetIpfsHash), dimension, samples, batchesCount, price]; // Estimate required amount of gas
+    var args = [config.web3.utils.toHex(datasetIpfsHash), dimension, samples, batchesCount, price]; // Estimate required amount of gas
 
-    const gas = await web3Helpers.estimateGas(config.contracts.Dataset.bytecode, args, config); // Create and deploy dataset contract
+    var gas = await web3Helpers.estimateGas(config.contracts.Dataset.bytecode, args, config); // Create and deploy dataset contract
 
-    const datasetContractAddress = await web3Helpers.deployContract(config.contracts.Dataset, {
-      args,
+    var datasetContractAddress = await web3Helpers.deployContract(config.contracts.Dataset, {
+      args: args,
       from: publisher,
       gas: Number.parseInt(gas * 1.5, 10)
     }, config);
@@ -297,28 +319,33 @@ const deploy = async (datasetIpfsHash, batchesCount, {
 
 exports.deploy = deploy;
 
-const addToMarket = (datasetContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
-  if (!config.web3) {
-    throw (0, _errors.default)(_errors.WEB3_REQUIRED);
-  }
+var addToMarket = function addToMarket(datasetContractAddress, publisherAddress) {
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  return new Promise(function (resolve, reject) {
+    if (!config.web3) {
+      throw (0, _errors.default)(_errors.WEB3_REQUIRED);
+    }
 
-  if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
-    throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'PandoraMarket');
-  }
+    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
+      throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'PandoraMarket');
+    }
 
-  if (!config.addresses || !config.addresses.market) {
-    throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
-  }
+    if (!config.addresses || !config.addresses.market) {
+      throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
+    }
 
-  if (!config.web3.currentProvider.isMetaMask) {
-    throw (0, _errors.default)(_errors.WEB3_METAMASK_REQUIRED);
-  }
+    if (!config.web3.currentProvider.isMetaMask) {
+      throw (0, _errors.default)(_errors.WEB3_METAMASK_REQUIRED);
+    }
 
-  const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
-  market.methods.addDataset(datasetContractAddress).send({
-    from: publisherAddress
-  }).on('error', reject).on('receipt', receipt => resolve(receipt.contractAddress));
-});
+    var market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    market.methods.addDataset(datasetContractAddress).send({
+      from: publisherAddress
+    }).on('error', reject).on('receipt', function (receipt) {
+      return resolve(receipt.contractAddress);
+    });
+  });
+};
 /**
  * Handle event DatasetAdded
  * 
@@ -330,7 +357,11 @@ const addToMarket = (datasetContractAddress, publisherAddress, config = {}) => n
 
 exports.addToMarket = addToMarket;
 
-const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+var eventDatasetAdded = function eventDatasetAdded() {
+  var storeCallback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+  var errorCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -343,15 +374,15 @@ const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () => {}, c
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Market');
   }
 
-  const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+  var mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
   mar.events.DatasetAdded({
     fromBlock: 0
-  }).on('data', async res => {
+  }).on('data', async function (res) {
     try {
-      const dataset = await fetchDataset(res.args.dataset, config);
+      var dataset = await fetchDataset(res.args.dataset, config);
       storeCallback({
         address: res.args.dataset,
-        dataset,
+        dataset: dataset,
         status: 'created',
         event: 'PandoraMarket.DatasetAdded'
       });

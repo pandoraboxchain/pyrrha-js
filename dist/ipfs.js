@@ -23,19 +23,21 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
  * @param {File} file 
  * @returns {Promise}
  */
-const loadFile = file => {
-  const reader = new FileReader();
-  return new Promise((resolve, reject) => {
-    reader.onerror = error => {
+var loadFile = function loadFile(file) {
+  var reader = new FileReader();
+  return new Promise(function (resolve, reject) {
+    reader.onerror = function (error) {
       reader.abort();
       reject(error);
     };
 
-    reader.onloadend = () => resolve({
-      result: reader.result,
-      name: file.name,
-      type: file.type
-    });
+    reader.onloadend = function () {
+      return resolve({
+        result: reader.result,
+        name: file.name,
+        type: file.type
+      });
+    };
 
     reader.readAsArrayBuffer(file);
   });
@@ -53,19 +55,24 @@ const loadFile = file => {
 
 exports.loadFile = loadFile;
 
-const add = async (buffer, loadedFile, progressCb = () => {}, config = {}) => {
+var add = async function add(buffer, loadedFile) {
+  var progressCb = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+  var config = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
   if (!config.ipfs) {
     throw (0, _errors.default)(_errors.IPFS_REQUIRED);
   }
 
   try {
-    const response = await config.ipfs.add(buffer, {
-      progress: progress => progressCb({
-        file: loadedFile.name,
-        size: buffer.length,
-        type: loadedFile.type,
-        progress
-      })
+    var response = await config.ipfs.add(buffer, {
+      progress: function progress(_progress) {
+        return progressCb({
+          file: loadedFile.name,
+          size: buffer.length,
+          type: loadedFile.type,
+          progress: _progress
+        });
+      }
     });
     return response[0].hash;
   } catch (err) {
@@ -83,15 +90,18 @@ const add = async (buffer, loadedFile, progressCb = () => {}, config = {}) => {
 
 exports.add = add;
 
-const submitFile = async (file, progressCb = () => {}, config = {}) => {
+var submitFile = async function submitFile(file) {
+  var progressCb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   if (!config.ipfs) {
     throw (0, _errors.default)(_errors.IPFS_REQUIRED);
   }
 
   try {
-    const loadedFile = await loadFile(file);
-    const buffer = Buffer.from(loadedFile.result);
-    const hash = await add(buffer, loadedFile, progressCb, config);
+    var loadedFile = await loadFile(file);
+    var buffer = Buffer.from(loadedFile.result);
+    var hash = await add(buffer, loadedFile, progressCb, config);
     return hash;
   } catch (err) {
     return Promise.reject(err);
@@ -109,11 +119,14 @@ const submitFile = async (file, progressCb = () => {}, config = {}) => {
 
 exports.submitFile = submitFile;
 
-const submitJson = async (jsonString, fileInfo, progressCb = () => {}, config = {}) => {
+var submitJson = async function submitJson(jsonString, fileInfo) {
+  var progressCb = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+  var config = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
   try {
-    const buffer = Buffer.from(jsonString);
+    var buffer = Buffer.from(jsonString);
     fileInfo.size = buffer.length;
-    const hash = await add(buffer, fileInfo, progressCb, config);
+    var hash = await add(buffer, fileInfo, progressCb, config);
     return hash;
   } catch (err) {
     return Promise.reject(err);

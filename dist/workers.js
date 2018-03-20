@@ -29,7 +29,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
-const fetchCount = async (config = {}) => {
+var fetchCount = async function fetchCount() {
+  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -42,8 +44,8 @@ const fetchCount = async (config = {}) => {
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
   }
 
-  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
-  const count = await pan.methods.workerNodesCount().call();
+  var pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  var count = await pan.methods.workerNodesCount().call();
   return Number.parseInt(count, 10);
 };
 /**
@@ -57,7 +59,9 @@ const fetchCount = async (config = {}) => {
 
 exports.fetchCount = fetchCount;
 
-const fetchAddressById = async (id, config = {}) => {
+var fetchAddressById = async function fetchAddressById(id) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -70,8 +74,8 @@ const fetchAddressById = async (id, config = {}) => {
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
   }
 
-  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
-  const address = await pan.methods.workerNodes(id).call();
+  var pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  var address = await pan.methods.workerNodes(id).call();
   return String(address);
 };
 /**
@@ -85,7 +89,9 @@ const fetchAddressById = async (id, config = {}) => {
 
 exports.fetchAddressById = fetchAddressById;
 
-const fetchState = async (address, config = {}) => {
+var fetchState = async function fetchState(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -94,8 +100,8 @@ const fetchState = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
   }
 
-  const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
-  const state = await wor.methods.currentState().call();
+  var wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
+  var state = await wor.methods.currentState().call();
   return Number.parseInt(state, 10);
 };
 /**
@@ -109,7 +115,9 @@ const fetchState = async (address, config = {}) => {
 
 exports.fetchState = fetchState;
 
-const fetchReputation = async (address, config = {}) => {
+var fetchReputation = async function fetchReputation(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -118,8 +126,8 @@ const fetchReputation = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
   }
 
-  const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
-  const reputation = await wor.methods.reputation().call();
+  var wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
+  var reputation = await wor.methods.reputation().call();
   return Number.parseInt(reputation, 10);
 };
 /**
@@ -133,7 +141,9 @@ const fetchReputation = async (address, config = {}) => {
 
 exports.fetchReputation = fetchReputation;
 
-const fetchActiveJobAddress = async (address, config = {}) => {
+var fetchActiveJobAddress = async function fetchActiveJobAddress(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -142,8 +152,8 @@ const fetchActiveJobAddress = async (address, config = {}) => {
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
   }
 
-  const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
-  const activeJob = await wor.methods.activeJob().call();
+  var wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
+  var activeJob = await wor.methods.activeJob().call();
   return String(activeJob, 10);
 };
 /**
@@ -157,12 +167,14 @@ const fetchActiveJobAddress = async (address, config = {}) => {
 
 exports.fetchActiveJobAddress = fetchActiveJobAddress;
 
-const fetchWorker = async (address, config = {}) => {
+var fetchWorker = async function fetchWorker(address) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   try {
-    const currentState = await fetchState(address, config);
-    const reputation = await fetchReputation(address, config);
-    let activeJob = await fetchActiveJobAddress(address, config);
-    let jobState; // Check is not 0x0
+    var currentState = await fetchState(address, config);
+    var reputation = await fetchReputation(address, config);
+    var activeJob = await fetchActiveJobAddress(address, config);
+    var jobState; // Check is not 0x0
 
     if (+activeJob !== 0) {
       jobState = await (0, _jobs.fetchState)(activeJob, config);
@@ -172,9 +184,9 @@ const fetchWorker = async (address, config = {}) => {
     }
 
     return {
-      address,
-      currentState,
-      reputation,
+      address: address,
+      currentState: currentState,
+      reputation: reputation,
       currentJob: activeJob,
       currentJobStatus: jobState
     };
@@ -193,10 +205,12 @@ const fetchWorker = async (address, config = {}) => {
 
 exports.fetchWorker = fetchWorker;
 
-const fetchWorkerById = async (id, config = {}) => {
+var fetchWorkerById = async function fetchWorkerById(id) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   try {
-    const address = await fetchAddressById(id, config);
-    const worker = await fetchWorker(address, config);
+    var address = await fetchAddressById(id, config);
+    var worker = await fetchWorker(address, config);
     return _objectSpread({
       id: id
     }, worker);
@@ -214,16 +228,17 @@ const fetchWorkerById = async (id, config = {}) => {
 
 exports.fetchWorkerById = fetchWorkerById;
 
-const fetchAll = async (config = {}) => {
-  let records = [];
-  let error = [];
+var fetchAll = async function fetchAll() {
+  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var records = [];
+  var error = [];
 
   try {
-    const count = await fetchCount(config);
+    var count = await fetchCount(config);
 
-    for (let i = 0; i < count; i++) {
+    for (var i = 0; i < count; i++) {
       try {
-        const worker = await fetchWorkerById(i, config);
+        var worker = await fetchWorkerById(i, config);
         records.push(_objectSpread({
           id: i
         }, worker));
@@ -241,8 +256,8 @@ const fetchAll = async (config = {}) => {
   }
 
   return {
-    records,
-    error
+    records: records,
+    error: error
   };
 };
 /**
@@ -256,7 +271,11 @@ const fetchAll = async (config = {}) => {
 
 exports.fetchAll = fetchAll;
 
-const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+var eventWorkerNodeCreated = function eventWorkerNodeCreated() {
+  var storeCallback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+  var errorCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -269,15 +288,15 @@ const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => 
     throw (0, _errors.default)(_errors.ADDRESS_REQUIRED, 'Pandora');
   }
 
-  const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+  var pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
   pan.events.WorkerNodeCreated({
     fromBlock: 0
-  }).on('data', async res => {
+  }).on('data', async function (res) {
     try {
-      const worker = await fetchWorker(res.args.workerNode, config);
+      var worker = await fetchWorker(res.args.workerNode, config);
       storeCallback({
         address: res.args.workerNode,
-        worker,
+        worker: worker,
         status: 'created',
         event: 'Pandora.WorkerNodeCreated'
       });
@@ -299,7 +318,11 @@ const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => 
 
 exports.eventWorkerNodeCreated = eventWorkerNodeCreated;
 
-const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+var eventWorkerNodeStateChanged = function eventWorkerNodeStateChanged(address) {
+  var storeCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var errorCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+  var config = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
   if (!config.web3) {
     throw (0, _errors.default)(_errors.WEB3_REQUIRED);
   }
@@ -308,15 +331,15 @@ const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, errorCal
     throw (0, _errors.default)(_errors.CONTRACT_REQUIRED, 'WorkerNode');
   }
 
-  const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
+  var wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
   wor.events.StateChanged({
     fromBlock: 0
-  }).on('data', async res => {
+  }).on('data', async function (res) {
     try {
-      const worker = await fetchWorker(res.args.workerNode, config);
+      var worker = await fetchWorker(res.args.workerNode, config);
       storeCallback({
         address: res.args.workerNode,
-        worker,
+        worker: worker,
         status: 'changed',
         event: 'WorkerNode.StateChanged'
       });
