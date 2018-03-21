@@ -5,14 +5,12 @@
             {
                 "targets": {
                     "node": "current"
-                },
-                "useBuiltIns": "usage"
+                }
             }
         ]
     ],
-    "plugins": [
-        "@babel/plugin-syntax-object-rest-spread",
-        "@babel/plugin-proposal-object-rest-spread"
+    "plugins":[
+        "@babel/proposal-object-rest-spread"
     ],
     "sourceMaps": "inline",
     "retainLines": true
