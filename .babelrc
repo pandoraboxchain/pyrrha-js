@@ -4,14 +4,14 @@
             "@babel/preset-env",
             {
                 "targets": {
-                    "node": "current"
-                }
+                    "node": "current"                    
+                },
+                "useBuiltIns": "usage"
             }
         ]
     ],
     "plugins":[
         "@babel/proposal-object-rest-spread"
     ],
-    "sourceMaps": "inline",
-    "retainLines": true
+    "sourceMaps": "inline"
 }
