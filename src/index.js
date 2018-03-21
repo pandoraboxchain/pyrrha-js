@@ -98,7 +98,7 @@ class Pjs {
                 this._web3 = new Pjs.Web3(window.web3.currentProvider);            
             } else {
     
-                this._web3 = new Pjs.Web3(`${options.eth.protocol || 'http'}://${options.eth.Host || 'localhost'}:${options.eth.port || ''}`);
+                this._web3 = new Pjs.Web3(`${options.eth.protocol || 'http'}://${options.eth.host || 'localhost'}:${options.eth.port || ''}`);
             }
 
             this._addMembers('kernels', kernels);
