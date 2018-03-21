@@ -1,4 +1,7 @@
 # pyrrha-js
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2d4e2b44ad06471c8e82a632b47041d7)](https://app.codacy.com/app/kostysh/pyrrha-js?utm_source=github.com&utm_medium=referral&utm_content=pandoraboxchain/pyrrha-js&utm_campaign=badger)
+
 Pandora Pyrrha functions and utilities library for JavaScript-based applications
 
 ## Initialisation and usage
