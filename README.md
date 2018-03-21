@@ -7,9 +7,6 @@ import Kernel from '../contracts/Kernel.json';
 import Dataset from '../contracts/Dataset.json';
 import Pjs from 'pyrrha-js';
 
-// web3 v1.0 and up is required
-const web3 = new Web3(window.web3.currentProvider || '<protocol>://<host>:<port>');
-
 const pjs = new Pjs({
     eth: {
         protocol: 'http',
