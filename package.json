@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test-with-coverage": "istanbul cover _mocha --report lcovonly -- --require @babel/register -R spec && cat ./coverage/lcov.info | npx codacy-coverage --token b9f35cad059c44b792590ef78c8b81f8 && rm -rf ./coverage",
+    "test-with-coverage": "istanbul cover _mocha --report lcovonly -- --require @babel/register -R spec && cat ./coverage/lcov.info | npx codacy-coverage --token b9f35cad059c44b792590ef78c8b81f8 && npx rimraf ./coverage",
     "build": "npx rimraf ./dist && NODE_ENV=production npx babel ./src --out-dir ./dist"
   },
   "repository": {
