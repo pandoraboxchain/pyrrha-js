@@ -39,7 +39,7 @@ class Pjs {
     // web3 setter
     set _web3(value) {
 
-        if (!value.currentProvider) {
+        if (!value || !value.currentProvider) {
             throw pjsError(WEB3_NOT_CONNECTED);
         }
 
@@ -83,19 +83,22 @@ class Pjs {
      * @memberof Pjs
      */
     constructor(options = {}) {
+        // @todo Implement options object validation
         this.version = pjsPackage.version;
         this.config = {};
+        this.isMetaMask = false;
 
         if (options.eth) {
 
             this.config.contracts = options.contracts || {};// @todo Validate minimum "required" contracts set 
             this.config.addresses = options.addresses || {};// @todo Validate addresses "required" option
 
-            if (window && window.web3 && 
-                window.web3.currentProvider && 
-                window.web3.currentProvider.isMetaMask) {
+            if (options.web3 && 
+                options.web3.currentProvider && 
+                options.web3.currentProvider.isMetaMask) {
                 
-                this._web3 = new Pjs.Web3(window.web3.currentProvider);            
+                this.isMetaMask = true;
+                this._web3 = new Pjs.Web3(options.web3.currentProvider);            
             } else {
     
                 this._web3 = new Pjs.Web3(`${options.eth.protocol || 'http'}://${options.eth.host || 'localhost'}:${options.eth.port || ''}`);
@@ -177,6 +180,7 @@ class Pjs {
             configurable: false
         });
 
+        /* istanbul ignore next */
         for (let key in members) {
             let member;
             

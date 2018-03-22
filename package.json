@@ -5,8 +5,9 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test-with-coverage": "istanbul cover _mocha --report lcovonly -- --require @babel/register -R spec && cat ./coverage/lcov.info | npx codacy-coverage --token b9f35cad059c44b792590ef78c8b81f8 && npx rimraf ./coverage",
+    "test": "istanbul cover _mocha --report lcovonly -- --require @babel/register -R spec && cat ./coverage/lcov.info | npx codacy-coverage --token b9f35cad059c44b792590ef78c8b81f8 && npx rimraf ./coverage",
+    "test:dev": "npx _mocha --require @babel/register",
+    "test:dev:cov": "npx rimraf ./coverage && istanbul cover _mocha -- --require @babel/register",
     "build": "npx rimraf ./dist && NODE_ENV=production npx babel ./src --out-dir ./dist"
   },
   "repository": {
@@ -34,7 +35,8 @@
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.0.4",
     "mocha-lcov-reporter": "^1.3.0",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "should": "^13.2.1"
   },
   "sideEffects": false,
   "author": "Kostiantyn Smyrnov <kostysh@gmail.com>",
