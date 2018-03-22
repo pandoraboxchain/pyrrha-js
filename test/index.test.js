@@ -152,7 +152,7 @@ describe('Core tests', () => {
             }).should.throw(Error, { code: WEB3_NOT_CONNECTED });
         });
 
-        it('Should not have kernels/datasets/jobs members if not eth config option provided', () => {
+        it('Should not have kernels/datasets/jobs members if no eth config option provided', () => {
             let pjsNoEth = new Pjs({
                 ...{
                     eth: {
@@ -173,7 +173,7 @@ describe('Core tests', () => {
             }
         });
 
-        it('Should not have ipfs member if not ipfs config option provided', () => {
+        it('Should not have ipfs member if no ipfs config option provided', () => {
             let pjsNoIpfs = new Pjs({
                 ...{
                     ipfs: {
