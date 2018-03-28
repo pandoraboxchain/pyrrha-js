@@ -1,13 +1,12 @@
 {
   "name": "pyrrha-js",
-  "version": "1.3.11",
+  "version": "1.3.12",
   "description": "Pandora Pyrrha functions and utilities library for JavaScript-based applications",
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "test": "istanbul cover _mocha --report lcovonly -- --require @babel/register -R spec && cat ./coverage/lcov.info | npx codacy-coverage --token b9f35cad059c44b792590ef78c8b81f8 && npx rimraf ./coverage",
-    "test:dev": "npx _mocha --require @babel/register",
-    "test:dev:cov": "npx rimraf ./coverage && istanbul cover _mocha -- --require @babel/register",
+    "test": "docker build --file ./tests/Dockerfile --build-arg PYRRHA_CONSENSUS_BRANCH=jobqueue_issues --rm .",
+    "test-with-coverage": "docker build --file ./tests/Dockerfile --build-arg PYRRHA_CONSENSUS_BRANCH=jobqueue_issues --build-arg WITH_COVERAGE=1 --rm .",
     "build": "npx rimraf ./dist && NODE_ENV=production npx babel ./src --out-dir ./dist"
   },
   "repository": {
@@ -30,13 +29,13 @@
     "@babel/polyfill": "^7.0.0-beta.42",
     "@babel/preset-env": "^7.0.0-beta.42",
     "@babel/register": "^7.0.0-beta.42",
+    "chai": "^4.1.2",
     "codacy-coverage": "^2.1.1",
     "eslint": "^4.18.2",
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.0.4",
     "mocha-lcov-reporter": "^1.3.0",
-    "rimraf": "^2.6.2",
-    "should": "^13.2.1"
+    "rimraf": "^2.6.2"
   },
   "sideEffects": false,
   "author": "Kostiantyn Smyrnov <kostysh@gmail.com>",

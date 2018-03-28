@@ -90,19 +90,21 @@ class Pjs {
 
         if (options.eth) {
 
-            this.config.contracts = options.contracts || {};// @todo Validate minimum "required" contracts set 
-            this.config.addresses = options.addresses || {};// @todo Validate addresses "required" option
+            if (options.eth.provider) {
 
-            if (options.web3 && 
-                options.web3.currentProvider && 
-                options.web3.currentProvider.isMetaMask) {
-                
-                this.isMetaMask = true;
-                this._web3 = new Pjs.Web3(options.web3.currentProvider);            
+                this._web3 = new Pjs.Web3(options.eth.provider);
+
+                if (options.eth.provider.isMetaMask) {
+                    
+                    this.isMetaMask = true;
+                }
             } else {
     
                 this._web3 = new Pjs.Web3(`${options.eth.protocol || 'http'}://${options.eth.host || 'localhost'}:${options.eth.port || ''}`);
             }
+
+            this.config.contracts = options.contracts || {};// @todo Validate minimum "required" contracts set 
+            this.config.addresses = options.addresses || {};// @todo Validate addresses "required" option
 
             this._addMembers('kernels', kernels);
             this._addMembers('datasets', datasets);
