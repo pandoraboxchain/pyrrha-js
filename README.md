@@ -14,7 +14,8 @@ const pjs = new Pjs({
     eth: {
         protocol: 'http',
         host: 'localhost',
-        port: 8545
+        port: 8545,
+        // or specify a "provider" property (like MetaMask provider)
     },
     ipfs: {
         protocol: 'http',
@@ -36,19 +37,14 @@ pjs.kernels.fetchAll()
     .catch(console.error);
 ```
 
-## Running tests
-```sh
-git submodule update --recursive
-npm run test
-```
+## Running tests  
 Tests and coverage results will be deployed to codacy and available on [Codacy Dashboard](https://www.codacy.com/app/kostysh/pyrrha-js?utm_source=github.com&utm_medium=referral&utm_content=pandoraboxchain/pyrrha-js&utm_campaign=Badge_Coverage)
 
 For testing without coverage report use:
 ```sh
-npm run test:dev
+npm test
 ```
-For generating local code coverage report use:
+For generating and updating a code coverage report use:
 ```sh
-npm run test:dev:cov
+npm run test-with-coverage
 ```
-Report will be created in folder `./coverage`
