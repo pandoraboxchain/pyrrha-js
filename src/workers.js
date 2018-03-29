@@ -28,16 +28,16 @@ export const fetchCount = async (config = {}) => {
     if (!config.web3) {
         throw pjsError(WEB3_REQUIRED);
     }
-    
+
     if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
 
-    if (!config.addresses || !config.addresses.pandora) {
+    if (!config.addresses || !config.addresses.Pandora) {
         throw pjsError(ADDRESS_REQUIRED, 'Pandora');
     }
 
-    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const count = await pan.methods
         .workerNodesCount()
         .call();
@@ -61,11 +61,11 @@ export const fetchAddressById = async (id, config = {}) => {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
 
-    if (!config.addresses || !config.addresses.pandora) {
+    if (!config.addresses || !config.addresses.Pandora) {
         throw pjsError(ADDRESS_REQUIRED, 'Pandora');
     }
 
-    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const address = await pan.methods
         .workerNodes(id)
         .call();
@@ -265,11 +265,11 @@ export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback =
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
 
-    if (!config.addresses || !config.addresses.pandora) {
+    if (!config.addresses || !config.addresses.Pandora) {
         throw pjsError(ADDRESS_REQUIRED, 'Pandora');
     }
 
-    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.events.WorkerNodeCreated({
         fromBlock: 0
     })

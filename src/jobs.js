@@ -39,11 +39,11 @@ export const fetchActiveCount = async (config = {}) => {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
 
-    if (!config.addresses || !config.addresses.pandora) {
+    if (!config.addresses || !config.addresses.Pandora) {
         throw pjsError(ADDRESS_REQUIRED, 'Pandora');
     }
 
-    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const count = await pan.methods
         .activeJobsCount()
         .call();
@@ -67,11 +67,11 @@ export const fetchAddressById = async (id, config = {}) => {
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
 
-    if (!config.addresses || !config.addresses.pandora) {
+    if (!config.addresses || !config.addresses.Pandora) {
         throw pjsError(ADDRESS_REQUIRED, 'Pandora');
     }
 
-    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const jobAddress = await pan.methods
         .activeJobs(id)
         .call();
@@ -344,11 +344,11 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
 
-    if (!config.addresses || !config.addresses.pandora) {
+    if (!config.addresses || !config.addresses.Pandora) {
         throw pjsError(ADDRESS_REQUIRED, 'Pandora');
     }
 
-    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.methods
         .createCognitiveJob(kernelAddress, datasetAddress)
         .send({
@@ -375,11 +375,11 @@ export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback
         throw pjsError(CONTRACT_REQUIRED, 'Pandora');
     }
 
-    if (!config.addresses || !config.addresses.pandora) {
+    if (!config.addresses || !config.addresses.Pandora) {
         throw pjsError(ADDRESS_REQUIRED, 'Pandora');
     }
 
-    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.pandora);
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.events.CognitiveJobCreated({
         fromBlock: 0
     })

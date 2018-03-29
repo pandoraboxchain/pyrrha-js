@@ -34,11 +34,11 @@ export const fetchAddressById = async (id, config) => {
         throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
     }
 
-    if (!config.addresses || !config.addresses.market) {
+    if (!config.addresses || !config.addresses.PandoraMarket) {
         throw pjsError(ADDRESS_REQUIRED, 'Market');
     }
 
-    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     const kernelContract = await mar.methods
         .kernels(id)
         .call();
@@ -275,7 +275,7 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
         throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
     }
 
-    if (!config.addresses || !config.addresses.market) {
+    if (!config.addresses || !config.addresses.PandoraMarket) {
         throw pjsError(ADDRESS_REQUIRED, 'Market');
     }
 
@@ -283,7 +283,7 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
         throw pjsError(WEB3_METAMASK_REQUIRED);
     }
 
-    const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     market.methods
         .addKernel(kernelContractAddress)
         .send({
@@ -310,11 +310,11 @@ export const eventKernelAdded = (storeCallback = () => {}, errorCallback = () =>
         throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
     }
 
-    if (!config.addresses || !config.addresses.market) {
+    if (!config.addresses || !config.addresses.PandoraMarket) {
         throw pjsError(ADDRESS_REQUIRED, 'Market');
     }
 
-    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.KernelAdded({
         fromBlock: 0
     })

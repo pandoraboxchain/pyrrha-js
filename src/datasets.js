@@ -34,11 +34,11 @@ export const fetchAddressById = async (id, config = {}) => {
         throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
     }
 
-    if (!config.addresses || !config.addresses.market) {
+    if (!config.addresses || !config.addresses.PandoraMarket) {
         throw pjsError(ADDRESS_REQUIRED, 'Market');
     }
 
-    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     const datasetContract = await mar.methods
         .datasets(id)
         .call();
@@ -300,7 +300,7 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
         throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
     }
 
-    if (!config.addresses || !config.addresses.market) {
+    if (!config.addresses || !config.addresses.PandoraMarket) {
         throw pjsError(ADDRESS_REQUIRED, 'Market');
     }
 
@@ -308,7 +308,7 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
         throw pjsError(WEB3_METAMASK_REQUIRED);
     }
 
-    const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     market.methods
         .addDataset(datasetContractAddress)
         .send({
@@ -335,11 +335,11 @@ export const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () =
         throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
     }
 
-    if (!config.addresses || !config.addresses.market) {
+    if (!config.addresses || !config.addresses.PandoraMarket) {
         throw pjsError(ADDRESS_REQUIRED, 'Market');
     }
 
-    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.market);
+    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.DatasetAdded({
         fromBlock: 0
     })

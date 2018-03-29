@@ -11,8 +11,8 @@
         ]
     ],
     "plugins":[
-        "@babel/syntax-object-rest-spread",
-        "@babel/proposal-object-rest-spread"
+        "@babel/plugin-syntax-object-rest-spread",
+        "@babel/plugin-proposal-object-rest-spread"
     ],
     "sourceMaps": "inline"
 }

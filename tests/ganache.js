@@ -1,4 +1,5 @@
 const { EventEmitter } = require('events');
+EventEmitter.defaultMaxListeners = 0;// disable MaxListenersExceededWarning
 const path = require('path');
 const Web3 = require('web3');
 const Config = require('truffle-config');
@@ -6,7 +7,7 @@ const Contracts = require('truffle-workflow-compile');
 const Migrate = require('truffle-migrate');
 const ganache = require('ganache-cli');
 
-class GanacheRunner extends EventEmitter {
+class GanacheNode extends EventEmitter {
 
     _asyncGetter(prop) {
         return new Promise((resolve, reject) => {
@@ -41,9 +42,12 @@ class GanacheRunner extends EventEmitter {
         return this._asyncGetter('_web3');
     }
 
+    get publisher() {
+        return this._asyncGetter('_publisher');
+    }
+
     constructor(basePath) {
         super();
-        this.setMaxListeners(20);
         this.config = Config.load(path.join(basePath, 'truffle.js'), {
             reset: true
         });
@@ -52,6 +56,7 @@ class GanacheRunner extends EventEmitter {
         this._contracts = {};
         this._addresses = {};
         this._web3 = {};
+        this._publisher = '';
         this._isInitializing = true;
         this._init().catch(err => { throw err; });
     }
@@ -81,12 +86,14 @@ class GanacheRunner extends EventEmitter {
             
             this._web3 = new Web3(this._provider);
         
-            this._web3.eth.getAccounts((err, accs) => {
+            this._web3.eth.getAccounts((err, accounts) => {
                 
                 if (err) {
         
                     return reject(err);
                 }
+
+                this._publisher = accounts[0];
         
                 this._web3.eth.net.getId((err, network_id) => {
                     
@@ -98,7 +105,7 @@ class GanacheRunner extends EventEmitter {
                     this.config.networks[this._network] = {
                         provider: this._provider,
                         network_id: network_id + '',
-                        from: accs[0]
+                        from: this._publisher
                     };
                     this.config.network = this._network;
                     
@@ -159,4 +166,4 @@ class GanacheRunner extends EventEmitter {
     }
 }
 
-module.exports = GanacheRunner;
+module.exports = GanacheNode;

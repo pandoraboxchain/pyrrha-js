@@ -7,6 +7,8 @@ ARG WITH_COVERAGE=0
 
 COPY ./src /pyrrha-js/src
 COPY ./tests /pyrrha-js/tests
+COPY ./tests/truffle.js /pyrrha-js/truffle.js
+COPY ./tests/truffle-config.js /pyrrha-js/truffle-config.js
 COPY ./package.json /pyrrha-js/package.json
 COPY ./.babelrc /pyrrha-js/.babelrc
 COPY ./.git /pyrrha-js/.git
@@ -15,18 +17,11 @@ COPY ./.git /pyrrha-js/.git
 WORKDIR /
 RUN git clone -b $PYRRHA_CONSENSUS_BRANCH https://github.com/pandoraboxchain/pyrrha-consensus.git /pyrrha-consensus && \
     mkdir /pyrrha-js/contracts && cp -r /pyrrha-consensus/contracts /pyrrha-js/contracts && \
-    mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations /pyrrha-js/migrations && \
-    cp /pyrrha-consensus/truffle.js /pyrrha-js/truffle.js && \
-    cp /pyrrha-consensus/truffle-config.js /pyrrha-js/truffle-config.js
+    mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations /pyrrha-js/migrations
 
 # Installing of dependencies
 WORKDIR /pyrrha-js
-RUN npm i --silent && \
-    npm i truffle-core --silent && \
-    npm i truffle-hdwallet-provider --silent && \
-    npm i truffle-privatekey-provider --silent && \
-    npm i zeppelin-solidity --silent && \
-    npm i ganache-cli --silent
+RUN npm i truffle-core zeppelin-solidity ganache-cli --silent && npm i --silent
 
 RUN sh -c 'if [ $WITH_COVERAGE = 0 ]; \
 then echo "Running test without coverage\n" && node /pyrrha-js/tests/tests-runner.js; \

@@ -190,7 +190,6 @@ class Pjs {
 
                 member = new Proxy(members[key], {
                     apply: function(target, that, args) {
-                        
                         // add config object to every methods calls
                         args.push(self.config);
 

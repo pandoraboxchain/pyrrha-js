@@ -1,6 +1,5 @@
-const path = require('path');
 const { expect } = require('chai');
-const GanacheRunner = require('../ganache');
+const ContractsNode = require('../contracts')();
 const Pjs = require('../../src');
 
 import {
@@ -19,177 +18,150 @@ const defaultIpfsConfig = {
 };
 
 describe('Core tests', () => {
-    
-    describe('Pjs', () => {
 
-        let Contracts;
-        let provider;
-        let contracts;
-        let addresses;        
+    let pjs;
+    let provider;
+    let contracts;
+    let addresses;
 
-        before(async () => {
+    before(done => {
 
-            try {
+        ContractsNode
+            .then(node => {
 
-                Contracts = new GanacheRunner(path.join(__dirname, '../../'));
-                provider = await Contracts.provider;
-                contracts = await Contracts.contracts;
-                addresses = await Contracts.addresses;
+                provider = node.provider;
+                contracts = node.contracts;
+                addresses = node.addresses;
 
-                return;
-            } catch(err) {
+                pjs = new Pjs({
+                    eth: {
+                        provider
+                    },
+                    ipfs: {
+                        ...defaultIpfsConfig
+                    },
+                    contracts,
+                    addresses
+                });
 
-                throw err;
-            }
-        });
+                done();
+            })
+            .catch(err => done(err));
+    });
 
-        let pjs = new Pjs({
+    it('Should be constructor', () => {
+        expect(Pjs.constructor).to.be.a('function');
+    });
+
+    it('Should have static properties Web3 and ipfsAPI', () => {
+        expect(Pjs).to.have.property('Web3');
+        expect(Pjs).to.have.property('ipfsAPI');
+    });
+
+    it('Constructor should create an appropriate object', () => {
+        expect(pjs).to.be.instanceof(Pjs);
+    });
+
+    it('Should have a version property', () => {
+        expect(pjs).to.to.have.property('version');
+    });
+
+    it('Should expose web3 and ipfs APIs', () => {
+        expect(pjs.api).to.have.property('web3');
+        expect(pjs.api).to.have.property('ipfs');
+        expect(pjs.api.web3).to.be.an('object');
+        expect(pjs.api.ipfs).to.be.an('object');
+    });
+
+    it('Should be able to use currentProvider from MetaMask', () => {
+
+        let pjsCurrent = new Pjs({
             eth: {
-                provider
+                provider: {
+                    isMetaMask: true
+                }
             },
             ipfs: {
                 ...defaultIpfsConfig
             },
-            contracts: {
-                ...contracts
+            contracts,
+            addresses
+        });
+
+        expect(pjsCurrent).to.have.property('isMetaMask');
+        expect(pjsCurrent.isMetaMask).to.be.true;
+    });
+
+    it('Should have kernels functions as members', () => {
+        expect(pjs).to.have.property('kernels');
+
+        for (let key in kernels) {
+
+            expect(pjs.kernels[key]).to.be.a('function');
+        }
+    });
+
+    it('Should have datasets functions as members', () => {
+        expect(pjs).to.have.property('datasets');
+
+        for (let key in datasets) {
+
+            expect(pjs.datasets[key]).to.be.a('function');
+        }
+    });
+
+    it('Should have jobs functions as members', () => {
+        expect(pjs).to.have.property('jobs');
+
+        for (let key in jobs) {
+
+            expect(pjs.jobs[key]).to.be.a('function');
+        }
+    });
+
+    it('Should have ipfs functions as members', () => {
+        expect(pjs).to.have.property('ipfs');
+
+        for (let key in ipfs) {
+
+            expect(pjs.ipfs[key]).to.be.a('function');
+        }
+    });
+
+    it(`Should throw WEB3_NOT_CONNECTED in case of trying to assign 
+        the wrong object as internal web3 representation property`, () => {
+
+        expect(() => {
+            pjs._web3 = null;
+        }).to.throw(Error).with.property('code', WEB3_NOT_CONNECTED);
+    });
+
+    it('Should not have ipfs member if no ipfs config option provided', () => {
+
+        let pjsNoEth = new Pjs({
+            eth: {
+                provider
             },
-            addresses: {
-                ...addresses
-            }
+            contracts,
+            addresses
         });
 
-        it('Should be constructor', () => {
-            expect(Pjs.constructor).to.be.a('function');
+        expect(pjsNoEth).not.to.have.property(ipfs);
+    });
+
+    it('Should not have kernels/datasets/jobs members if no eth config option provided', () => {
+
+        let pjsNoIpfs = new Pjs({
+            ipfs: {
+                ...defaultIpfsConfig
+            },
+            contracts,
+            addresses
         });
 
-        it('Should have static properties Web3 and ipfsAPI', () => {
-            expect(Pjs).to.have.property('Web3');
-            expect(Pjs).to.have.property('ipfsAPI');
-        });
+        for (let member of ['kernels', 'datasets', 'jobs']) {
 
-        it('Constructor should create an appropriate object', () => {
-            expect(pjs).to.be.instanceof(Pjs);
-        });
-
-        it('Should have a version property', () => {
-            expect(pjs).to.to.have.property('version');            
-        });
-
-        it('Should expose web3 and ipfs APIs', () => {
-            expect(pjs.api).to.have.property('web3');
-            expect(pjs.api).to.have.property('ipfs');
-            expect(pjs.api.web3).to.be.an('object');
-            expect(pjs.api.ipfs).to.be.an('object');
-        });
-
-        it('Should be able to use currentProvider from MetaMask', () => {
-
-            let pjsCurrent = new Pjs({
-                ...{
-                    eth: {
-                        provider: {
-                            isMetaMask: true
-                        }                     
-                    },
-                    ipfs: {
-                        ...defaultIpfsConfig
-                    },
-                    contracts: {
-                        ...contracts
-                    },
-                    addresses: {
-                        ...addresses
-                    }
-                }
-            });
-
-            expect(pjsCurrent).to.have.property('isMetaMask');
-            expect(pjsCurrent.isMetaMask).to.be.true;
-        });
-
-        it('Should have kernels functions as members', () => {
-            expect(pjs).to.have.property('kernels');
-
-            for (let key in kernels) {
-                
-                expect(pjs.kernels[key]).to.be.a('function');
-            }
-        });
-
-        it('Should have datasets functions as members', () => {
-            expect(pjs).to.have.property('datasets');
-
-            for (let key in datasets) {
-                
-                expect(pjs.datasets[key]).to.be.a('function');
-            }
-        });
-
-        it('Should have jobs functions as members', () => {
-            expect(pjs).to.have.property('jobs');
-
-            for (let key in jobs) {
-                
-                expect(pjs.jobs[key]).to.be.a('function');
-            }
-        });
-
-        it('Should have ipfs functions as members', () => {
-            expect(pjs).to.have.property('ipfs');
-
-            for (let key in ipfs) {
-                
-                expect(pjs.ipfs[key]).to.be.a('function');
-            }
-        });
-
-        it(`Should throw WEB3_NOT_CONNECTED in case of trying to assign 
-            the wrong object as internal web3 representation property`, () => {
-                        
-            expect(() => { 
-                pjs._web3 = null; 
-            }).to.throw(Error).with.property('code', WEB3_NOT_CONNECTED);
-        });
-
-        it('Should not have ipfs member if no ipfs config option provided', () => {
-
-            let pjsNoEth = new Pjs({
-                ...{
-                    eth: {
-                        ...provider
-                    },
-                    contracts: {
-                        ...contracts
-                    },
-                    addresses: {
-                        ...addresses
-                    }
-                }
-            });
-
-            expect(pjsNoEth).not.to.have.property(ipfs);
-        });
-
-        it('Should not have kernels/datasets/jobs members if no eth config option provided', () => {
-            
-            let pjsNoIpfs = new Pjs({
-                ...{
-                    ipfs: {
-                        ...defaultIpfsConfig
-                    },
-                    contracts: {
-                        ...contracts
-                    },
-                    addresses: {
-                        ...addresses
-                    }
-                }
-            });
-
-            for (let member of ['kernels', 'datasets', 'jobs']) {
-
-                expect(pjsNoIpfs).not.to.have.property(member);
-            }
-        });
+            expect(pjsNoIpfs).not.to.have.property(member);
+        }
     });
 });
