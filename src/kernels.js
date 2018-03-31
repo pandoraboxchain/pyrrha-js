@@ -263,7 +263,7 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
  * @param {String} kernelContractAddress 
  * @param {String} publisherAddress 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} Promise object resolved to {string} contractAddress
+ * @returns {Promise} Promise object resolved to {string} contractAddress // can be null if used ganache-cli environment
  */
 export const addToMarket = (kernelContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
 
@@ -311,13 +311,13 @@ export const eventKernelAdded = (storeCallback = () => {}, errorCallback = () =>
     }
 
     if (!config.addresses || !config.addresses.PandoraMarket) {
-        throw pjsError(ADDRESS_REQUIRED, 'Market');
+        throw pjsError(ADDRESS_REQUIRED, 'PandoraMarket');
     }
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.KernelAdded({
         fromBlock: 0
-    })
+    }, errorCallback)
         .on('data', async res => {
 
             try {

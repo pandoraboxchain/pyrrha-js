@@ -9,27 +9,23 @@ describe('Workers tests', () => {
     let contracts;
     let addresses;
     
-    before(done => {
+    before(() => ContractsNode
+        .then(node => {
 
-        ContractsNode
-            .then(node => {
+            provider = node.provider;
+            contracts = node.contracts;
+            addresses = node.addresses;
 
-                provider = node.provider;
-                contracts = node.contracts;
-                addresses = node.addresses;
+            pjs = new Pjs({
+                eth: {
+                    provider
+                },
+                contracts,
+                addresses
+            });
 
-                pjs = new Pjs({
-                    eth: {
-                        provider
-                    },
-                    contracts,
-                    addresses
-                });
-                
-                done();
-            })
-            .catch(err => done(err));            
-    });
+            return;
+        }));
 
     it('#fetchCount should return count of workers', done => {
 

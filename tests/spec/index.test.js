@@ -17,37 +17,33 @@ const defaultIpfsConfig = {
     port: 5001
 };
 
-describe('Core tests', () => {
+describe('Core', () => {
 
     let pjs;
     let provider;
     let contracts;
     let addresses;
 
-    before(done => {
+    before(() => ContractsNode
+        .then(node => {
 
-        ContractsNode
-            .then(node => {
+            provider = node.provider;
+            contracts = node.contracts;
+            addresses = node.addresses;
 
-                provider = node.provider;
-                contracts = node.contracts;
-                addresses = node.addresses;
+            pjs = new Pjs({
+                eth: {
+                    provider
+                },
+                ipfs: {
+                    ...defaultIpfsConfig
+                },
+                contracts,
+                addresses
+            });
 
-                pjs = new Pjs({
-                    eth: {
-                        provider
-                    },
-                    ipfs: {
-                        ...defaultIpfsConfig
-                    },
-                    contracts,
-                    addresses
-                });
-
-                done();
-            })
-            .catch(err => done(err));
-    });
+            return;
+        }));
 
     it('Should be constructor', () => {
         expect(Pjs.constructor).to.be.a('function');

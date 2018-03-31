@@ -4,6 +4,14 @@ LABEL maintainer="kostysh@gmail.com"
 
 ARG PYRRHA_CONSENSUS_BRANCH=master
 ARG WITH_COVERAGE=0
+ENV WITH_COVERAGE=$WITH_COVERAGE
+
+# Fetching of contracts sources
+WORKDIR /
+RUN git clone -b $PYRRHA_CONSENSUS_BRANCH https://github.com/pandoraboxchain/pyrrha-consensus.git /pyrrha-consensus && \
+    mkdir /pyrrha-js && \
+    mkdir /pyrrha-js/contracts && cp -r /pyrrha-consensus/contracts /pyrrha-js/contracts && \
+    mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations /pyrrha-js/migrations
 
 COPY ./src /pyrrha-js/src
 COPY ./tests /pyrrha-js/tests
@@ -12,17 +20,20 @@ COPY ./tests/truffle-config.js /pyrrha-js/truffle-config.js
 COPY ./package.json /pyrrha-js/package.json
 COPY ./.babelrc /pyrrha-js/.babelrc
 COPY ./.git /pyrrha-js/.git
-
-# Fetching of contracts sources
-WORKDIR /
-RUN git clone -b $PYRRHA_CONSENSUS_BRANCH https://github.com/pandoraboxchain/pyrrha-consensus.git /pyrrha-consensus && \
-    mkdir /pyrrha-js/contracts && cp -r /pyrrha-consensus/contracts /pyrrha-js/contracts && \
-    mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations /pyrrha-js/migrations
+COPY ./tests/tests-runner.sh /pyrrha-js/tests-runner.sh
 
 # Installing of dependencies
 WORKDIR /pyrrha-js
-RUN npm i truffle-core zeppelin-solidity ganache-cli --silent && npm i --silent
+RUN npm i --silent && \ 
+    npm i \ 
+        fs-extra \
+        truffle-core \
+        zeppelin-solidity \
+        ganache-cli@7.0.0-beta.0 \
+        mocha \
+        mocha-lcov-reporter \
+        chai \
+        istanbul@1.1.0-alpha.1 \
+        codacy-coverage --silent
 
-RUN sh -c 'if [ $WITH_COVERAGE = 0 ]; \
-then echo "Running test without coverage\n" && node /pyrrha-js/tests/tests-runner.js; \
-else echo "Running test with coverage\n" && npx istanbul cover _mocha --report lcovonly -- --require @babel/register -R spec --timeout 120000 ./tests/spec/**/*.test.js && cat ./coverage/lcov.info | npx codacy-coverage --token b9f35cad059c44b792590ef78c8b81f8 && npx rimraf ./coverage; fi'
+CMD [ "/pyrrha-js/tests-runner.sh" ]

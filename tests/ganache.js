@@ -1,11 +1,14 @@
 const { EventEmitter } = require('events');
 EventEmitter.defaultMaxListeners = 0;// disable MaxListenersExceededWarning
+const fs = require('fs-extra');
 const path = require('path');
 const Web3 = require('web3');
 const Config = require('truffle-config');
 const Contracts = require('truffle-workflow-compile');
 const Migrate = require('truffle-migrate');
 const ganache = require('ganache-cli');
+
+let ganachePort = 8545;
 
 class GanacheNode extends EventEmitter {
 
@@ -46,72 +49,132 @@ class GanacheNode extends EventEmitter {
         return this._asyncGetter('_publisher');
     }
 
-    constructor(basePath) {
+    constructor(basePath, useServer = false) {
         super();
-        this.config = Config.load(path.join(basePath, 'truffle.js'), {
-            reset: true
-        });
-        this._network = Web3.utils.randomHex(4);
+        this._basePath = basePath;
+        this._useServer = useServer;
+        this._port = ganachePort++;
+        this._network = Web3.utils.randomHex(4);// own network for each instance
+        this._config = {};
         this._provider = {};
+        this._server = {};
         this._contracts = {};
         this._addresses = {};
         this._web3 = {};
         this._publisher = '';
         this._isInitializing = true;
-        this._init().catch(err => { throw err; });
+
+        this._init()
+            .then(() => {
+                this._isInitializing = false;
+                this.emit('initialized', this);
+            })
+            .catch(err => {
+                this._isInitializing = false;
+                this.emit('error', err);
+            });
     }
 
     async _init() {
 
         try {
 
-            await this._createNetwork();
+            // Create contracts sandbox
+            const tempDir = path.join('/', 'contracts-sandbox', this._network);
+            await fs.copy(path.join(this._basePath, 'truffle.js'), path.join(tempDir, 'truffle.js'));
+            await fs.copy(path.join(this._basePath, 'truffle-config.js'), path.join(tempDir, 'truffle-config.js'));
+            await fs.copy(path.join(this._basePath, 'contracts'), tempDir);
+            await fs.copy(path.join(this._basePath, 'migrations'), tempDir);
+            await fs.copy(path.join(this._basePath, 'node_modules', 'zeppelin-solidity'), path.join(tempDir, 'node_modules', 'zeppelin-solidity'));
+            
+            // Create truffle config related to sandbox
+            this._config = Config.load(path.join(tempDir, 'truffle.js'), {
+                reset: true
+            });
+            this._config.network = this._network;
+
+            // Create ganache network
+            await this._createNetwork({
+                seed: this._network,
+                gasLimit: this._config.gas,
+                locked: false
+            });
+
+            // Compile contracts
             await this._compile();
+
+            // Deploy contracts to the network
             await this._migrate();
-            this._isInitializing = false;
-            this.emit('initialized', this);
+            return;
         } catch(err) {
-            this._isInitializing = false;
-            this.emit('error', err);
+            return Promise.reject(err);
         }
     }
 
-    _createNetwork() {
-        return new Promise((resolve, reject) => {
+    async _extractPublisherAddress() {
 
-            this._provider = ganache.provider({
-                seed: this._network,
-                gasLimit: this.config.gas
+        try {
+
+            const accounts = await this._web3.eth.getAccounts();
+            this._publisher = accounts[0];
+            const networkId = await this._web3.eth.net.getId();
+            this._config.networks[this._network] = {
+                provider: this._provider,
+                network_id: networkId + '',
+                from: this._publisher
+            };
+            return;
+        } catch(err) {
+            return Promise.reject(err);
+        }
+    }
+
+    _startServer(defaultConfig) {
+        return new Promise((resolve, reject) => {
+            this._server = ganache.server({
+                ...defaultConfig,
+                logger: {
+                    log: console
+                },
+                port: this._port,
+                ws: true
             });
-            
-            this._web3 = new Web3(this._provider);
-        
-            this._web3.eth.getAccounts((err, accounts) => {
-                
+            this._server.listen((err, result) => {
+
                 if (err) {
-        
+
                     return reject(err);
                 }
 
-                this._publisher = accounts[0];
-        
-                this._web3.eth.net.getId((err, network_id) => {
-                    
-                    if (err) {
-        
-                        return reject(err);
-                    }
-        
-                    this.config.networks[this._network] = {
-                        provider: this._provider,
-                        network_id: network_id + '',
-                        from: this._publisher
-                    };
-                    this.config.network = this._network;
-                    
-                    resolve(this);
-                });
+                resolve(result);
             });
+        });
+    }
+
+    _createNetwork(networkConfig) {
+        return new Promise((resolve, reject) => {
+
+            if (this._useServer) {
+
+                this._startServer(networkConfig)
+                    .then(result => {
+                        //console.log('Server:', this._server);
+                        console.log(`Ganache server started on port ${this._port}`, result);
+
+                        this._provider = new Web3.providers.WebsocketProvider(`ws://localhost:${this._port}`);
+                        this._web3 = new Web3(this._provider);
+                        return this._extractPublisherAddress();
+                    })
+                    .then(() => resolve(this))
+                    .catch(reject);                
+            } else {
+
+                this._provider = ganache.provider(networkConfig);
+                this._web3 = new Web3(this._provider);
+                this._extractPublisherAddress()
+                    .then(() => resolve(this))
+                    .catch(reject);
+            }
         });
     }
 
@@ -120,7 +183,7 @@ class GanacheNode extends EventEmitter {
             
             this._contracts = {};
 
-            Contracts.compile(this.config.with({
+            Contracts.compile(this._config.with({
                 all: true
             }), (err, contracts) => {
                         
@@ -139,12 +202,12 @@ class GanacheNode extends EventEmitter {
         return new Promise((resolve, reject) => {
     
             this._addresses = {};
-        
-            Migrate.run(this.config.with({
+
+            Migrate.run(this._config.with({
                 logger: {
                     log: text => {
                         text = String(text).trim();
-        
+                        
                         if (new RegExp('Pandora:').test(text) || 
                             new RegExp('PandoraMarket:').test(text)) {
         

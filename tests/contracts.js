@@ -1,11 +1,11 @@
 const path = require('path');
 const GanacheNode = require('./ganache');
-const Contracts = new GanacheNode(path.join(__dirname, '../'));
 
-module.exports = async () => {
+module.exports = async (useServer = false) => {
 
     try {
-
+        
+        const Contracts = new GanacheNode(path.join(__dirname, '../'), useServer);
         const provider = await Contracts.provider;
         const contracts = await Contracts.contracts;
         const addresses = await Contracts.addresses;
