@@ -59,7 +59,25 @@ describe('Kernels tests:', () => {
         };
 
         let kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, options);
-        return await pjs.kernels.addToMarket(kernelContractAddress, publisher);
+        let addedContractAddress = await pjs.kernels.addToMarket(kernelContractAddress, publisher);
+
+        expect(kernelContractAddress).to.be.equal(addedContractAddress);
+        return;
+    });
+
+    it('#fetchKernel should fetch a previously added kernel', async () => {
+        let options = {
+            publisher, 
+            dimension: 100, 
+            complexity: 100, 
+            price: 100
+        };
+
+        let kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, options);
+        let kernel = await pjs.kernels.fetchKernel(kernelContractAddress);
+
+        expect(kernelContractAddress).to.be.equal(kernel.address);
+        return;
     });
 
     it('#eventKernelAdded should handle KernelAdded event', () => new Promise((resolve, reject) => {

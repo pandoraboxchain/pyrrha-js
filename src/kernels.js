@@ -290,7 +290,9 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
             from: publisherAddress
         })
         .on('error', reject)
-        .on('receipt', receipt => resolve(receipt.contractAddress));
+        .on('receipt', receipt => {
+            resolve(receipt.contractAddress || receipt.events.KernelAdded.returnValues.kernel)
+        });
 });
 
 /**

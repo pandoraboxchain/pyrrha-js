@@ -131,9 +131,7 @@ describe('Core tests:', () => {
     it(`Should throw WEB3_NOT_CONNECTED in case of trying to assign 
         the wrong object as internal web3 representation property`, () => {
 
-        expect(() => {
-            pjs._web3 = null;
-        }).to.throw(Error).with.property('code', WEB3_NOT_CONNECTED);
+        expect(() => { pjs._web3 = null; }).to.throw(Error).with.property('code', WEB3_NOT_CONNECTED);
     });
 
     it('Should not have ipfs member if no ipfs config option provided', () => {

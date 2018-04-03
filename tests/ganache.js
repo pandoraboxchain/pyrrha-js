@@ -4,6 +4,7 @@ const { EventEmitter } = require('events');
 EventEmitter.defaultMaxListeners = 0;// disable MaxListenersExceededWarning
 const fs = require('fs-extra');
 const path = require('path');
+const debug = require('debug')('ganache');
 const Web3 = require('web3');
 const Config = require('truffle-config');
 const Contracts = require('truffle-workflow-compile');
@@ -138,7 +139,7 @@ class GanacheNode extends EventEmitter {
                 gasLimit: this._config.gas,
                 locked: false,
                 logger: {
-                    log: this._logServer ? text => console.log(`ServerLog: ${text}`) : () => {}
+                    log: this._logServer ? text => debug(`ServerLog: ${text}`) : () => {}
                 },
                 ws: true
             });
@@ -179,7 +180,7 @@ class GanacheNode extends EventEmitter {
 
                 if (this._logServer) {
 
-                    console.log('Servers has been closed due to error:', err);
+                    debug(`Servers has been closed due to error: ${err}`);
                 }
             }));            
             this._server.listen(this._port, err => {

@@ -8,7 +8,7 @@ ENV WITH_COVERAGE=$WITH_COVERAGE
 
 # Fetching of contracts sources
 WORKDIR /
-RUN git clone -b $PYRRHA_CONSENSUS_BRANCH https://github.com/pandoraboxchain/pyrrha-consensus.git /pyrrha-consensus && \
+RUN git clone -b "$PYRRHA_CONSENSUS_BRANCH" https://github.com/pandoraboxchain/pyrrha-consensus.git /pyrrha-consensus && \
     mkdir /pyrrha-js && \
     mkdir /pyrrha-js/contracts && cp -r /pyrrha-consensus/contracts /pyrrha-js/contracts && \
     mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations /pyrrha-js/migrations
