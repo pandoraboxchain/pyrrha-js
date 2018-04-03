@@ -380,16 +380,14 @@ export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback
     }
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    pan.events.CognitiveJobCreated({
-        fromBlock: 0
-    })
+    pan.events.CognitiveJobCreated()
         .on('data', async res => {
 
             try {
 
-                const store = await fetchJobStore(res.args.cognitiveJob);
+                const store = await fetchJobStore(res.returnValues.cognitiveJob);
                 storeCallback({
-                    address: res.args.cognitiveJob,
+                    address: res.returnValues.cognitiveJob,
                     store,
                     status: 'created',
                     event: 'Pandora.CognitiveJobCreated'
@@ -421,16 +419,14 @@ export const eventCognitiveJobStateChanged = (address, storeCallback = () => {},
     }
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    cog.events.StateChanged({
-        fromBlock: 0
-    })
+    cog.events.StateChanged()
         .on('data', async res => {
 
             try {
 
-                const store = await fetchJobStore(res.args.cognitiveJob);
+                const store = await fetchJobStore(res.returnValues.cognitiveJob);
                 storeCallback({
-                    address: res.args.cognitiveJob,
+                    address: res.returnValues.cognitiveJob,
                     store,
                     status: 'changed',
                     event: 'CognitiveJob.StateChanged'

@@ -1,3 +1,5 @@
+'use strict';
+
 const { expect } = require('chai');
 const ContractsNode = require('../contracts')();
 const Pjs = require('../../src');
@@ -17,9 +19,10 @@ const defaultIpfsConfig = {
     port: 5001
 };
 
-describe('Core', () => {
+describe('Core tests:', () => {
 
     let pjs;
+    let server;
     let provider;
     let contracts;
     let addresses;
@@ -27,6 +30,7 @@ describe('Core', () => {
     before(() => ContractsNode
         .then(node => {
 
+            server = node.node;
             provider = node.provider;
             contracts = node.contracts;
             addresses = node.addresses;
@@ -45,7 +49,9 @@ describe('Core', () => {
             return;
         }));
 
-    it('Should be constructor', () => {
+    after(done => server.close(done));
+
+    it('Should be a constructor', () => {
         expect(Pjs.constructor).to.be.a('function');
     });
 
@@ -73,9 +79,7 @@ describe('Core', () => {
 
         let pjsCurrent = new Pjs({
             eth: {
-                provider: {
-                    isMetaMask: true
-                }
+                provider
             },
             ipfs: {
                 ...defaultIpfsConfig
@@ -134,7 +138,7 @@ describe('Core', () => {
 
     it('Should not have ipfs member if no ipfs config option provided', () => {
 
-        let pjsNoEth = new Pjs({
+        let pjsNoIpfs = new Pjs({
             eth: {
                 provider
             },
@@ -142,22 +146,19 @@ describe('Core', () => {
             addresses
         });
 
-        expect(pjsNoEth).not.to.have.property(ipfs);
+        expect(pjsNoIpfs).not.to.have.property(ipfs);
     });
 
     it('Should not have kernels/datasets/jobs members if no eth config option provided', () => {
 
-        let pjsNoIpfs = new Pjs({
-            ipfs: {
-                ...defaultIpfsConfig
-            },
+        let pjsNoEth = new Pjs({
             contracts,
             addresses
         });
 
         for (let member of ['kernels', 'datasets', 'jobs']) {
 
-            expect(pjsNoIpfs).not.to.have.property(member);
+            expect(pjsNoEth).not.to.have.property(member);
         }
     });
 });

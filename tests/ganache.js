@@ -1,3 +1,5 @@
+'use strict';
+
 const { EventEmitter } = require('events');
 EventEmitter.defaultMaxListeners = 0;// disable MaxListenersExceededWarning
 const fs = require('fs-extra');
@@ -9,6 +11,7 @@ const Migrate = require('truffle-migrate');
 const ganache = require('ganache-cli');
 
 let ganachePort = 8545;
+let ganacheServers = {};
 
 class GanacheNode extends EventEmitter {
 
@@ -26,7 +29,11 @@ class GanacheNode extends EventEmitter {
     }
 
     get network() {
-        return this._network;
+        return this._networkName;
+    }
+
+    get server() {
+        return this._asyncGetter('_server');
     }
 
     get provider() {
@@ -49,15 +56,15 @@ class GanacheNode extends EventEmitter {
         return this._asyncGetter('_publisher');
     }
 
-    constructor(basePath, useServer = false) {
+    constructor(basePath, logServer = false) {
         super();
         this._basePath = basePath;
-        this._useServer = useServer;
+        this._logServer = logServer;
         this._port = ganachePort++;
-        this._network = Web3.utils.randomHex(4);// own network for each instance
+        this._networkName = Web3.utils.randomHex(4);// own network for each instance
         this._config = {};
-        this._provider = {};
         this._server = {};
+        this._provider = {};
         this._contracts = {};
         this._addresses = {};
         this._web3 = {};
@@ -75,29 +82,65 @@ class GanacheNode extends EventEmitter {
             });
     }
 
+    close(callback = () => {}) {
+
+        try {
+
+            ganacheServers[this._networkName].closed = true;
+            let totalClose = true;
+
+            for (let key of Object.keys(ganacheServers)) {
+
+                if (ganacheServers[key] && !ganacheServers[key].closed) {
+
+                    totalClose = false;
+                    break;
+                }
+            }
+
+            if (totalClose) {
+
+                // we have to close server after all tests have been finished only
+                // so send a close event after all close methods have been called
+                for (let key of Object.keys(ganacheServers)) {
+
+                    ganacheServers[key].server.close();
+                }
+            }
+
+            callback();
+        } catch(err) {
+            callback(err);
+        }
+    }
+
     async _init() {
 
         try {
 
             // Create contracts sandbox
-            const tempDir = path.join('/', 'contracts-sandbox', this._network);
+            const tempDir = path.join(this._basePath, 'contracts-sandbox', this._networkName);
             await fs.copy(path.join(this._basePath, 'truffle.js'), path.join(tempDir, 'truffle.js'));
             await fs.copy(path.join(this._basePath, 'truffle-config.js'), path.join(tempDir, 'truffle-config.js'));
-            await fs.copy(path.join(this._basePath, 'contracts'), tempDir);
-            await fs.copy(path.join(this._basePath, 'migrations'), tempDir);
+            await fs.copy(path.join(this._basePath, 'contracts'), path.join(tempDir, 'contracts'));
+            await fs.copy(path.join(this._basePath, 'migrations'), path.join(tempDir, 'migrations'));
             await fs.copy(path.join(this._basePath, 'node_modules', 'zeppelin-solidity'), path.join(tempDir, 'node_modules', 'zeppelin-solidity'));
             
             // Create truffle config related to sandbox
             this._config = Config.load(path.join(tempDir, 'truffle.js'), {
                 reset: true
             });
-            this._config.network = this._network;
+            this._config.network = this._networkName;
 
             // Create ganache network
             await this._createNetwork({
-                seed: this._network,
+                seed: this._networkName,
                 gasLimit: this._config.gas,
-                locked: false
+                locked: false,
+                logger: {
+                    log: this._logServer ? text => console.log(`ServerLog: ${text}`) : () => {}
+                },
+                ws: true
             });
 
             // Compile contracts
@@ -118,7 +161,7 @@ class GanacheNode extends EventEmitter {
             const accounts = await this._web3.eth.getAccounts();
             this._publisher = accounts[0];
             const networkId = await this._web3.eth.net.getId();
-            this._config.networks[this._network] = {
+            this._config.networks[this._networkName] = {
                 provider: this._provider,
                 network_id: networkId + '',
                 from: this._publisher
@@ -129,52 +172,43 @@ class GanacheNode extends EventEmitter {
         }
     }
 
-    _startServer(defaultConfig) {
+    _createNetwork(networkConfig) {
         return new Promise((resolve, reject) => {
-            this._server = ganache.server({
-                ...defaultConfig,
-                logger: {
-                    log: console
-                },
-                port: this._port,
-                ws: true
-            });
-            this._server.listen((err, result) => {
+            this._server = ganache.server(networkConfig);
+            this.once('error', err => this._server.close(() => {
+
+                if (this._logServer) {
+
+                    console.log('Servers has been closed due to error:', err);
+                }
+            }));            
+            this._server.listen(this._port, err => {
 
                 if (err) {
 
                     return reject(err);
                 }
 
-                resolve(result);
-            });
-        });
-    }
+                this._provider = new Web3.providers.WebsocketProvider(`ws://localhost:${this._port}`);                
+                this._provider.isMetaMask = true;
+                
+                // due to the current version of WebsocketProvider provider where this method is missed 
+                // this issue will be fixed in the future releases of web3
+                if (typeof this._provider.sendAsync !== 'function') {
 
-    _createNetwork(networkConfig) {
-        return new Promise((resolve, reject) => {
+                    this._provider.sendAsync = this._provider.send;
+                }                
 
-            if (this._useServer) {
-
-                this._startServer(networkConfig)
-                    .then(result => {
-                        //console.log('Server:', this._server);
-                        console.log(`Ganache server started on port ${this._port}`, result);
-
-                        this._provider = new Web3.providers.WebsocketProvider(`ws://localhost:${this._port}`);
-                        this._web3 = new Web3(this._provider);
-                        return this._extractPublisherAddress();
-                    })
-                    .then(() => resolve(this))
-                    .catch(reject);                
-            } else {
-
-                this._provider = ganache.provider(networkConfig);
                 this._web3 = new Web3(this._provider);
                 this._extractPublisherAddress()
-                    .then(() => resolve(this))
+                    .then(resolve)
                     .catch(reject);
-            }
+            });
+            
+            ganacheServers[this._networkName] = {
+                server: this._server,
+                closed: false
+            };
         });
     }
 
@@ -193,7 +227,7 @@ class GanacheNode extends EventEmitter {
                 }
 
                 this._contracts = contracts;        
-                resolve(this);
+                resolve();
             });    
         });
     }
@@ -223,7 +257,7 @@ class GanacheNode extends EventEmitter {
                     return reject(err);
                 }
         
-                resolve(this);
+                resolve();
             });    
         });
     }

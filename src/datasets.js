@@ -340,16 +340,14 @@ export const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () =
     }
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    mar.events.DatasetAdded({
-        fromBlock: 0
-    })
+    mar.events.DatasetAdded()
         .on('data', async res => {
 
             try {
 
-                const dataset = await fetchDataset(res.args.dataset, config);
+                const dataset = await fetchDataset(res.returnValues.dataset, config);
                 storeCallback({
-                    address: res.args.dataset,
+                    address: res.returnValues.dataset,
                     dataset,
                     status: 'created',
                     event: 'PandoraMarket.DatasetAdded'

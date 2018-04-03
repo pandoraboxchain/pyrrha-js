@@ -315,16 +315,14 @@ export const eventKernelAdded = (storeCallback = () => {}, errorCallback = () =>
     }
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    mar.events.KernelAdded({
-        fromBlock: 0
-    }, errorCallback)
+    mar.events.KernelAdded()
         .on('data', async res => {
 
             try {
 
-                const kernel = await fetchKernel(res.args.kernel, config);
+                const kernel = await fetchKernel(res.returnValues.kernel, config);
                 storeCallback({
-                    address: res.args.kernel,
+                    address: res.returnValues.kernel,
                     kernel,
                     status: 'created',
                     event: 'PandoraMarket.KernelAdded'

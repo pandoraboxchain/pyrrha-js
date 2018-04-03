@@ -270,16 +270,14 @@ export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback =
     }
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    pan.events.WorkerNodeCreated({
-        fromBlock: 0
-    })
+    pan.events.WorkerNodeCreated()
         .on('data', async res => {
 
             try {
 
-                const worker = await fetchWorker(res.args.workerNode, config);
+                const worker = await fetchWorker(res.returnValues.workerNode, config);
                 storeCallback({
-                    address: res.args.workerNode,
+                    address: res.returnValues.workerNode,
                     worker,
                     status: 'created',
                     event: 'Pandora.WorkerNodeCreated'
@@ -311,16 +309,14 @@ export const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, e
     }
 
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
-    wor.events.StateChanged({
-        fromBlock: 0
-    })
+    wor.events.StateChanged()
         .on('data', async res => {
 
             try {
 
-                const worker = await fetchWorker(res.args.workerNode, config);
+                const worker = await fetchWorker(res.returnValues.workerNode, config);
                 storeCallback({
-                    address: res.args.workerNode,
+                    address: res.returnValues.workerNode,
                     worker,
                     status: 'changed',
                     event: 'WorkerNode.StateChanged'
