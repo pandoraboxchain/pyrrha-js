@@ -42,6 +42,7 @@ export const fetchAddressById = async (id, config = {}) => {
     const datasetContract = await mar.methods
         .datasets(id)
         .call();
+
     return datasetContract;
 };
 
@@ -66,6 +67,7 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
     const ipfsAddress = await dat.methods
         .ipfsAddress()
         .call();
+
     return String(ipfsAddress);
 };
 
@@ -90,6 +92,7 @@ export const fetchDataDim = async (address = '', config = {}) => {
     const dataDim = await dat.methods
         .dataDim()
         .call();
+
     return Number.parseInt(dataDim, 10);
 };
 
@@ -114,6 +117,7 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
     const currentPrice = await dat.methods
         .currentPrice()
         .call();
+
     return Number.parseInt(currentPrice, 10);
 };
 
@@ -138,6 +142,7 @@ export const fetchSamplesCount = async (address = '', config = {}) => {
     const samplesCount = await dat.methods
         .samplesCount()
         .call();
+
     return Number.parseInt(samplesCount, 10);
 };
 
@@ -162,6 +167,7 @@ export const fetchBatchesCount = async (address = '', config = {}) => {
     const batchesCount = await dat.methods
         .batchesCount()
         .call();
+        
     return Number.parseInt(batchesCount, 10);
 };
 
@@ -174,25 +180,20 @@ export const fetchBatchesCount = async (address = '', config = {}) => {
  */
 export const fetchDataset = async (address = '', config = {}) => {
 
-    try {
+    const ipfsAddress = await fetchIpfsAddress(address, config);
+    const dataDim = await fetchDataDim(address, config);
+    const currentPrice = await fetchCurrentPrice(address, config);
+    const samplesCount = await fetchSamplesCount(address, config);
+    const batchesCount = await fetchBatchesCount(address, config);
 
-        const ipfsAddress = await fetchIpfsAddress(address, config);
-        const dataDim = await fetchDataDim(address, config);
-        const currentPrice = await fetchCurrentPrice(address, config);
-        const samplesCount = await fetchSamplesCount(address, config);
-        const batchesCount = await fetchBatchesCount(address, config);
-
-        return {
-            address,
-            ipfsAddress,
-            dataDim,
-            currentPrice,
-            samplesCount,
-            batchesCount
-        };
-    } catch(err) {
-        return Promise.reject(err);
-    }
+    return {
+        address,
+        ipfsAddress,
+        dataDim,
+        currentPrice,
+        samplesCount,
+        batchesCount
+    };
 };
 
 /**
@@ -263,23 +264,19 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
         throw pjsError(CONTRACT_REQUIRED, 'Dataset');
     }
 
-    try {
-        const args = [config.web3.utils.toHex(datasetIpfsHash), dimension, samples, batchesCount, price];
+    const args = [config.web3.utils.toHex(datasetIpfsHash), dimension, samples, batchesCount, price];
         
-        // Estimate required amount of gas
-        const gas = await web3Helpers.estimateGas(config.contracts.Dataset.bytecode, args, config);
+    // Estimate required amount of gas
+    const gas = await web3Helpers.estimateGas(config.contracts.Dataset.bytecode, args, config);
 
-        // Create and deploy dataset contract
-        const datasetContractAddress = await web3Helpers.deployContract(config.contracts.Dataset, {
-            args,
-            from: publisher,
-            gas: Number.parseInt(gas * 1.5, 10)
-        }, config);
+    // Create and deploy dataset contract
+    const datasetContractAddress = await web3Helpers.deployContract(config.contracts.Dataset, {
+        args,
+        from: publisher,
+        gas: Number.parseInt(gas * 1.5, 10)
+    }, config);
 
-        return datasetContractAddress;
-    } catch(err) {
-        return Promise.reject(err);
-    }
+    return datasetContractAddress;
 };
 
 /**

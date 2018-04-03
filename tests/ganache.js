@@ -117,60 +117,52 @@ class GanacheNode extends EventEmitter {
 
     async _init() {
 
-        try {
+        // Create contracts sandbox
+        const tempDir = path.join(this._basePath, 'contracts-sandbox', this._networkName);
+        await fs.copy(path.join(this._basePath, 'truffle.js'), path.join(tempDir, 'truffle.js'));
+        await fs.copy(path.join(this._basePath, 'truffle-config.js'), path.join(tempDir, 'truffle-config.js'));
+        await fs.copy(path.join(this._basePath, 'contracts'), path.join(tempDir, 'contracts'));
+        await fs.copy(path.join(this._basePath, 'migrations'), path.join(tempDir, 'migrations'));
+        await fs.copy(path.join(this._basePath, 'node_modules', 'zeppelin-solidity'), path.join(tempDir, 'node_modules', 'zeppelin-solidity'));
+        
+        // Create truffle config related to sandbox
+        this._config = Config.load(path.join(tempDir, 'truffle.js'), {
+            reset: true
+        });
+        this._config.network = this._networkName;
 
-            // Create contracts sandbox
-            const tempDir = path.join(this._basePath, 'contracts-sandbox', this._networkName);
-            await fs.copy(path.join(this._basePath, 'truffle.js'), path.join(tempDir, 'truffle.js'));
-            await fs.copy(path.join(this._basePath, 'truffle-config.js'), path.join(tempDir, 'truffle-config.js'));
-            await fs.copy(path.join(this._basePath, 'contracts'), path.join(tempDir, 'contracts'));
-            await fs.copy(path.join(this._basePath, 'migrations'), path.join(tempDir, 'migrations'));
-            await fs.copy(path.join(this._basePath, 'node_modules', 'zeppelin-solidity'), path.join(tempDir, 'node_modules', 'zeppelin-solidity'));
-            
-            // Create truffle config related to sandbox
-            this._config = Config.load(path.join(tempDir, 'truffle.js'), {
-                reset: true
-            });
-            this._config.network = this._networkName;
+        // Create ganache network
+        await this._createNetwork({
+            seed: this._networkName,
+            gasLimit: this._config.gas,
+            locked: false,
+            logger: {
+                log: this._logServer ? text => debug(`ServerLog: ${text}`) : () => {}
+            },
+            ws: true
+        });
 
-            // Create ganache network
-            await this._createNetwork({
-                seed: this._networkName,
-                gasLimit: this._config.gas,
-                locked: false,
-                logger: {
-                    log: this._logServer ? text => debug(`ServerLog: ${text}`) : () => {}
-                },
-                ws: true
-            });
+        // Compile contracts
+        await this._compile();
 
-            // Compile contracts
-            await this._compile();
+        // Deploy contracts to the network
+        await this._migrate();
 
-            // Deploy contracts to the network
-            await this._migrate();
-            return;
-        } catch(err) {
-            return Promise.reject(err);
-        }
+        return this;
     }
 
     async _extractPublisherAddress() {
 
-        try {
+        const accounts = await this._web3.eth.getAccounts();
+        this._publisher = accounts[0];
+        const networkId = await this._web3.eth.net.getId();
+        this._config.networks[this._networkName] = {
+            provider: this._provider,
+            network_id: networkId + '',
+            from: this._publisher
+        };
 
-            const accounts = await this._web3.eth.getAccounts();
-            this._publisher = accounts[0];
-            const networkId = await this._web3.eth.net.getId();
-            this._config.networks[this._networkName] = {
-                provider: this._provider,
-                network_id: networkId + '',
-                from: this._publisher
-            };
-            return;
-        } catch(err) {
-            return Promise.reject(err);
-        }
+        return this;
     }
 
     _createNetwork(networkConfig) {

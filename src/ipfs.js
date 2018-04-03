@@ -51,19 +51,16 @@ export const add = async (buffer, loadedFile, progressCb = () => {}, config = {}
         throw pjsError(IPFS_REQUIRED);
     }
 
-    try {
-        const response = await config.ipfs.add(buffer, {
-            progress: progress => progressCb({
-                file: loadedFile.name,
-                size: buffer.length,
-                type: loadedFile.type,
-                progress
-            })
-        });
-        return response[0].hash;
-    } catch(err) {
-        return Promise.reject(err);
-    }
+    const response = await config.ipfs.add(buffer, {
+        progress: progress => progressCb({
+            file: loadedFile.name,
+            size: buffer.length,
+            type: loadedFile.type,
+            progress
+        })
+    });
+
+    return response[0].hash;
 };
 
 /**
@@ -79,14 +76,11 @@ export const submitFile = async (file, progressCb = () => {}, config = {}) => {
         throw pjsError(IPFS_REQUIRED);
     }
     
-    try {
-        const loadedFile = await loadFile(file);
-        const buffer = Buffer.from(loadedFile.result);
-        const hash = await add(buffer, loadedFile, progressCb, config);
-        return hash;
-    } catch(err) {
-        return Promise.reject(err);
-    }    
+    const loadedFile = await loadFile(file);
+    const buffer = Buffer.from(loadedFile.result);
+    const hash = await add(buffer, loadedFile, progressCb, config);
+
+    return hash;    
 };
 
 /**
@@ -99,12 +93,9 @@ export const submitFile = async (file, progressCb = () => {}, config = {}) => {
  */
 export const submitJson = async (jsonString, fileInfo, progressCb = () => {}, config = {}) => {
 
-    try {
-        const buffer = Buffer.from(jsonString);
-        fileInfo.size = buffer.length;
-        const hash = await add(buffer, fileInfo, progressCb, config);
-        return hash;
-    } catch(err) {
-        return Promise.reject(err);
-    } 
+    const buffer = Buffer.from(jsonString);
+    fileInfo.size = buffer.length;
+    const hash = await add(buffer, fileInfo, progressCb, config);
+    
+    return hash; 
 };

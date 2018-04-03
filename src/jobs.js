@@ -47,6 +47,7 @@ export const fetchActiveCount = async (config = {}) => {
     const count = await pan.methods
         .activeJobsCount()
         .call();
+        
     return Number.parseInt(count, 10);
 };
 
@@ -75,6 +76,7 @@ export const fetchAddressById = async (id, config = {}) => {
     const jobAddress = await pan.methods
         .activeJobs(id)
         .call();
+
     return String(jobAddress);
 };
 
@@ -99,6 +101,7 @@ export const fetchState = async (address, config = {}) => {
     const state = await cog.methods
         .currentState()
         .call();
+
     return Number.parseInt(state, 10);
 };
 
@@ -123,6 +126,7 @@ export const fetchKernel = async (address, config = {}) => {
     const kernel = await cog.methods
         .kernel()
         .call();
+
     return String(kernel);
 };
 
@@ -147,6 +151,7 @@ export const fetchDataset = async (address, config = {}) => {
     const dataset = await cog.methods
         .dataset()
         .call();
+
     return String(dataset);
 };
 
@@ -171,6 +176,7 @@ export const fetchBatches = async (address, config = {}) => {
     const batches = await cog.methods
         .batches()
         .call();
+
     return Number.parseInt(batches, 10);
 };
 
@@ -195,6 +201,7 @@ export const fetchProgress = async (address, config = {}) => {
     const progress = await cog.methods
         .progress()
         .call();
+
     return Number.parseInt(progress, 10);
 };
 
@@ -219,6 +226,7 @@ export const fetchIpfsResults = async (address, config = {}) => {
     const ipfsResults = await cog.methods
         .ipfsResults()
         .call();
+
     return ipfsResults;
 };
 
@@ -231,28 +239,23 @@ export const fetchIpfsResults = async (address, config = {}) => {
  */
 export const fetchJob = async (address, config = {}) => {
 
-    try {
-
-        const state = await fetchState(address, config);
-        const kernel = await fetchKernel(address, config);
-        const dataset = await fetchDataset(address, config);
-        const batches = await fetchBatches(address, config);
-        const progress = await fetchProgress(address, config);
-        const ipfsResults = await fetchIpfsResults(address, config);
-        
-        return {
-            address: address,
-            jobStatus: state,
-            kernel: kernel,
-            dataset: dataset,
-            batches: batches,
-            progress: progress,
-            ipfsResults: ipfsResults,
-            activeWorkersCount: batches
-        };
-    } catch(err) {
-        return Promise.reject(err);
-    }
+    const state = await fetchState(address, config);
+    const kernel = await fetchKernel(address, config);
+    const dataset = await fetchDataset(address, config);
+    const batches = await fetchBatches(address, config);
+    const progress = await fetchProgress(address, config);
+    const ipfsResults = await fetchIpfsResults(address, config);
+    
+    return {
+        address: address,
+        jobStatus: state,
+        kernel: kernel,
+        dataset: dataset,
+        batches: batches,
+        progress: progress,
+        ipfsResults: ipfsResults,
+        activeWorkersCount: batches
+    };
 };
 
 /**
@@ -309,20 +312,15 @@ export const fetchAll = async (config = {}) => {
  */
 export const fetchJobStore = async (address, config = {}) => {
 
-    try {
-
-        const job = await fetchJob(address, config);
-        const kernel = await fetchIpfsAddressByKernelAddress(job.kernel, config);
-        const dataset = await fetchDatasetByDatasetAddress(job.dataset, config);
-        
-        return {
-            job,
-            kernel,
-            dataset
-        };
-    } catch(err) {
-        return Promise.reject(err);
-    }
+    const job = await fetchJob(address, config);
+    const kernel = await fetchIpfsAddressByKernelAddress(job.kernel, config);
+    const dataset = await fetchDatasetByDatasetAddress(job.dataset, config);
+    
+    return {
+        job,
+        kernel,
+        dataset
+    };
 };
 
 /**

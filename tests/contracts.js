@@ -5,25 +5,19 @@ const GanacheNode = require('./ganache');
 
 module.exports = async (useServer = false) => {
 
-    try {
-        
-        const node = new GanacheNode(path.join(__dirname, '../'), useServer);
-        const server = await node.server;
-        const provider = await node.provider;
-        const contracts = await node.contracts;
-        const addresses = await node.addresses;
-        const publisher = await node.publisher;
+    const node = new GanacheNode(path.join(__dirname, '../'), useServer);
+    const server = await node.server;
+    const provider = await node.provider;
+    const contracts = await node.contracts;
+    const addresses = await node.addresses;
+    const publisher = await node.publisher;
 
-        return {
-            node,
-            server,
-            provider,
-            contracts,
-            addresses,
-            publisher
-        };
-    } catch(err) {
-
-        return Promise.reject(err);
-    }
+    return {
+        node,
+        server,
+        provider,
+        contracts,
+        addresses,
+        publisher
+    };
 };

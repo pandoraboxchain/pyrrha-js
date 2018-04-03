@@ -41,6 +41,7 @@ export const fetchCount = async (config = {}) => {
     const count = await pan.methods
         .workerNodesCount()
         .call();
+
     return Number.parseInt(count, 10);
 };
 
@@ -69,6 +70,7 @@ export const fetchAddressById = async (id, config = {}) => {
     const address = await pan.methods
         .workerNodes(id)
         .call();
+
     return String(address);
 };
 
@@ -93,6 +95,7 @@ export const fetchState = async (address, config = {}) => {
     const state = await wor.methods
         .currentState()
         .call();
+
     return Number.parseInt(state, 10);
 };
 
@@ -117,6 +120,7 @@ export const fetchReputation = async (address, config = {}) => {
     const reputation = await wor.methods
         .reputation()
         .call();
+
     return Number.parseInt(reputation, 10);
 };
 
@@ -141,6 +145,7 @@ export const fetchActiveJobAddress = async (address, config = {}) => {
     const activeJob = await wor.methods
         .activeJob()
         .call();
+
     return String(activeJob, 10);
 };
 
@@ -153,33 +158,28 @@ export const fetchActiveJobAddress = async (address, config = {}) => {
  */
 export const fetchWorker = async (address, config = {}) => {
     
-    try {
+    const currentState = await fetchState(address, config);
+    const reputation = await fetchReputation(address, config);
 
-        const currentState = await fetchState(address, config);
-        const reputation = await fetchReputation(address, config);
+    let activeJob = await fetchActiveJobAddress(address, config);
+    let jobState;
 
-        let activeJob = await fetchActiveJobAddress(address, config);
-        let jobState;
+    // Check is not 0x0
+    if (+activeJob !== 0) {
 
-        // Check is not 0x0
-        if (+activeJob !== 0) {
-
-            jobState = await fetchJobState(activeJob, config);
-        } else {
-            activeJob = null;
-            jobState = -1;
-        }
-
-        return {
-            address,
-            currentState,
-            reputation,
-            currentJob: activeJob,
-            currentJobStatus: jobState
-        };
-    } catch(err) {
-        return Promise.reject(err);
+        jobState = await fetchJobState(activeJob, config);
+    } else {
+        activeJob = null;
+        jobState = -1;
     }
+
+    return {
+        address,
+        currentState,
+        reputation,
+        currentJob: activeJob,
+        currentJobStatus: jobState
+    };
 };
 
 /**
@@ -191,18 +191,13 @@ export const fetchWorker = async (address, config = {}) => {
  */
 export const fetchWorkerById = async (id, config = {}) => {
     
-    try {
+    const address = await fetchAddressById(id, config);
+    const worker = await fetchWorker(address, config);
 
-        const address = await fetchAddressById(id, config);
-        const worker = await fetchWorker(address, config);
-
-        return {
-            id: id,
-            ...worker
-        };
-    } catch(err) {
-        return Promise.reject(err);
-    }
+    return {
+        id: id,
+        ...worker
+    };
 };
 
 /**

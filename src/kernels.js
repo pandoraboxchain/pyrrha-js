@@ -42,6 +42,7 @@ export const fetchAddressById = async (id, config) => {
     const kernelContract = await mar.methods
         .kernels(id)
         .call();
+
     return kernelContract;
 };
 
@@ -66,6 +67,7 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
     const ipfsAddress = await ker.methods
         .ipfsAddress()
         .call();
+
     return String(ipfsAddress);
 };
 
@@ -90,6 +92,7 @@ export const fetchDataDim = async (address = '', config = {}) => {
     const dataDim = await ker.methods
         .dataDim()
         .call();
+
     return Number.parseInt(dataDim, 10);
 };
 
@@ -114,6 +117,7 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
     const currentPrice = await ker.methods
         .currentPrice()
         .call();
+
     return Number.parseInt(currentPrice, 10);
 };
 
@@ -138,6 +142,7 @@ export const fetchComplexity = async (address = '', config = {}) => {
     const complexity = await ker.methods
         .complexity()
         .call();
+
     return Number.parseInt(complexity, 10);
 };
 
@@ -150,23 +155,18 @@ export const fetchComplexity = async (address = '', config = {}) => {
  */
 export const fetchKernel = async (address = '', config = {}) => {
 
-    try {
+    const ipfsAddress = await fetchIpfsAddress(address, config);
+    const dataDim = await fetchDataDim(address, config);
+    const currentPrice = await fetchCurrentPrice(address, config);
+    const complexity = await fetchComplexity(address, config);
 
-        const ipfsAddress = await fetchIpfsAddress(address, config);
-        const dataDim = await fetchDataDim(address, config);
-        const currentPrice = await fetchCurrentPrice(address, config);
-        const complexity = await fetchComplexity(address, config);
-
-        return {
-            address,
-            ipfsAddress,
-            dataDim,
-            currentPrice,
-            complexity
-        };
-    } catch(err) {
-        return Promise.reject(err);
-    }
+    return {
+        address,
+        ipfsAddress,
+        dataDim,
+        currentPrice,
+        complexity
+    };
 };
 
 /**
@@ -238,23 +238,19 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
         throw pjsError(CONTRACT_REQUIRED, 'Kernel');
     }
 
-    try {
-        const args = [config.web3.utils.toHex(kernelIpfsHash), dimension, complexity, price];
+    const args = [config.web3.utils.toHex(kernelIpfsHash), dimension, complexity, price];
         
-        // Estimate required amount of gas
-        const gas = await web3Helpers.estimateGas(config.contracts.Kernel.bytecode, args, config);
+    // Estimate required amount of gas
+    const gas = await web3Helpers.estimateGas(config.contracts.Kernel.bytecode, args, config);
 
-        // Create and deploy kernel contract
-        const kernelContractAddress = await web3Helpers.deployContract(config.contracts.Kernel, {
-            args,
-            from: publisher,
-            gas: Number.parseInt(gas * 1.5, 10)
-        }, config);
+    // Create and deploy kernel contract
+    const kernelContractAddress = await web3Helpers.deployContract(config.contracts.Kernel, {
+        args,
+        from: publisher,
+        gas: Number.parseInt(gas * 1.5, 10)
+    }, config);
 
-        return kernelContractAddress;
-    } catch(err) {
-        return Promise.reject(err);
-    }
+    return kernelContractAddress;
 };
 
 /**
@@ -290,9 +286,7 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
             from: publisherAddress
         })
         .on('error', reject)
-        .on('receipt', receipt => {
-            resolve(receipt.contractAddress || receipt.events.KernelAdded.returnValues.kernel)
-        });
+        .on('receipt', receipt => resolve(receipt.contractAddress || receipt.events.KernelAdded.returnValues.kernel));
 });
 
 /**
