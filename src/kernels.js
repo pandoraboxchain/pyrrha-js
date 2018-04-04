@@ -9,7 +9,8 @@
 
 'use strict';
 
-import pjsError, {
+import * as expect from './helpers/expect';
+import {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
     WEB3_REQUIRED,
@@ -26,17 +27,22 @@ import * as web3Helpers from './helpers/web3';
  */
 export const fetchAddressById = async (id, config) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
-    }
-
-    if (!config.addresses || !config.addresses.PandoraMarket) {
-        throw pjsError(ADDRESS_REQUIRED, 'Market');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['PandoraMarket']
+        }
+    });
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     const kernelContract = await mar.methods
@@ -55,13 +61,17 @@ export const fetchAddressById = async (id, config) => {
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Kernel || !config.contracts.Kernel.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Kernel');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Kernel.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Kernel']
+        }
+    });
 
     const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
     const ipfsAddress = await ker.methods
@@ -80,13 +90,17 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
  */
 export const fetchDataDim = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Kernel || !config.contracts.Kernel.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Kernel');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Kernel.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Kernel']
+        }
+    });
 
     const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
     const dataDim = await ker.methods
@@ -105,13 +119,17 @@ export const fetchDataDim = async (address = '', config = {}) => {
  */
 export const fetchCurrentPrice = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Kernel || !config.contracts.Kernel.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Kernel');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Kernel.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Kernel']
+        }
+    });
 
     const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
     const currentPrice = await ker.methods
@@ -130,13 +148,17 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
  */
 export const fetchComplexity = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Kernel || !config.contracts.Kernel.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Kernel');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Kernel.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Kernel']
+        }
+    });
 
     const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
     const complexity = await ker.methods
@@ -230,13 +252,17 @@ export const fetchAll = async (config = {}) => {
  */
 export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity, price }, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Kernel || !config.contracts.Kernel.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Kernel');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Kernel.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Kernel']
+        }
+    });
 
     const args = [config.web3.utils.toHex(kernelIpfsHash), dimension, complexity, price];
         
@@ -263,21 +289,26 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
  */
 export const addToMarket = (kernelContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
-    }
-
-    if (!config.addresses || !config.addresses.PandoraMarket) {
-        throw pjsError(ADDRESS_REQUIRED, 'Market');
-    }
-
-    if (!config.web3.currentProvider.isMetaMask) {
-        throw pjsError(WEB3_METAMASK_REQUIRED);
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Kernel']
+        },
+        'web3.currentProvider.isMetaMask': {
+            type: 'boolean',
+            code: WEB3_METAMASK_REQUIRED
+        }
+    });
 
     const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     market.methods
@@ -298,17 +329,22 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
  */
 export const eventKernelAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
-    }
-
-    if (!config.addresses || !config.addresses.PandoraMarket) {
-        throw pjsError(ADDRESS_REQUIRED, 'PandoraMarket');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Kernel']
+        }
+    });
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.KernelAdded()

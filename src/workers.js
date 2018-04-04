@@ -9,7 +9,8 @@
 
 'use strict';
 
-import pjsError, {
+import * as expect from './helpers/expect';
+import {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
     WEB3_REQUIRED
@@ -25,17 +26,22 @@ import { fetchState as fetchJobState } from './jobs';
  */
 export const fetchCount = async (config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
-    }
-
-    if (!config.addresses || !config.addresses.Pandora) {
-        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        }
+    });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const count = await pan.methods
@@ -54,17 +60,22 @@ export const fetchCount = async (config = {}) => {
  */
 export const fetchAddressById = async (id, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
-    }
-
-    if (!config.addresses || !config.addresses.Pandora) {
-        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        }
+    });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const address = await pan.methods
@@ -83,13 +94,17 @@ export const fetchAddressById = async (id, config = {}) => {
  */
 export const fetchState = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.WorkerNode.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['WorkerNode']
+        }
+    });
 
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);    
     const state = await wor.methods
@@ -108,13 +123,17 @@ export const fetchState = async (address, config = {}) => {
  */
 export const fetchReputation = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.WorkerNode.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['WorkerNode']
+        }
+    });
 
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
     const reputation = await wor.methods
@@ -133,13 +152,17 @@ export const fetchReputation = async (address, config = {}) => {
  */
 export const fetchActiveJobAddress = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-    
-    if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.WorkerNode.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['WorkerNode']
+        }
+    });
 
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
     const activeJob = await wor.methods
@@ -251,18 +274,23 @@ export const fetchAll = async (config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
 export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
-    
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
 
-    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
-    }
-
-    if (!config.addresses || !config.addresses.Pandora) {
-        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        }
+    });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.events.WorkerNodeCreated()
@@ -295,13 +323,17 @@ export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback =
  */
 export const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.WorkerNode || !config.contracts.WorkerNode.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'WorkerNode');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.WorkerNode.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['WorkerNode']
+        }
+    });
 
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
     wor.events.StateChanged()

@@ -9,6 +9,7 @@
 
 'use strict';
 
+export const OPTIONS_REQUIRED = 'OPTIONS_REQUIRED';
 export const WEB3_REQUIRED = 'WEB3_REQUIRED';
 export const WEB3_NOT_CONNECTED = 'WEB3_NOT_CONNECTED';
 export const CONTRACT_REQUIRED = 'CONTRACT_REQUIRED';
@@ -21,6 +22,10 @@ export default (code, ...args) => {
     let message = 'Unknown error';
     
     switch (code) {
+        case OPTIONS_REQUIRED:
+            message = 'Config options is required and expected to be an object';
+            break;
+            
         case WEB3_REQUIRED:
             message = 'Web3 API required';
             break;

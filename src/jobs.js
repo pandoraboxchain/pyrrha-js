@@ -9,7 +9,8 @@
 
 'use strict';
 
-import pjsError, {
+import * as expect from './helpers/expect';
+import {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
     WEB3_REQUIRED
@@ -31,17 +32,22 @@ import {
  */
 export const fetchActiveCount = async (config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
-    }
-
-    if (!config.addresses || !config.addresses.Pandora) {
-        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        }
+    });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const count = await pan.methods
@@ -60,17 +66,22 @@ export const fetchActiveCount = async (config = {}) => {
  */
 export const fetchAddressById = async (id, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
-    }
-
-    if (!config.addresses || !config.addresses.Pandora) {
-        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        }
+    });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const jobAddress = await pan.methods
@@ -89,13 +100,17 @@ export const fetchAddressById = async (id, config = {}) => {
  */
 export const fetchState = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJob.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJob']
+        }
+    });
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
     const state = await cog.methods
@@ -114,13 +129,17 @@ export const fetchState = async (address, config = {}) => {
  */
 export const fetchKernel = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-    
-    if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJob.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJob']
+        }
+    });
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
     const kernel = await cog.methods
@@ -139,13 +158,17 @@ export const fetchKernel = async (address, config = {}) => {
  */
 export const fetchDataset = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-    
-    if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJob.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJob']
+        }
+    });
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
     const dataset = await cog.methods
@@ -164,13 +187,17 @@ export const fetchDataset = async (address, config = {}) => {
  */
 export const fetchBatches = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-    
-    if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJob.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJob']
+        }
+    });
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
     const batches = await cog.methods
@@ -189,13 +216,17 @@ export const fetchBatches = async (address, config = {}) => {
  */
 export const fetchProgress = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-    
-    if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJob.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJob']
+        }
+    });
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
     const progress = await cog.methods
@@ -214,13 +245,17 @@ export const fetchProgress = async (address, config = {}) => {
  */
 export const fetchIpfsResults = async (address, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-    
-    if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJob.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJob']
+        }
+    });
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
     const ipfsResults = await cog.methods
@@ -334,17 +369,22 @@ export const fetchJobStore = async (address, config = {}) => {
  */
 export const create = (kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
-    }
-
-    if (!config.addresses || !config.addresses.Pandora) {
-        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        }
+    });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.methods
@@ -365,17 +405,22 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
  */
 export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Pandora || !config.contracts.Pandora.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Pandora');
-    }
-
-    if (!config.addresses || !config.addresses.Pandora) {
-        throw pjsError(ADDRESS_REQUIRED, 'Pandora');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        }
+    });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.events.CognitiveJobCreated()
@@ -408,13 +453,17 @@ export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback
  */
 export const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.CognitiveJob || !config.contracts.CognitiveJob.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'CognitiveJob');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJob.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJob']
+        }
+    });
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
     cog.events.StateChanged()

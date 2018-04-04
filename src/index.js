@@ -57,6 +57,8 @@ class Pjs {
     
     {
         eth: {
+            provider: <external_provider>,
+            // or
             protocol: 'http',
             host: 'localhost',
             port: ''

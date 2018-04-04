@@ -9,7 +9,8 @@
 
 'use strict';
 
-import pjsError, {
+import * as expect from './helpers/expect';
+import {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
     WEB3_REQUIRED,
@@ -26,17 +27,22 @@ import * as web3Helpers from './helpers/web3';
  */
 export const fetchAddressById = async (id, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
-    }
-
-    if (!config.addresses || !config.addresses.PandoraMarket) {
-        throw pjsError(ADDRESS_REQUIRED, 'Market');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Market']
+        }
+    });
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     const datasetContract = await mar.methods
@@ -55,13 +61,17 @@ export const fetchAddressById = async (id, config = {}) => {
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Dataset');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Dataset.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Dataset']
+        }
+    });
 
     const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
     const ipfsAddress = await dat.methods
@@ -80,13 +90,17 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
  */
 export const fetchDataDim = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Dataset');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Dataset.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Dataset']
+        }
+    });
 
     const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
     const dataDim = await dat.methods
@@ -105,13 +119,17 @@ export const fetchDataDim = async (address = '', config = {}) => {
  */
 export const fetchCurrentPrice = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Dataset');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Dataset.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Dataset']
+        }
+    });
 
     const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
     const currentPrice = await dat.methods
@@ -130,13 +148,17 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
  */
 export const fetchSamplesCount = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Dataset');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Dataset.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Dataset']
+        }
+    });
 
     const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
     const samplesCount = await dat.methods
@@ -155,13 +177,17 @@ export const fetchSamplesCount = async (address = '', config = {}) => {
  */
 export const fetchBatchesCount = async (address = '', config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Dataset');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Dataset.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Dataset']
+        }
+    });
 
     const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
     const batchesCount = await dat.methods
@@ -256,13 +282,21 @@ export const fetchAll = async (config = {}) => {
  */
 export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price }, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.Dataset || !config.contracts.Dataset.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'Dataset');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Dataset': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Dataset']
+        },
+        'web3.currentProvider.isMetaMask': {
+            type: 'boolean',
+            code: WEB3_METAMASK_REQUIRED
+        }
+    });
 
     const args = [config.web3.utils.toHex(datasetIpfsHash), dimension, samples, batchesCount, price];
         
@@ -289,21 +323,26 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
  */
 export const addToMarket = (datasetContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
-    }
-
-    if (!config.addresses || !config.addresses.PandoraMarket) {
-        throw pjsError(ADDRESS_REQUIRED, 'Market');
-    }
-
-    if (!config.web3.currentProvider.isMetaMask) {
-        throw pjsError(WEB3_METAMASK_REQUIRED);
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Market']
+        },
+        'web3.currentProvider.isMetaMask': {
+            type: 'boolean',
+            code: WEB3_METAMASK_REQUIRED
+        }
+    });
 
     const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     market.methods
@@ -324,17 +363,22 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
  */
 export const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
-
-    if (!config.contracts || !config.contracts.PandoraMarket || !config.contracts.PandoraMarket.abi) {
-        throw pjsError(CONTRACT_REQUIRED, 'PandoraMarket');
-    }
-
-    if (!config.addresses || !config.addresses.PandoraMarket) {
-        throw pjsError(ADDRESS_REQUIRED, 'Market');
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Market']
+        }
+    });
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.DatasetAdded()

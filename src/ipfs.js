@@ -8,7 +8,8 @@
  */
 'use strict';
 
-import pjsError, {
+import * as expect from './helpers/expect';
+import {
     IPFS_REQUIRED
 } from './helpers/errors';
 
@@ -47,9 +48,12 @@ export const loadFile = (file) => {
  */
 export const add = async (buffer, loadedFile, progressCb = () => {}, config = {}) => {
 
-    if (!config.ipfs) {
-        throw pjsError(IPFS_REQUIRED);
-    }
+    expect.all(config, {
+        'ipfs': {
+            type: 'object',
+            code: IPFS_REQUIRED
+        }
+    });
 
     const response = await config.ipfs.add(buffer, {
         progress: progress => progressCb({
@@ -72,9 +76,12 @@ export const add = async (buffer, loadedFile, progressCb = () => {}, config = {}
  */
 export const submitFile = async (file, progressCb = () => {}, config = {}) => {
 
-    if (!config.ipfs) {
-        throw pjsError(IPFS_REQUIRED);
-    }
+    expect.all(config, {
+        'ipfs': {
+            type: 'object',
+            code: IPFS_REQUIRED
+        }
+    });
     
     const loadedFile = await loadFile(file);
     const buffer = Buffer.from(loadedFile.result);
