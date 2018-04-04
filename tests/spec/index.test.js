@@ -134,6 +134,19 @@ describe('Core tests:', () => {
         expect(() => { pjs._web3 = null; }).to.throw(Error).with.property('code', WEB3_NOT_CONNECTED);
     });
 
+    it('Should instantiate web3 HttpProvider if protocol, host and port has been given as options', () => {
+        const pjsHttp = new Pjs({
+            eth: {
+                protocol: 'http',
+                host: 'localhost',
+                port: ''
+            },
+            contracts,
+            addresses
+        });
+        expect(pjsHttp.api.web3.currentProvider).to.be.an.instanceof(pjs.api.web3.providers.HttpProvider);
+    });
+
     it('Should not have ipfs member if no ipfs config option provided', () => {
 
         const pjsNoIpfs = new Pjs({

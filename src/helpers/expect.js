@@ -15,7 +15,7 @@ import PjsError, {
 
 export const all = (options = {}, model = {}) => {
 
-    if (!options || typeof options !== 'object') {
+    if (typeof options !== 'object' || Object.keys(options).length === 0) {
 
         throw PjsError(OPTIONS_REQUIRED);
     }

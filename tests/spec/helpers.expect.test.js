@@ -2,11 +2,24 @@
 
 const { expect } = require('chai');
 const expectHelper = require('../../src/helpers/expect');
+const errorsHelper = require('../../src/helpers/errors');
 
 describe('Helper #expect tests:', () => {
 
     it('Module should expose method "all" as a function', () => {
         expect(expectHelper.all).to.be.a('function');
+    });
+
+    it('#all should throw a Error({code: OPTIONS_REQUIRED}) if no options was specified', () => {
+        let testAllHelper = () => {
+            expectHelper.all(undefined, {
+                'key1': {
+                    type: 'string'
+                }
+            });
+        };
+
+        expect(testAllHelper).to.throw(Error).with.property('code', errorsHelper.OPTIONS_REQUIRED);
     });
 
     it('#all should validate options keys existance by model', () => {

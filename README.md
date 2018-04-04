@@ -4,6 +4,9 @@
 
 Pandora Pyrrha functions and utilities library for JavaScript-based applications
 
+- Current version: 1.4
+- [Release notes]('./docs/release-notes.md')
+
 ## Initialization and usage
 ```javascript
 import Kernel from '../contracts/Kernel.json';
@@ -15,7 +18,7 @@ const pjs = new Pjs({
         protocol: 'http',
         host: 'localhost',
         port: 8545,
-        // or specify a "provider" property (like MetaMask provider)
+        // or specify a "provider" property (like MetaMask or WebsocketProvider provider)
     },
     ipfs: {
         protocol: 'http',

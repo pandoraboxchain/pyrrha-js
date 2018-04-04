@@ -20,7 +20,7 @@ export const WEB3_METAMASK_REQUIRED = 'WEB3_METAMASK_REQUIRED';
 
 export default (code, ...args) => {
     let message = 'Unknown error';
-    
+
     switch (code) {
         case OPTIONS_REQUIRED:
             message = 'Config options is required and expected to be an object';
