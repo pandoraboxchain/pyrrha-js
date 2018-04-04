@@ -8,7 +8,8 @@
  */
 'use strict';
 
-import pjsError, {
+import * as expect from './expect';
+import {
     WEB3_REQUIRED,
     WEB3_METAMASK_REQUIRED
 } from './errors';
@@ -22,9 +23,12 @@ import pjsError, {
  */
 export const estimateGas = async (bytecode, args, config = {}) => {
 
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        }
+    });
 
     return await config.web3.eth.estimateGas({
         data: bytecode,
@@ -40,14 +44,17 @@ export const estimateGas = async (bytecode, args, config = {}) => {
  * @returns {Promise} Promise object resolved to contract address
  */
 export const deployContract = (contract, { args, from, gas }, config = {}) => new Promise((resolve, reject) => {
-    
-    if (!config.web3) {
-        throw pjsError(WEB3_REQUIRED);
-    }
 
-    if (!config.web3.currentProvider.isMetaMask) {
-        throw pjsError(WEB3_METAMASK_REQUIRED);
-    }
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'web3.currentProvider.isMetaMask': {
+            type: 'boolean',
+            code: WEB3_METAMASK_REQUIRED
+        }
+    });
 
     new config.web3.eth.Contract(contract.abi)
         .deploy({

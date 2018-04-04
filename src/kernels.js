@@ -78,7 +78,7 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
         .ipfsAddress()
         .call();
 
-    return String(ipfsAddress);
+    return config.web3.utils.hexToAscii(ipfsAddress);
 };
 
 /**
@@ -318,6 +318,7 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
         })
         .on('error', reject)
         .on('receipt', receipt => resolve(receipt.contractAddress || receipt.events.KernelAdded.returnValues.kernel));
+    // @note In case of ganache-cli blockchain "contractAddress" always will be equal to null
 });
 
 /**

@@ -77,7 +77,7 @@ describe('Core tests:', () => {
 
     it('Should be able to use currentProvider from MetaMask', () => {
 
-        let pjsCurrent = new Pjs({
+        const pjsCurrent = new Pjs({
             eth: {
                 provider
             },
@@ -136,7 +136,7 @@ describe('Core tests:', () => {
 
     it('Should not have ipfs member if no ipfs config option provided', () => {
 
-        let pjsNoIpfs = new Pjs({
+        const pjsNoIpfs = new Pjs({
             eth: {
                 provider
             },
@@ -149,7 +149,7 @@ describe('Core tests:', () => {
 
     it('Should not have kernels/datasets/jobs members if no eth config option provided', () => {
 
-        let pjsNoEth = new Pjs({
+        const pjsNoEth = new Pjs({
             contracts,
             addresses
         });
