@@ -8,6 +8,7 @@ import {
     WEB3_NOT_CONNECTED
 } from '../../src/helpers/errors';
 
+const pandora = require('../../src/pandora');
 const datasets = require('../../src/datasets');
 const kernels = require('../../src/kernels');
 const jobs = require('../../src/jobs');
@@ -90,6 +91,15 @@ describe('Core tests:', () => {
 
         expect(pjsCurrent).to.have.property('isMetaMask');
         expect(pjsCurrent.isMetaMask).to.be.true;
+    });
+
+    it('Should have pandora functions as members', () => {
+        expect(pjs).to.have.property('pandora');
+
+        for (let key in pandora) {
+
+            expect(pjs.pandora[key]).to.be.a('function');
+        }
     });
 
     it('Should have kernels functions as members', () => {

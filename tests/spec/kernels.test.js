@@ -50,6 +50,16 @@ describe('Kernels tests:', () => {
 
     after(done => server.close(done));
 
+    it('#fetchCount should return a number', async () => {
+        const count = await pjs.kernels.fetchCount();
+        expect(count).to.be.a('number');
+    });
+
+    it('#fetchAddressById', async () => {
+        const kernelAddress = await pjs.kernels.fetchAddressById(0);
+        expect(kernelAddress).to.be.a('string');
+    });
+
     it('#deploy should resolved to an address of the deployed contract', () => {
         expect(kernelContractAddress).to.be.a('string');
     });
@@ -86,15 +96,38 @@ describe('Kernels tests:', () => {
         expect(kernelContractAddress).to.be.equal(kernel.address);
     });
 
+    it('#fetchAll should fetch kernels records', async () => {
+        const kernels = await pjs.kernels.fetchAll();
+        expect(kernels).to.be.a('object');
+        expect(kernels).to.have.property('records').to.satisfy(val => Array.isArray(val));
+        expect(kernels).to.have.property('error').to.satisfy(val => Array.isArray(val));
+        expect(kernels.records.length).to.satisfy(val => val > 0);
+    });
+
+    it('#removeKernel should remove previously added kernel without errors', async () => {
+        const options = {
+            publisher, 
+            dimension: 100, 
+            complexity: 100, 
+            price: 100
+        };
+
+        const kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, options);
+        await pjs.kernels.addToMarket(kernelContractAddress, publisher);
+        await pjs.kernels.removeKernel(kernelContractAddress, publisher);
+    });
+
     it('#eventKernelAdded should handle KernelAdded event', () => new Promise((resolve, reject) => {
         let addressAdded;
+        let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
-        pjs.kernels.eventKernelAdded(
-            result => {
+        pjs.kernels.eventKernelAdded()
+            .then(result => {
                 expect(result.address === addressAdded).to.be.true;
+                clearTimeout(timeout);
                 resolve();
-            },
-            reject);
+            })
+            .catch(reject);
 
         const options = {
             publisher, 
@@ -108,6 +141,34 @@ describe('Kernels tests:', () => {
                 addressAdded = kernelContractAddress;
                 return pjs.kernels.addToMarket(kernelContractAddress, publisher);
             })
+            .catch(reject);
+    }));
+
+    it.skip('#eventKernelRemoved should handle KernelRemoved event', () => new Promise((resolve, reject) => {
+        let addressAdded;
+        let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
+
+        pjs.kernels.eventKernelRemoved()
+            .then(result => {
+                expect(result.address === addressAdded).to.be.true;
+                clearTimeout(timeout);
+                resolve();
+            })
+            .catch(reject);
+
+        const options = {
+            publisher, 
+            dimension: 100, 
+            complexity: 100, 
+            price: 100
+        };
+
+        pjs.kernels.deploy(kernelIpfsHash, options)
+            .then(kernelContractAddress => {
+                addressAdded = kernelContractAddress;
+                return pjs.kernels.addToMarket(kernelContractAddress, publisher);
+            })
+            .then(() => pjs.kernels.removeKernel(addressAdded, publisher))
             .catch(reject);
     }));
 });

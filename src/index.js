@@ -17,6 +17,7 @@ import pjsError, {
     WEB3_NOT_CONNECTED
 } from './helpers/errors';
 
+import * as pandora from './pandora';
 import * as kernels from './kernels';
 import * as datasets from './datasets';
 import * as jobs from './jobs';
@@ -108,6 +109,7 @@ class Pjs {
             this.config.contracts = options.contracts || {};// @todo Validate minimum "required" contracts set 
             this.config.addresses = options.addresses || {};// @todo Validate addresses "required" option
 
+            this._addMembers('pandora', pandora);
             this._addMembers('kernels', kernels);
             this._addMembers('datasets', datasets);
             this._addMembers('jobs', jobs);
