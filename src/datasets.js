@@ -19,6 +19,39 @@ import {
 import * as web3Helpers from './helpers/web3';
 
 /**
+ * Get datasets count from PandoraMarket contract
+ * 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {number} 
+ */
+export const fetchCount = async (config = {}) => {
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['PandoraMarket']
+        }
+    });
+
+    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
+    const count = await mar.methods
+        .datasetsCount()
+        .call();
+
+    return Number.parseInt(count, 10);
+};
+
+/**
  * Get Dataset address by kernel id
  * 
  * @param {number} id
@@ -78,7 +111,7 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
         .ipfsAddress()
         .call();
 
-    return String(ipfsAddress);
+    return config.web3.utils.hexToAscii(ipfsAddress);
 };
 
 /**
@@ -223,6 +256,21 @@ export const fetchDataset = async (address = '', config = {}) => {
 };
 
 /**
+ * Get dataset by id
+ * 
+ * @param {integer} id 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object}
+ */
+export const fetchDatasetById = async (id, config = {}) => {
+    
+    const address = await fetchAddressById(id, config);
+    const dataset = await fetchDataset(address, config);
+
+    return dataset;
+};
+
+/**
  * Get all datasets
  * 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
@@ -230,41 +278,35 @@ export const fetchDataset = async (address = '', config = {}) => {
  */
 export const fetchAll = async (config = {}) => {
 
-    let id = 0;
     let records = [];
     let error = [];
 
     try {
 
-        // @todo Add method getDatasetsCount to the PandoraMarket contract for avoid iterating with "while"
-        while (true) {
+        const count = await fetchCount(config);
 
-            const datasetAddress = await fetchAddressById(id++, config);// can be 0x0
-
-            if (+datasetAddress === 0) {
-                break;
-            }
+        for (let i=0; i < count; i++) {
             
             try {
 
-                const datasetObj = await fetchDataset(datasetAddress, config);
+                const dataset = await fetchDatasetById(i, config);
+
                 records.push({
-                    id: id,
-                    ...datasetObj
+                    id: i,
+                    ...dataset
                 });
             } catch(err) {
-                
                 error.push({
-                    address: datasetAddress,
-                    error: err.message
+                    id: i,
+                    message: err.message
                 });
             }        
-        }        
+        }
     } catch(err) {
         error.push({
             error: err.message
         });
-    }
+    }   
 
     return {
         records,
@@ -351,17 +393,52 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
             from: publisherAddress
         })
         .on('error', reject)
-        .on('receipt', receipt => resolve(receipt.contractAddress));
+        .on('receipt', receipt => resolve(receipt.contractAddress || receipt.events.DatasetAdded.returnValues.dataset));
+    // @note In case of ganache-cli blockchain "contractAddress" always will be equal to null
+});
+
+/**
+ * Remove dataset from PandoraMarket
+ * 
+ * @param {String} datasetAddress
+ * @param {String} publisherAddress 
+ * @param {Object} config Library config (provided by the proxy but can be overridden) 
+ */
+export const removeDataset = (datasetAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Kernel']
+        }
+    });
+
+    const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
+    market.methods
+        .removeDataset(datasetAddress)
+        .send({
+            from: publisherAddress
+        })
+        .on('error', reject)
+        .on('receipt', resolve);
 });
 
 /**
  * Handle event DatasetAdded
  * 
- * @param {Function} storeCallback 
- * @param {Function} errorCallback
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+export const eventDatasetAdded = (config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -387,15 +464,52 @@ export const eventDatasetAdded = (storeCallback = () => {}, errorCallback = () =
             try {
 
                 const dataset = await fetchDataset(res.returnValues.dataset, config);
-                storeCallback({
+                resolve({
                     address: res.returnValues.dataset,
                     dataset,
                     status: 'created',
                     event: 'PandoraMarket.DatasetAdded'
                 });
             } catch(err) {
-                errorCallback(err);
+                reject(err);
             }            
         })
-        .on('error', errorCallback);
-};
+        .on('error', reject);
+});
+
+/**
+ * Handle event KernelRemoved
+ * 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+export const eventKernelRemoved = (config = {}) => new Promise((resolve, reject) => {
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.PandoraMarket.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['PandoraMarket']
+        },
+        'addresses.PandoraMarket': {
+            type: 'string',
+            code: ADDRESS_REQUIRED,
+            args: ['Kernel']
+        }
+    });
+
+    const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
+    mar.events.KernelRemoved()
+        .on('data', async res => {
+
+            resolve({
+                address: res.returnValues.dataset,
+                status: 'removed',
+                event: 'PandoraMarket.KernelRemoved'
+            });            
+        })
+        .on('error', reject);
+});

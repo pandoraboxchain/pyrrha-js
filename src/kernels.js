@@ -236,10 +236,7 @@ export const fetchKernelById = async (id, config = {}) => {
     const address = await fetchAddressById(id, config);
     const kernel = await fetchKernel(address, config);
 
-    return {
-        id: id,
-        ...kernel
-    };
+    return kernel;
 };
 
 /**
