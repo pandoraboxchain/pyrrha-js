@@ -393,7 +393,15 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
             from: publisherAddress
         })
         .on('error', reject)
-        .on('receipt', receipt => resolve(receipt.contractAddress || receipt.events.DatasetAdded.returnValues.dataset));
+        .on('receipt', receipt => {
+
+            if (Number(receipt.status) === 0) {
+
+                return reject(new Error('Transaction was unsuccessful'));
+            }
+
+            resolve(receipt.contractAddress || receipt.events.DatasetAdded.returnValues.dataset);
+        });
     // @note In case of ganache-cli blockchain "contractAddress" always will be equal to null
 });
 
@@ -430,7 +438,15 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
             from: publisherAddress
         })
         .on('error', reject)
-        .on('receipt', resolve);
+        .on('receipt', receipt => {
+
+            if (Number(receipt.status) === 0) {
+
+                return reject(new Error('Transaction was unsuccessful'));
+            }
+
+            resolve(receipt.contractAddress);
+        });
 });
 
 /**

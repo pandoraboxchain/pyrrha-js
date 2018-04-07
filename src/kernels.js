@@ -358,7 +358,15 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
             from: publisherAddress
         })
         .on('error', reject)
-        .on('receipt', receipt => resolve(receipt.contractAddress || receipt.events.KernelAdded.returnValues.kernel));
+        .on('receipt', receipt => {
+
+            if (Number(receipt.status) === 0) {
+
+                return reject(new Error('Transaction was unsuccessful'));
+            }
+
+            resolve(receipt.contractAddress || receipt.events.KernelAdded.returnValues.kernel);
+        });
     // @note In case of ganache-cli blockchain "contractAddress" always will be equal to null
 });
 
@@ -395,7 +403,17 @@ export const removeKernel = (kernelAddress, publisherAddress, config = {}) => ne
             from: publisherAddress
         })
         .on('error', reject)
-        .on('receipt', resolve);
+        .on('receipt', receipt => {
+
+            console.log('===', receipt)
+
+            if (Number(receipt.status) === 0) {
+
+                return reject(new Error('Transaction was unsuccessful'));
+            }
+
+            resolve(receipt.contractAddress);
+        });
 });
 
 /**

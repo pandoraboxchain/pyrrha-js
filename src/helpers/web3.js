@@ -66,5 +66,13 @@ export const deployContract = (contract, { args, from, gas }, config = {}) => ne
             gas
         })
         .on('error', reject)
-        .on('receipt', receipt => resolve(receipt.contractAddress));
+        .on('receipt', receipt => {
+
+            if (Number(receipt.status) === 0) {
+
+                return reject(new Error('Transaction was unsuccessful'));
+            }
+
+            resolve(receipt.contractAddress);
+        });
 });

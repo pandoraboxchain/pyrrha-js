@@ -41,9 +41,7 @@ describe('Kernels tests:', () => {
 
             return pjs;
         })
-        .then(pjs => {
-            return pjs.kernels.deploy(kernelIpfsHash, kernelOptions);
-        })
+        .then(pjs => pjs.kernels.deploy(kernelIpfsHash, kernelOptions))
         .then(address => {
             kernelContractAddress = address;
         }));
@@ -104,7 +102,7 @@ describe('Kernels tests:', () => {
         expect(kernels.records.length).to.satisfy(val => val > 0);
     });
 
-    it('#removeKernel should remove previously added kernel without errors', async () => {
+    it.skip('#removeKernel should remove previously added kernel without errors', async () => {
         const options = {
             publisher, 
             dimension: 100, 
