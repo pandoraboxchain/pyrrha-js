@@ -405,8 +405,6 @@ export const removeKernel = (kernelAddress, publisherAddress, config = {}) => ne
         .on('error', reject)
         .on('receipt', receipt => {
 
-            console.log('===', receipt)
-
             if (Number(receipt.status) === 0) {
 
                 return reject(new Error('Transaction was unsuccessful'));
