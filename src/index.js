@@ -103,7 +103,7 @@ class Pjs {
                 }
             } else {
     
-                this._web3 = new Pjs.Web3(`${options.eth.protocol || 'http'}://${options.eth.host || 'localhost'}:${options.eth.port || ''}`);
+                this._web3 = new Pjs.Web3.providers.HttpProvider(`${options.eth.protocol || 'http'}://${options.eth.host || 'localhost'}:${options.eth.port || ''}`);
             }
 
             this.config.contracts = options.contracts || {};// @todo Validate minimum "required" contracts set 
