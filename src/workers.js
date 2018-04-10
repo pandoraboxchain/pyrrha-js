@@ -269,11 +269,9 @@ export const fetchAll = async (config = {}) => {
 /**
  * Handle event WorkerNodeCreated
  * 
- * @param {Function} storeCallback 
- * @param {Function} errorCallback
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+export const eventWorkerNodeCreated = (config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -299,29 +297,27 @@ export const eventWorkerNodeCreated = (storeCallback = () => {}, errorCallback =
             try {
 
                 const worker = await fetchWorker(res.returnValues.workerNode, config);
-                storeCallback({
+                resolve({
                     address: res.returnValues.workerNode,
                     worker,
                     status: 'created',
                     event: 'Pandora.WorkerNodeCreated'
                 });
             } catch(err) {
-                errorCallback(err);
+                reject(err);
             }            
         })
-        .on('error', errorCallback);
-};
+        .on('error', reject);
+});
 
 /**
  * Handle event StateChanged for WorkerNode
  * 
  * @param {string} address
- * @param {Function} storeCallback 
- * @param {Function} errorCallback
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object} 
  */
-export const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+export const eventWorkerNodeStateChanged = (address, config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -342,15 +338,15 @@ export const eventWorkerNodeStateChanged = (address, storeCallback = () => {}, e
             try {
 
                 const worker = await fetchWorker(res.returnValues.workerNode, config);
-                storeCallback({
+                resolve({
                     address: res.returnValues.workerNode,
                     worker,
                     status: 'changed',
                     event: 'WorkerNode.StateChanged'
                 });
             } catch(err) {
-                errorCallback(err);
+                reject(err);
             }
         })
-        .on('error', errorCallback);
-};
+        .on('error', reject);
+});
