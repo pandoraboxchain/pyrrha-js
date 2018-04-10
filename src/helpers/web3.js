@@ -9,9 +9,10 @@
 'use strict';
 
 import * as expect from './expect';
-import {
+import pjsError, {
     WEB3_REQUIRED,
-    WEB3_METAMASK_REQUIRED
+    WEB3_METAMASK_REQUIRED,
+    TRANSACTION_UNSUCCESSFUL
 } from './errors';
 
 /**
@@ -70,7 +71,7 @@ export const deployContract = (contract, { args, from, gas }, config = {}) => ne
 
             if (Number(receipt.status) === 0) {
 
-                return reject(new Error('Transaction was unsuccessful'));
+                return reject(pjsError(TRANSACTION_UNSUCCESSFUL));
             }
 
             resolve(receipt.contractAddress);

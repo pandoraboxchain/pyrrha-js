@@ -30,6 +30,7 @@ RUN git clone -b "$PYRRHA_CONSENSUS_BRANCH" https://github.com/pandoraboxchain/p
     mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations /pyrrha-js/migrations
 
 COPY ./src /pyrrha-js/src
+COPY ./dist /pyrrha-js/dist
 COPY ./tests /pyrrha-js/tests
 COPY ./tests/truffle.js /pyrrha-js/truffle.js
 COPY ./tests/truffle-config.js /pyrrha-js/truffle-config.js

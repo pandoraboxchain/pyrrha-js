@@ -10,10 +10,11 @@
 'use strict';
 
 import * as expect from './helpers/expect';
-import {
+import pjsError, {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
-    WEB3_REQUIRED
+    WEB3_REQUIRED,
+    TRANSACTION_UNSUCCESSFUL
 } from './helpers/errors';
 
 import {
@@ -393,7 +394,15 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
             from
         })
         .on('error', reject)
-        .on('receipt', receipt => resolve(receipt.contractAddress));
+        .on('receipt', receipt => {
+
+            if (Number(receipt.status) === 0) {
+
+                return reject(pjsError(TRANSACTION_UNSUCCESSFUL));
+            }
+
+            resolve(receipt.contractAddress);
+        });
 });
 
 /**
@@ -403,7 +412,7 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
  * @param {Function} errorCallback
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+export const eventCognitiveJobCreated = (config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -429,29 +438,27 @@ export const eventCognitiveJobCreated = (storeCallback = () => {}, errorCallback
             try {
 
                 const store = await fetchJobStore(res.returnValues.cognitiveJob);
-                storeCallback({
+                resolve({
                     address: res.returnValues.cognitiveJob,
                     store,
                     status: 'created',
                     event: 'Pandora.CognitiveJobCreated'
                 });
             } catch(err) {
-                errorCallback(err);
+                reject(err);
             }            
         })
-        .on('error', errorCallback);
-};
+        .on('error', reject);
+});
 
 /**
  * Handle event StateChanged for CognitiveJob
  * 
  * @param {string} address
- * @param {Function} storeCallback 
- * @param {Function} errorCallback
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object} 
  */
-export const eventCognitiveJobStateChanged = (address, storeCallback = () => {}, errorCallback = () => {}, config = {}) => {
+export const eventCognitiveJobStateChanged = (address, config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -472,15 +479,15 @@ export const eventCognitiveJobStateChanged = (address, storeCallback = () => {},
             try {
 
                 const store = await fetchJobStore(res.returnValues.cognitiveJob);
-                storeCallback({
+                resolve({
                     address: res.returnValues.cognitiveJob,
                     store,
                     status: 'changed',
                     event: 'CognitiveJob.StateChanged'
                 });
             } catch(err) {
-                errorCallback(err);
+                reject(err);
             }
         })
-        .on('error', errorCallback);
-};
+        .on('error', reject);
+});

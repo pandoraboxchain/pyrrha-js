@@ -17,6 +17,7 @@ export const ADDRESS_REQUIRED = 'ADDRESS_REQUIRED';
 export const IPFS_REQUIRED = 'IPFS_REQUIRED';
 export const IPFS_NOT_CONNECTED = 'IPFS_NOT_CONNECTED';
 export const WEB3_METAMASK_REQUIRED = 'WEB3_METAMASK_REQUIRED';
+export const TRANSACTION_UNSUCCESSFUL = 'TRANSACTION_UNSUCCESSFUL';
 
 export default (code, ...args) => {
     let message = 'Unknown error';
@@ -25,7 +26,7 @@ export default (code, ...args) => {
         case OPTIONS_REQUIRED:
             message = 'Config options is required and expected to be an object';
             break;
-            
+
         case WEB3_REQUIRED:
             message = 'Web3 API required';
             break;
@@ -52,6 +53,11 @@ export default (code, ...args) => {
 
         case IPFS_NOT_CONNECTED:
             message = 'No connection to IPFS server';
+            break;
+
+        case TRANSACTION_UNSUCCESSFUL:
+            message = 'Transaction was unsuccessful';
+            break;
     }
 
     const err = new Error(message);

@@ -10,11 +10,12 @@
 'use strict';
 
 import * as expect from './helpers/expect';
-import {
+import pjsError, {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
     WEB3_REQUIRED,
-    WEB3_METAMASK_REQUIRED
+    WEB3_METAMASK_REQUIRED,
+    TRANSACTION_UNSUCCESSFUL
 } from './helpers/errors';
 import * as web3Helpers from './helpers/web3';
 
@@ -397,7 +398,7 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
 
             if (Number(receipt.status) === 0) {
 
-                return reject(new Error('Transaction was unsuccessful'));
+                return reject(pjsError(TRANSACTION_UNSUCCESSFUL));
             }
 
             resolve(receipt.contractAddress || receipt.events.DatasetAdded.returnValues.dataset);
@@ -442,7 +443,7 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
 
             if (Number(receipt.status) === 0) {
 
-                return reject(new Error('Transaction was unsuccessful'));
+                return reject(pjsError(TRANSACTION_UNSUCCESSFUL));
             }
 
             resolve(receipt.contractAddress);

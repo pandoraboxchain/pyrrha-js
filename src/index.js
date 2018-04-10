@@ -37,6 +37,11 @@ class Pjs {
         return ipfsAPI;
     }
 
+    // Library version
+    static get version() {
+        return pjsPackage.version;
+    }
+
     // web3 setter
     set _web3(value) {
 
@@ -103,7 +108,7 @@ class Pjs {
                 }
             } else {
     
-                this._web3 = new Pjs.Web3.providers.HttpProvider(`${options.eth.protocol || 'http'}://${options.eth.host || 'localhost'}:${options.eth.port || ''}`);
+                this._web3 = new Pjs.Web3(new Pjs.Web3.providers.HttpProvider(`${options.eth.protocol || 'http'}://${options.eth.host || 'localhost'}:${options.eth.port || ''}`));
             }
 
             this.config.contracts = options.contracts || {};// @todo Validate minimum "required" contracts set 

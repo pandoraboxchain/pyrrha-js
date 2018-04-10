@@ -65,6 +65,10 @@ describe('Core tests:', () => {
         expect(pjs).to.be.instanceof(Pjs);
     });
 
+    it('Should have a static version property', () => {
+        expect(Pjs).to.to.have.property('version');
+    });
+
     it('Should have a version property', () => {
         expect(pjs).to.to.have.property('version');
     });
