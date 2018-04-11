@@ -13,10 +13,8 @@ COPY ./package.json /pyrrha-js/package.json
 WORKDIR /pyrrha-js
 RUN npm i --silent && \ 
     npm i \ 
-        fs-extra \
-        truffle-core \
+        ganache-sandbox@https://github.com/pandoraboxchain/ganache-sandbox.git#v0.1.1 \
         zeppelin-solidity \
-        ganache-cli@7.0.0-beta.0 \
         mocha \
         mocha-lcov-reporter \
         chai \
