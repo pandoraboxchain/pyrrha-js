@@ -275,12 +275,21 @@ export const fetchIpfsResults = async (address, config = {}) => {
  */
 export const fetchJob = async (address, config = {}) => {
 
-    const state = await fetchState(address, config);
-    const kernel = await fetchKernel(address, config);
-    const dataset = await fetchDataset(address, config);
-    const batches = await fetchBatches(address, config);
-    const progress = await fetchProgress(address, config);
-    const ipfsResults = await fetchIpfsResults(address, config);
+    const [
+        state,
+        kernel,
+        dataset,
+        batches,
+        progress,
+        ipfsResults
+    ] = await Promise.all([
+        fetchState(address, config),
+        fetchKernel(address, config),
+        fetchDataset(address, config),
+        fetchBatches(address, config),
+        fetchProgress(address, config),
+        fetchIpfsResults(address, config)
+    ]);
     
     return {
         address: address,
@@ -349,8 +358,14 @@ export const fetchAll = async (config = {}) => {
 export const fetchJobStore = async (address, config = {}) => {
 
     const job = await fetchJob(address, config);
-    const kernel = await fetchIpfsAddressByKernelAddress(job.kernel, config);
-    const dataset = await fetchDatasetByDatasetAddress(job.dataset, config);
+
+    const [
+        kernel,
+        dataset
+    ] = await Promise.all([
+        fetchIpfsAddressByKernelAddress(job.kernel, config),
+        fetchDatasetByDatasetAddress(job.dataset, config)
+    ]);
     
     return {
         job,
@@ -408,11 +423,10 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
 /**
  * Handle event CognitiveJobCreated
  * 
- * @param {Function} storeCallback 
- * @param {Function} errorCallback
+ * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventCognitiveJobCreated = (config = {}) => new Promise((resolve, reject) => {
+export const eventCognitiveJobCreated = (options = {}, config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -432,7 +446,7 @@ export const eventCognitiveJobCreated = (config = {}) => new Promise((resolve, r
     });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    pan.events.CognitiveJobCreated()
+    pan.events.CognitiveJobCreated(options)
         .on('data', async res => {
 
             try {

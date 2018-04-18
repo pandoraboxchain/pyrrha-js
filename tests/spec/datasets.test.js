@@ -103,7 +103,7 @@ describe('Datasets tests:', () => {
         expect(datasets.records.length).to.satisfy(val => val > 0);
     });
 
-    it.skip('#removeDataset should remove previously added dataset without errors', async () => {
+    it('#removeDataset should remove previously added dataset without errors', async () => {
         const options = {
             publisher, 
             dimension: 100, 
@@ -120,7 +120,7 @@ describe('Datasets tests:', () => {
         let addressAdded;
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
-        pjs.datasets.eventDatasetAdded()
+        pjs.datasets.eventDatasetAdded({})
             .then(result => {
                 expect(result.address === addressAdded).to.be.true;
                 clearTimeout(timeout);
@@ -143,11 +143,11 @@ describe('Datasets tests:', () => {
             .catch(reject);
     }));
 
-    it.skip('#eventDatasetRemoved should handle DatasetRemoved event', () => new Promise((resolve, reject) => {
+    it('#eventDatasetRemoved should handle DatasetRemoved event', () => new Promise((resolve, reject) => {
         let addressAdded;
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
-        pjs.datasets.eventDatasetRemoved()
+        pjs.datasets.eventDatasetRemoved({})
             .then(result => {
                 expect(result.address === addressAdded).to.be.true;
                 clearTimeout(timeout);

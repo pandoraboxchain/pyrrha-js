@@ -2,7 +2,7 @@
  * Datasets related methods
  * This file it is a part of the Pandora Pyrrha Javascript library
  * 
- * @file kernels.js
+ * @file datasets.js
  * @author Kostiantyn Smyrnov <kostysh@gmail.com>
  * @date 2018
  */
@@ -53,7 +53,7 @@ export const fetchCount = async (config = {}) => {
 };
 
 /**
- * Get Dataset address by kernel id
+ * Get Dataset address by dataset id
  * 
  * @param {number} id
  * @param {Object} config Library config (provided by the proxy but can be overridden)
@@ -240,11 +240,19 @@ export const fetchBatchesCount = async (address = '', config = {}) => {
  */
 export const fetchDataset = async (address = '', config = {}) => {
 
-    const ipfsAddress = await fetchIpfsAddress(address, config);
-    const dataDim = await fetchDataDim(address, config);
-    const currentPrice = await fetchCurrentPrice(address, config);
-    const samplesCount = await fetchSamplesCount(address, config);
-    const batchesCount = await fetchBatchesCount(address, config);
+    const [
+        ipfsAddress,
+        dataDim,
+        currentPrice,
+        samplesCount,
+        batchesCount
+    ] = await Promise.all([
+        fetchIpfsAddress(address, config),
+        fetchDataDim(address, config),
+        fetchCurrentPrice(address, config),
+        fetchSamplesCount(address, config),
+        fetchBatchesCount(address, config)
+    ]);
 
     return {
         address,
@@ -453,9 +461,10 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
 /**
  * Handle event DatasetAdded
  * 
+ * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventDatasetAdded = (config = {}) => new Promise((resolve, reject) => {
+export const eventDatasetAdded = (options = {}, config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -475,7 +484,7 @@ export const eventDatasetAdded = (config = {}) => new Promise((resolve, reject) 
     });
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    mar.events.DatasetAdded()
+    mar.events.DatasetAdded(options)
         .on('data', async res => {
 
             try {
@@ -495,11 +504,12 @@ export const eventDatasetAdded = (config = {}) => new Promise((resolve, reject) 
 });
 
 /**
- * Handle event KernelRemoved
+ * Handle event DatasetRemoved
  * 
+ * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventKernelRemoved = (config = {}) => new Promise((resolve, reject) => {
+export const eventDatasetRemoved = (options = {}, config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -514,18 +524,18 @@ export const eventKernelRemoved = (config = {}) => new Promise((resolve, reject)
         'addresses.PandoraMarket': {
             type: 'string',
             code: ADDRESS_REQUIRED,
-            args: ['Kernel']
+            args: ['PandoraMarket']
         }
     });
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    mar.events.KernelRemoved()
+    mar.events.DatasetRemoved(options)
         .on('data', async res => {
 
             resolve({
                 address: res.returnValues.dataset,
                 status: 'removed',
-                event: 'PandoraMarket.KernelRemoved'
+                event: 'PandoraMarket.DatasetRemoved'
             });            
         })
         .on('error', reject);

@@ -211,10 +211,17 @@ export const fetchComplexity = async (address = '', config = {}) => {
  */
 export const fetchKernel = async (address = '', config = {}) => {
 
-    const ipfsAddress = await fetchIpfsAddress(address, config);
-    const dataDim = await fetchDataDim(address, config);
-    const currentPrice = await fetchCurrentPrice(address, config);
-    const complexity = await fetchComplexity(address, config);
+    const [
+        ipfsAddress,
+        dataDim,
+        currentPrice,
+        complexity
+    ] = await Promise.all([
+        fetchIpfsAddress(address, config),
+        fetchDataDim(address, config),
+        fetchCurrentPrice(address, config),
+        fetchComplexity(address, config)
+    ]);
 
     return {
         address,
@@ -418,9 +425,10 @@ export const removeKernel = (kernelAddress, publisherAddress, config = {}) => ne
 /**
  * Handle event KernelAdded
  * 
+ * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventKernelAdded = (config = {}) => new Promise((resolve, reject) => {
+export const eventKernelAdded = (options = {}, config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -440,7 +448,7 @@ export const eventKernelAdded = (config = {}) => new Promise((resolve, reject) =
     });
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    mar.events.KernelAdded()
+    mar.events.KernelAdded(options)
         .on('data', async res => {
 
             try {
@@ -462,9 +470,10 @@ export const eventKernelAdded = (config = {}) => new Promise((resolve, reject) =
 /**
  * Handle event KernelRemoved
  * 
+ * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventKernelRemoved = (config = {}) => new Promise((resolve, reject) => {
+export const eventKernelRemoved = (options = {}, config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -479,12 +488,12 @@ export const eventKernelRemoved = (config = {}) => new Promise((resolve, reject)
         'addresses.PandoraMarket': {
             type: 'string',
             code: ADDRESS_REQUIRED,
-            args: ['Kernel']
+            args: ['PandoraMarket']
         }
     });
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    mar.events.KernelRemoved()
+    mar.events.KernelRemoved(options)
         .on('data', async res => {
 
             resolve({

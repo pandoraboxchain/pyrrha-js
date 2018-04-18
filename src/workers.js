@@ -181,18 +181,26 @@ export const fetchActiveJobAddress = async (address, config = {}) => {
  */
 export const fetchWorker = async (address, config = {}) => {
     
-    const currentState = await fetchState(address, config);
-    const reputation = await fetchReputation(address, config);
+    const [
+        currentState,
+        reputation,
+        activeJob
+    ] = await Promise.all([
+        fetchState(address, config),
+        fetchReputation(address, config),
+        fetchActiveJobAddress(address, config)
+    ]);
 
-    let activeJob = await fetchActiveJobAddress(address, config);
-    let jobState;
+
+    let currentJob = activeJob;
+    let jobState;    
 
     // Check is not 0x0
     if (+activeJob !== 0) {
 
         jobState = await fetchJobState(activeJob, config);
     } else {
-        activeJob = null;
+        currentJob = null;
         jobState = -1;
     }
 
@@ -200,7 +208,7 @@ export const fetchWorker = async (address, config = {}) => {
         address,
         currentState,
         reputation,
-        currentJob: activeJob,
+        currentJob,
         currentJobStatus: jobState
     };
 };
@@ -269,9 +277,10 @@ export const fetchAll = async (config = {}) => {
 /**
  * Handle event WorkerNodeCreated
  * 
+ * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  */
-export const eventWorkerNodeCreated = (config = {}) => new Promise((resolve, reject) => {
+export const eventWorkerNodeCreated = (options = {}, config = {}) => new Promise((resolve, reject) => {
 
     expect.all(config, {
         'web3': {
@@ -291,7 +300,7 @@ export const eventWorkerNodeCreated = (config = {}) => new Promise((resolve, rej
     });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    pan.events.WorkerNodeCreated()
+    pan.events.WorkerNodeCreated(options)
         .on('data', async res => {
 
             try {

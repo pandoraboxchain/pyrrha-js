@@ -4,7 +4,7 @@
 
 Pandora Pyrrha functions and utilities library for JavaScript-based applications
 
-- Current version: 1.4
+- Current version: 1.5
 - [Release notes]('./docs/release-notes.md')
 
 ## Initialization and usage

@@ -102,7 +102,7 @@ describe('Kernels tests:', () => {
         expect(kernels.records.length).to.satisfy(val => val > 0);
     });
 
-    it.skip('#removeKernel should remove previously added kernel without errors', async () => {
+    it('#removeKernel should remove previously added kernel without errors', async () => {
         const options = {
             publisher, 
             dimension: 100, 
@@ -119,7 +119,7 @@ describe('Kernels tests:', () => {
         let addressAdded;
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
-        pjs.kernels.eventKernelAdded()
+        pjs.kernels.eventKernelAdded({})
             .then(result => {
                 expect(result.address === addressAdded).to.be.true;
                 clearTimeout(timeout);
@@ -142,11 +142,11 @@ describe('Kernels tests:', () => {
             .catch(reject);
     }));
 
-    it.skip('#eventKernelRemoved should handle KernelRemoved event', () => new Promise((resolve, reject) => {
+    it('#eventKernelRemoved should handle KernelRemoved event', () => new Promise((resolve, reject) => {
         let addressAdded;
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
-        pjs.kernels.eventKernelRemoved()
+        pjs.kernels.eventKernelRemoved({})
             .then(result => {
                 expect(result.address === addressAdded).to.be.true;
                 clearTimeout(timeout);
