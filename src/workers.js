@@ -279,8 +279,9 @@ export const fetchAll = async (config = {}) => {
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventWorkerNodeCreated = (options = {}, config = {}) => new Promise((resolve, reject) => {
+export const eventWorkerNodeCreated = (options = {}, config = {}) => {
 
     expect.all(config, {
         'web3': {
@@ -299,6 +300,22 @@ export const eventWorkerNodeCreated = (options = {}, config = {}) => new Promise
         }
     });
 
+    const callbacks = {
+        onData: () => {},
+        onError: () => {}
+    };
+
+    const chain = {
+        data: (cb = () => {}) => {
+            callbacks.onData = cb;
+            return chain;
+        },
+        error: (cb = () => {}) => {
+            callbacks.onError = cb;
+            return chain;
+        }
+    };
+
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.events.WorkerNodeCreated(options)
         .on('data', async res => {
@@ -306,27 +323,29 @@ export const eventWorkerNodeCreated = (options = {}, config = {}) => new Promise
             try {
 
                 const worker = await fetchWorker(res.returnValues.workerNode, config);
-                resolve({
+                callbacks.onData({
                     address: res.returnValues.workerNode,
                     worker,
                     status: 'created',
                     event: 'Pandora.WorkerNodeCreated'
                 });
             } catch(err) {
-                reject(err);
+                callbacks.onError(err);
             }            
         })
-        .on('error', reject);
-});
+        .on('error', callbacks.onError);
+
+    return chain;
+};
 
 /**
  * Handle event StateChanged for WorkerNode
  * 
  * @param {string} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {Object} 
+ * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventWorkerNodeStateChanged = (address, config = {}) => new Promise((resolve, reject) => {
+export const eventWorkerNodeStateChanged = (address, config = {}) => {
 
     expect.all(config, {
         'web3': {
@@ -340,6 +359,22 @@ export const eventWorkerNodeStateChanged = (address, config = {}) => new Promise
         }
     });
 
+    const callbacks = {
+        onData: () => {},
+        onError: () => {}
+    };
+
+    const chain = {
+        data: (cb = () => {}) => {
+            callbacks.onData = cb;
+            return chain;
+        },
+        error: (cb = () => {}) => {
+            callbacks.onError = cb;
+            return chain;
+        }
+    };
+
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
     wor.events.StateChanged()
         .on('data', async res => {
@@ -347,15 +382,17 @@ export const eventWorkerNodeStateChanged = (address, config = {}) => new Promise
             try {
 
                 const worker = await fetchWorker(res.returnValues.workerNode, config);
-                resolve({
+                callbacks.onData({
                     address: res.returnValues.workerNode,
                     worker,
                     status: 'changed',
                     event: 'WorkerNode.StateChanged'
                 });
             } catch(err) {
-                reject(err);
+                callbacks.onError(err);
             }
         })
-        .on('error', reject);
-});
+        .on('error', callbacks.onError);
+
+    return chain;
+};

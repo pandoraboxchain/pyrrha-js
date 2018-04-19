@@ -384,6 +384,7 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
  * @param {String} kernelAddress
  * @param {String} publisherAddress 
  * @param {Object} config Library config (provided by the proxy but can be overridden) 
+ * @returns {Promise} Promise object resolved to {String} contractAddress
  */
 export const removeKernel = (kernelAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
 
@@ -427,8 +428,9 @@ export const removeKernel = (kernelAddress, publisherAddress, config = {}) => ne
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventKernelAdded = (options = {}, config = {}) => new Promise((resolve, reject) => {
+export const eventKernelAdded = (options = {}, config = {}) => {
 
     expect.all(config, {
         'web3': {
@@ -447,6 +449,22 @@ export const eventKernelAdded = (options = {}, config = {}) => new Promise((reso
         }
     });
 
+    const callbacks = {
+        onData: () => {},
+        onError: () => {}
+    };
+
+    const chain = {
+        data: (cb = () => {}) => {
+            callbacks.onData = cb;
+            return chain;
+        },
+        error: (cb = () => {}) => {
+            callbacks.onError = cb;
+            return chain;
+        }
+    };
+
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.KernelAdded(options)
         .on('data', async res => {
@@ -454,26 +472,29 @@ export const eventKernelAdded = (options = {}, config = {}) => new Promise((reso
             try {
 
                 const kernel = await fetchKernel(res.returnValues.kernel, config);
-                resolve({
+                callbacks.onData({
                     address: res.returnValues.kernel,
                     kernel,
                     status: 'created',
                     event: 'PandoraMarket.KernelAdded'
                 });
             } catch(err) {
-                reject(err);
+                callbacks.onError(err);
             }            
         })
-        .on('error', reject);
-});
+        .on('error', callbacks.onError);
+
+    return chain;
+};
 
 /**
  * Handle event KernelRemoved
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventKernelRemoved = (options = {}, config = {}) => new Promise((resolve, reject) => {
+export const eventKernelRemoved = (options = {}, config = {}) => {
 
     expect.all(config, {
         'web3': {
@@ -492,15 +513,33 @@ export const eventKernelRemoved = (options = {}, config = {}) => new Promise((re
         }
     });
 
+    const callbacks = {
+        onData: () => {},
+        onError: () => {}
+    };
+
+    const chain = {
+        data: (cb = () => {}) => {
+            callbacks.onData = cb;
+            return chain;
+        },
+        error: (cb = () => {}) => {
+            callbacks.onError = cb;
+            return chain;
+        }
+    };
+
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.KernelRemoved(options)
         .on('data', async res => {
 
-            resolve({
+            callbacks.onData({
                 address: res.returnValues.kernel,
                 status: 'removed',
                 event: 'PandoraMarket.KernelRemoved'
             });            
         })
-        .on('error', reject);
-});
+        .on('error', callbacks.onError);
+
+    return chain;
+};

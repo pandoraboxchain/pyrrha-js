@@ -120,12 +120,12 @@ describe('Kernels tests:', () => {
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
         pjs.kernels.eventKernelAdded({})
-            .then(result => {
+            .data(result => {
                 expect(result.address === addressAdded).to.be.true;
                 clearTimeout(timeout);
                 resolve();
             })
-            .catch(reject);
+            .error(reject);
 
         const options = {
             publisher, 
@@ -147,12 +147,12 @@ describe('Kernels tests:', () => {
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
         pjs.kernels.eventKernelRemoved({})
-            .then(result => {
+            .data(result => {
                 expect(result.address === addressAdded).to.be.true;
                 clearTimeout(timeout);
                 resolve();
             })
-            .catch(reject);
+            .error(reject);
 
         const options = {
             publisher, 

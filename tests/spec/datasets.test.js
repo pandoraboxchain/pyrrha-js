@@ -121,12 +121,12 @@ describe('Datasets tests:', () => {
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
         pjs.datasets.eventDatasetAdded({})
-            .then(result => {
+            .data(result => {
                 expect(result.address === addressAdded).to.be.true;
                 clearTimeout(timeout);
                 resolve();
             })
-            .catch(reject);
+            .error(reject);
 
         const options = {
             publisher, 
@@ -148,12 +148,12 @@ describe('Datasets tests:', () => {
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
         pjs.datasets.eventDatasetRemoved({})
-            .then(result => {
+            .data(result => {
                 expect(result.address === addressAdded).to.be.true;
                 clearTimeout(timeout);
                 resolve();
             })
-            .catch(reject);
+            .error(reject);
 
         const options = {
             publisher, 

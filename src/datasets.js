@@ -463,8 +463,9 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventDatasetAdded = (options = {}, config = {}) => new Promise((resolve, reject) => {
+export const eventDatasetAdded = (options = {}, config = {}) => {
 
     expect.all(config, {
         'web3': {
@@ -483,6 +484,22 @@ export const eventDatasetAdded = (options = {}, config = {}) => new Promise((res
         }
     });
 
+    const callbacks = {
+        onData: () => {},
+        onError: () => {}
+    };
+
+    const chain = {
+        data: (cb = () => {}) => {
+            callbacks.onData = cb;
+            return chain;
+        },
+        error: (cb = () => {}) => {
+            callbacks.onError = cb;
+            return chain;
+        }
+    };
+
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.DatasetAdded(options)
         .on('data', async res => {
@@ -490,26 +507,29 @@ export const eventDatasetAdded = (options = {}, config = {}) => new Promise((res
             try {
 
                 const dataset = await fetchDataset(res.returnValues.dataset, config);
-                resolve({
+                callbacks.onData({
                     address: res.returnValues.dataset,
                     dataset,
                     status: 'created',
                     event: 'PandoraMarket.DatasetAdded'
                 });
             } catch(err) {
-                reject(err);
+                callbacks.onError(err);
             }            
         })
-        .on('error', reject);
-});
+        .on('error', callbacks.onError);
+
+    return chain;
+};
 
 /**
  * Handle event DatasetRemoved
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventDatasetRemoved = (options = {}, config = {}) => new Promise((resolve, reject) => {
+export const eventDatasetRemoved = (options = {}, config = {}) => {
 
     expect.all(config, {
         'web3': {
@@ -528,15 +548,33 @@ export const eventDatasetRemoved = (options = {}, config = {}) => new Promise((r
         }
     });
 
+    const callbacks = {
+        onData: () => {},
+        onError: () => {}
+    };
+
+    const chain = {
+        data: (cb = () => {}) => {
+            callbacks.onData = cb;
+            return chain;
+        },
+        error: (cb = () => {}) => {
+            callbacks.onError = cb;
+            return chain;
+        }
+    };
+
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     mar.events.DatasetRemoved(options)
         .on('data', async res => {
 
-            resolve({
+            callbacks.onData({
                 address: res.returnValues.dataset,
                 status: 'removed',
                 event: 'PandoraMarket.DatasetRemoved'
             });            
         })
-        .on('error', reject);
-});
+        .on('error', callbacks.onError);
+
+    return chain;
+};
