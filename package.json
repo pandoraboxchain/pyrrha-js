@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/pandoraboxchain/pyrrha-js",
   "dependencies": {
-    "debug": "^3.1.0",
     "ipfs-api": "^20.0.1",
     "web3": "1.0.0-beta.34"
   },
