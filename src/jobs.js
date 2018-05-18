@@ -258,10 +258,24 @@ export const fetchIpfsResults = async (address, config = {}) => {
         }
     });
 
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    const ipfsResults = await cog.methods
-        .ipfsResults()
-        .call();
+    // @fixme due to https://github.com/pandoraboxchain/pyrrha-consensus/issues/26 then uncomment the following
+
+    // const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+
+    // const ipfsResultsCount = await cog.methods
+    //     .ipfsResultsCount()
+    //     .call();
+
+    let ipfsResults = [];
+
+    // for (let i=0; i < ipfsResultsCount; i++) {
+        
+    //     const result = await cog.methods
+    //         .ipfsResults(i)
+    //         .call();
+
+    //     ipfsResults.push(result);        
+    // }    
 
     return ipfsResults;
 };
