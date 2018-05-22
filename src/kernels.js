@@ -61,6 +61,12 @@ export const fetchCount = async (config = {}) => {
  */
 export const fetchAddressById = async (id, config = {}) => {
 
+    expect.all({ id }, {
+        'id': {
+            type: 'number'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -95,6 +101,12 @@ export const fetchAddressById = async (id, config = {}) => {
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
 
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -123,6 +135,12 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchDataDim = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -153,6 +171,12 @@ export const fetchDataDim = async (address = '', config = {}) => {
  */
 export const fetchCurrentPrice = async (address = '', config = {}) => {
 
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -181,6 +205,12 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchComplexity = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -301,6 +331,24 @@ export const fetchAll = async (config = {}) => {
  */
 export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity, price }, config = {}) => {
 
+    expect.all({ kernelIpfsHash, publisher, dimension, complexity, price }, {
+        'kernelIpfsHash': {
+            type: 'string'
+        },
+        'publisher': {
+            type: 'address'
+        },
+        'dimension': {
+            type: 'number'
+        },
+        'complexity': {
+            type: 'number'
+        },
+        'price': {
+            type: 'number'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -337,6 +385,15 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
  * @returns {Promise} Promise object resolved to {string} contractAddress // can be null if used ganache-cli environment
  */
 export const addToMarket = (kernelContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
+
+    expect.all({ kernelContractAddress, publisherAddress }, {
+        'kernelContractAddress': {
+            type: 'address'
+        },
+        'publisherAddress': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -388,6 +445,15 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
  */
 export const removeKernel = (kernelAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
 
+    expect.all({ kernelAddress, publisherAddress }, {
+        'kernelAddress': {
+            type: 'address'
+        },
+        'publisherAddress': {
+            type: 'address'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -431,6 +497,12 @@ export const removeKernel = (kernelAddress, publisherAddress, config = {}) => ne
  * @returns {Object} Object with chained callbacks #data and #error
  */
 export const eventKernelAdded = (options = {}, config = {}) => {
+
+    expect.all({ options }, {
+        'options': {
+            type: 'object'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -495,6 +567,12 @@ export const eventKernelAdded = (options = {}, config = {}) => {
  * @returns {Object} Object with chained callbacks #data and #error
  */
 export const eventKernelRemoved = (options = {}, config = {}) => {
+
+    expect.all({ options }, {
+        'options': {
+            type: 'object'
+        }
+    });
 
     expect.all(config, {
         'web3': {

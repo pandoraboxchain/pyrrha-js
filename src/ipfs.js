@@ -48,6 +48,18 @@ export const loadFile = (file) => {
  */
 export const add = async (buffer, loadedFile, progressCb = () => {}, config = {}) => {
 
+    expect.all({ buffer, loadedFile, progressCb }, {
+        'buffer': {
+            type: 'object'
+        },
+        'loadedFile': {
+            type: 'object'
+        },
+        'progressCb': {
+            type: 'function'
+        }
+    });
+
     expect.all(config, {
         'ipfs': {
             type: 'object',
@@ -76,6 +88,15 @@ export const add = async (buffer, loadedFile, progressCb = () => {}, config = {}
  */
 export const submitFile = async (file, progressCb = () => {}, config = {}) => {
 
+    expect.all({ file, progressCb }, {
+        'file': {
+            type: 'object'
+        },
+        'progressCb': {
+            type: 'function'
+        }
+    });
+
     expect.all(config, {
         'ipfs': {
             type: 'object',
@@ -99,6 +120,18 @@ export const submitFile = async (file, progressCb = () => {}, config = {}) => {
  * @returns 
  */
 export const submitJson = async (jsonString, fileInfo, progressCb = () => {}, config = {}) => {
+
+    expect.all({ jsonString, fileInfo, progressCb }, {
+        'jsonString': {
+            type: 'string'
+        },
+        'fileInfo': {
+            type: 'object'
+        },
+        'progressCb': {
+            type: 'function'
+        }
+    });
 
     const buffer = Buffer.from(jsonString);
     fileInfo.size = buffer.length;

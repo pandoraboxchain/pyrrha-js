@@ -79,8 +79,8 @@ class Pjs {
             Dataset  // contract json
         },
         addresses: {
-            pandora: '0x58e66b79928cfb362b53c185a6a1fded882bb07d',
-            market: '0x6142029abb21ef2e0bffde8d43f15c64f3750fe6'
+            Pandora: '0x58e66b79928cfb362b53c185a6a1fded882bb07d',
+            PandoraMarket: '0x6142029abb21ef2e0bffde8d43f15c64f3750fe6'
         }
     }
      

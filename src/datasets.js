@@ -61,6 +61,12 @@ export const fetchCount = async (config = {}) => {
  */
 export const fetchAddressById = async (id, config = {}) => {
 
+    expect.all({ id }, {
+        'id': {
+            type: 'number'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -95,6 +101,12 @@ export const fetchAddressById = async (id, config = {}) => {
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
 
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -123,6 +135,12 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchDataDim = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -153,6 +171,12 @@ export const fetchDataDim = async (address = '', config = {}) => {
  */
 export const fetchCurrentPrice = async (address = '', config = {}) => {
 
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -181,6 +205,12 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
  * @returns {Promise} A Promise object represents the {number}
  */
 export const fetchSamplesCount = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -211,6 +241,12 @@ export const fetchSamplesCount = async (address = '', config = {}) => {
  */
 export const fetchBatchesCount = async (address = '', config = {}) => {
 
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -240,6 +276,12 @@ export const fetchBatchesCount = async (address = '', config = {}) => {
  */
 export const fetchDataset = async (address = '', config = {}) => {
 
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
     const [
         ipfsAddress,
         dataDim,
@@ -267,12 +309,12 @@ export const fetchDataset = async (address = '', config = {}) => {
 /**
  * Get dataset by id
  * 
- * @param {integer} id 
+ * @param {number} id 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object}
  */
 export const fetchDatasetById = async (id, config = {}) => {
-    
+
     const address = await fetchAddressById(id, config);
     const dataset = await fetchDataset(address, config);
 
@@ -333,6 +375,15 @@ export const fetchAll = async (config = {}) => {
  */
 export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price }, config = {}) => {
 
+    expect.all({ datasetIpfsHash, batchesCount }, {
+        'datasetIpfsHash': {
+            type: 'string'
+        },
+        'batchesCount': {
+            type: 'number'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -373,6 +424,15 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
  * @returns {Promise} Promise object resolved to {string} contractAddress
  */
 export const addToMarket = (datasetContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
+
+    expect.all({ datasetContractAddress, publisherAddress }, {
+        'datasetContractAddress': {
+            type: 'address'
+        },
+        'publisherAddress': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -423,6 +483,15 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
  */
 export const removeDataset = (datasetAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
 
+    expect.all({ datasetAddress, publisherAddress }, {
+        'datasetAddress': {
+            type: 'address'
+        },
+        'publisherAddress': {
+            type: 'address'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -466,6 +535,12 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
  * @returns {Object} Object with chained callbacks #data and #error
  */
 export const eventDatasetAdded = (options = {}, config = {}) => {
+
+    expect.all({ options }, {
+        'options': {
+            type: 'object'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -530,6 +605,12 @@ export const eventDatasetAdded = (options = {}, config = {}) => {
  * @returns {Object} Object with chained callbacks #data and #error
  */
 export const eventDatasetRemoved = (options = {}, config = {}) => {
+
+    expect.all({ options }, {
+        'options': {
+            type: 'object'
+        }
+    });
 
     expect.all(config, {
         'web3': {

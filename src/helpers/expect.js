@@ -25,7 +25,7 @@ export const all = (options = {}, model = {}) => {
     for (let key of Object.keys(model)) {
 
         let value = key.split('.').reduce((acc, part) => {
-            return acc[part] ? acc[part] : null;
+            return acc[part] !== undefined ? acc[part] : null;
         }, options);
 
         if (model[key].type && model[key].type === 'address' && !(new RegExp('^0x[a-fA-F0-9]{40}$').test(value))) {
@@ -39,7 +39,7 @@ export const all = (options = {}, model = {}) => {
             ]);
         }
 
-        if (!value || (model[key].type && model[key].type !== 'address' && typeof value !== model[key].type)) {
+        if (model[key].type && model[key].type !== 'address' && typeof value !== model[key].type) {
 
             throw PjsError.apply(undefined, [
                 model[key].code || WRONG_TYPE, 

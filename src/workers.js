@@ -61,6 +61,12 @@ export const fetchCount = async (config = {}) => {
  */
 export const fetchAddressById = async (id, config = {}) => {
 
+    expect.all({ id }, {
+        'id': {
+            type: 'number'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -93,7 +99,13 @@ export const fetchAddressById = async (id, config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
-export const fetchState = async (address, config = {}) => {
+export const fetchState = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -122,7 +134,13 @@ export const fetchState = async (address, config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
-export const fetchReputation = async (address, config = {}) => {
+export const fetchReputation = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -151,7 +169,13 @@ export const fetchReputation = async (address, config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {string}
  */
-export const fetchActiveJobAddress = async (address, config = {}) => {
+export const fetchActiveJobAddress = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -180,7 +204,7 @@ export const fetchActiveJobAddress = async (address, config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object}
  */
-export const fetchWorker = async (address, config = {}) => {
+export const fetchWorker = async (address = '', config = {}) => {
     
     const [
         currentState,
@@ -284,6 +308,12 @@ export const fetchAll = async (config = {}) => {
  */
 export const eventWorkerNodeCreated = (options = {}, config = {}) => {
 
+    expect.all({ options }, {
+        'options': {
+            type: 'object'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -346,7 +376,13 @@ export const eventWorkerNodeCreated = (options = {}, config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventWorkerNodeStateChanged = (address, config = {}) => {
+export const eventWorkerNodeStateChanged = (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
 
     expect.all(config, {
         'web3': {
@@ -410,10 +446,10 @@ export const alive = (workerNodeAddress, from, config = {}) => new Promise((reso
 
     expect.all({ workerNodeAddress, from }, {
         'workerNodeAddress': {
-            type: 'string'
+            type: 'address'
         },
         'from': {
-            type: 'string'
+            type: 'address'
         }
     });
 
