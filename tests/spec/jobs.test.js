@@ -79,7 +79,7 @@ describe('Jobs tests:', () => {
     it('#create should create a cognitive job', async () => {
         await pjs.pandora.whitelistWorkerOwner(publisher, accounts[2]);
         const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[2]);
-        const res = await pjs.workers.alive(workerNodeAddress, accounts[2]);
+        await pjs.workers.alive(workerNodeAddress, accounts[2]);
         const jobContractAddress = await pjs.jobs.create(kernelContractAddress, datasetContractAddress, accounts[3]);
         expect(jobContractAddress).to.be.a('string');
     });
