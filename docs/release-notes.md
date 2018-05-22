@@ -1,6 +1,7 @@
 # Release Notes
 
 ## 1.6.x
+- expectation helper improvement, added ethereum address validation
 - new method: pandora.whitelistWorkerOwner
 - new method: pandora.createWorkerNode
 - new method: workers.alive

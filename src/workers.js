@@ -38,7 +38,7 @@ export const fetchCount = async (config = {}) => {
             args: ['Pandora']
         },
         'addresses.Pandora': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Pandora']
         }
@@ -72,7 +72,7 @@ export const fetchAddressById = async (id, config = {}) => {
             args: ['Pandora']
         },
         'addresses.Pandora': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Pandora']
         }
@@ -295,7 +295,7 @@ export const eventWorkerNodeCreated = (options = {}, config = {}) => {
             args: ['Pandora']
         },
         'addresses.Pandora': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Pandora']
         }

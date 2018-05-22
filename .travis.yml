@@ -7,5 +7,27 @@ node_js:
 services:
   - docker
 
-script:
-  - npm run test-with-coverage
+branches:
+  only:
+    - master
+    - develop
+    - "/^v\\d+\\.\\d+\\.\\d+(-\\w+)?$/"
+
+stages:
+  - test
+  - deploy
+
+jobs:
+  include:
+    - stage: test
+      script:
+        - set -e
+        - npm run test-with-coverage
+        - set +e
+    - stage: deploy
+      if: tag IS present
+      script:
+        - set -e
+        - npm link
+        - npx ghu issue -k "$GITHUB_API_TOKEN" -o pandoraboxchain -r pyrrha-webclient,pyrrha-boxproxy -t "pyrrha-js version update required" -b "pyrrha-js package was updated to version $tag, project dependency should be updated too"
+        - set +e

@@ -38,7 +38,7 @@ export const fetchCount = async (config = {}) => {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['PandoraMarket']
         }
@@ -72,7 +72,7 @@ export const fetchAddressById = async (id, config = {}) => {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Market']
         }
@@ -385,7 +385,7 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Market']
         },
@@ -434,7 +434,7 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Kernel']
         }
@@ -478,7 +478,7 @@ export const eventDatasetAdded = (options = {}, config = {}) => {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Market']
         }
@@ -542,7 +542,7 @@ export const eventDatasetRemoved = (options = {}, config = {}) => {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['PandoraMarket']
         }

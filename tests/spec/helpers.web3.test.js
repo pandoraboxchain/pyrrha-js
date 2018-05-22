@@ -79,6 +79,6 @@ describe('Helper #web3 tests:', () => {
         expect(kernelContractAddress).to.be.a('string');
         expect(kernelContractAddress).to.satisfy(address => {
             return new RegExp('^0x[a-fA-F0-9]{40}$').test(address);
-        }, 'math to ethereum address regexp');
+        }, 'matсh to ethereum address regexp');
     });
 });

@@ -10,27 +10,27 @@
 'use strict';
 
 export const OPTIONS_REQUIRED = 'OPTIONS_REQUIRED';
-export const SPECIFIC_ADDRESS_REQUIRED = 'SPECIFIC_ADDRESS_REQUIRED';
+export const WRONG_TYPE = 'WRONG_TYPE';
+export const ADDRESS_REQUIRED = 'ADDRESS_REQUIRED';
 export const WEB3_REQUIRED = 'WEB3_REQUIRED';
 export const WEB3_NOT_CONNECTED = 'WEB3_NOT_CONNECTED';
 export const CONTRACT_REQUIRED = 'CONTRACT_REQUIRED';
-export const ADDRESS_REQUIRED = 'ADDRESS_REQUIRED';
 export const IPFS_REQUIRED = 'IPFS_REQUIRED';
 export const IPFS_NOT_CONNECTED = 'IPFS_NOT_CONNECTED';
 export const WEB3_METAMASK_REQUIRED = 'WEB3_METAMASK_REQUIRED';
 export const TRANSACTION_UNSUCCESSFUL = 'TRANSACTION_UNSUCCESSFUL';
 export const FAILURE_EVENT = 'FAILURE_EVENT';
 
-export default (code, ...args) => {
+export default (code, key, type, value, ...args) => {
     let message = 'Unknown error';
-
+        
     switch (code) {
-        case SPECIFIC_ADDRESS_REQUIRED:
-            message = `Address required ${args[0] ? '(' + args[0] + ')' : ''}`;
-            break;
-
         case OPTIONS_REQUIRED:
             message = 'Config options is required and expected to be an object';
+            break;
+
+        case WRONG_TYPE:
+            message = `Wrong property type. Expected '${key}' to be: '${type}', but got: '${value}'`;
             break;
 
         case WEB3_REQUIRED:
@@ -46,11 +46,11 @@ export default (code, ...args) => {
             break;
 
         case CONTRACT_REQUIRED:
-            message = `Contract "${args[0]}" is required`;
+            message = `Contract '${args[0]}' is required`;
             break;
 
         case ADDRESS_REQUIRED:
-            message = `Address of "${args[0]}" contract is required`;
+            message = `Address of '${args[0] || key}' is required. Wrong ethereum address: ${value}`;
             break;
 
         case IPFS_REQUIRED:

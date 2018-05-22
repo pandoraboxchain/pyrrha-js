@@ -10,7 +10,9 @@
 'use strict';
 
 import PjsError, {
-    OPTIONS_REQUIRED
+    OPTIONS_REQUIRED,
+    WRONG_TYPE,
+    ADDRESS_REQUIRED
 } from './errors';
 
 export const all = (options = {}, model = {}) => {
@@ -26,9 +28,26 @@ export const all = (options = {}, model = {}) => {
             return acc[part] ? acc[part] : null;
         }, options);
 
-        if (!value || (model[key].type && typeof value !== model[key].type)) {
+        if (model[key].type && model[key].type === 'address' && !(new RegExp('^0x[a-fA-F0-9]{40}$').test(value))) {
 
-            throw PjsError.apply(undefined, [...[model[key].code], ...(model[key].args ? model[key].args : [])]);
+            throw PjsError.apply(undefined, [
+                model[key].code || ADDRESS_REQUIRED, 
+                key, 
+                model[key].type, 
+                value,
+                ...(model[key].args ? model[key].args : [undefined])
+            ]);
+        }
+
+        if (!value || (model[key].type && model[key].type !== 'address' && typeof value !== model[key].type)) {
+
+            throw PjsError.apply(undefined, [
+                model[key].code || WRONG_TYPE, 
+                key, 
+                model[key].type, 
+                value,
+                ...(model[key].args ? model[key].args : [undefined])
+            ]);
         }
     }
 };

@@ -38,7 +38,7 @@ export const fetchCount = async (config = {}) => {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['PandoraMarket']
         }
@@ -72,7 +72,7 @@ export const fetchAddressById = async (id, config = {}) => {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['PandoraMarket']
         }
@@ -349,7 +349,7 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Kernel']
         },
@@ -399,7 +399,7 @@ export const removeKernel = (kernelAddress, publisherAddress, config = {}) => ne
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Kernel']
         }
@@ -443,7 +443,7 @@ export const eventKernelAdded = (options = {}, config = {}) => {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Kernel']
         }
@@ -507,7 +507,7 @@ export const eventKernelRemoved = (options = {}, config = {}) => {
             args: ['PandoraMarket']
         },
         'addresses.PandoraMarket': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['PandoraMarket']
         }

@@ -45,7 +45,7 @@ export const fetchActiveCount = async (config = {}) => {
             args: ['Pandora']
         },
         'addresses.Pandora': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Pandora']
         }
@@ -79,7 +79,7 @@ export const fetchAddressById = async (id, config = {}) => {
             args: ['Pandora']
         },
         'addresses.Pandora': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Pandora']
         }
@@ -400,13 +400,13 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
 
     expect.all({ kernelAddress, datasetAddress, from }, {
         'kernelAddress': {
-            type: 'string'
+            type: 'address'
         },
         'datasetAddress': {
-            type: 'string'
+            type: 'address'
         },
         'from': {
-            type: 'string'
+            type: 'address'
         }
     });
 
@@ -421,7 +421,7 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
             args: ['Pandora']
         },
         'addresses.Pandora': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Pandora']
         }
@@ -473,7 +473,7 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
             args: ['Pandora']
         },
         'addresses.Pandora': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Pandora']
         }

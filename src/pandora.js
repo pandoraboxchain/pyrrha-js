@@ -13,7 +13,6 @@ import pjsError, {
     WEB3_REQUIRED,
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
-    SPECIFIC_ADDRESS_REQUIRED,
     TRANSACTION_UNSUCCESSFUL
 } from './helpers/errors';
 
@@ -36,7 +35,7 @@ export const version = async (config = {}) => {
             args: ['Pandora']
         },
         'addresses.Pandora': {
-            type: 'string',
+            type: 'address',
             code: ADDRESS_REQUIRED,
             args: ['Pandora']
         }
@@ -61,13 +60,13 @@ export const whitelistWorkerOwner = (publisher, ownerAddress, config = {}) => ne
     
     expect.all({ publisher, ownerAddress }, {
         'publisher': {
-            type: 'string',
-            code: SPECIFIC_ADDRESS_REQUIRED,
+            type: 'address',
+            code: ADDRESS_REQUIRED,
             args: ['Pandora contract owner']
         },
         'ownerAddress': {
-            type: 'string',
-            code: SPECIFIC_ADDRESS_REQUIRED,
+            type: 'address',
+            code: ADDRESS_REQUIRED,
             args: ['WorkerNode owner']
         }
     });
@@ -108,8 +107,8 @@ export const createWorkerNode = (publisher, config = {}) => new Promise((resolve
 
     expect.all({ publisher }, {
         'publisher': {
-            type: 'string',
-            code: SPECIFIC_ADDRESS_REQUIRED,
+            type: 'address',
+            code: ADDRESS_REQUIRED,
             args: ['Pandora contract owner']
         }
     });
