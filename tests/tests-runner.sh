@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Exit script as soon as a command fails.
+set -o errexit
+
 if [ "$WITH_COVERAGE" -eq 0 ]; then 
     echo "Running tests without coverage"
     npx mocha --require @babel/register -R spec --timeout 70000 ./tests/spec/**/*.test.js

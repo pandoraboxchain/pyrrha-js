@@ -10,6 +10,7 @@
 'use strict';
 
 export const OPTIONS_REQUIRED = 'OPTIONS_REQUIRED';
+export const SPECIFIC_ADDRESS_REQUIRED = 'SPECIFIC_ADDRESS_REQUIRED';
 export const WEB3_REQUIRED = 'WEB3_REQUIRED';
 export const WEB3_NOT_CONNECTED = 'WEB3_NOT_CONNECTED';
 export const CONTRACT_REQUIRED = 'CONTRACT_REQUIRED';
@@ -18,11 +19,16 @@ export const IPFS_REQUIRED = 'IPFS_REQUIRED';
 export const IPFS_NOT_CONNECTED = 'IPFS_NOT_CONNECTED';
 export const WEB3_METAMASK_REQUIRED = 'WEB3_METAMASK_REQUIRED';
 export const TRANSACTION_UNSUCCESSFUL = 'TRANSACTION_UNSUCCESSFUL';
+export const FAILURE_EVENT = 'FAILURE_EVENT';
 
 export default (code, ...args) => {
     let message = 'Unknown error';
 
     switch (code) {
+        case SPECIFIC_ADDRESS_REQUIRED:
+            message = `Address required ${args[0] ? '(' + args[0] + ')' : ''}`;
+            break;
+
         case OPTIONS_REQUIRED:
             message = 'Config options is required and expected to be an object';
             break;
@@ -58,9 +64,14 @@ export default (code, ...args) => {
         case TRANSACTION_UNSUCCESSFUL:
             message = 'Transaction was unsuccessful';
             break;
+
+        case FAILURE_EVENT:
+            message = 'Contract returns an failure event';
+            break;
     }
 
     const err = new Error(message);
     err.code = code || 'UNKNOWN';
+    err.args = args;
     return err;
 };

@@ -2,7 +2,7 @@
 
 const { expect } = require('chai');
 const web3Helper = require('../../src/helpers/web3');
-const ContractsNode = require('../contracts')();
+const ContractsNode = require('../contracts');
 const Pjs = require('../../src');
 
 describe('Helper #web3 tests:', () => {
@@ -21,26 +21,24 @@ describe('Helper #web3 tests:', () => {
         price: 100
     };
 
-    before(() => ContractsNode
-        .then(node => {
+    before(async () => {
+        const node = await ContractsNode();
+        
+        server = node.node;
+        provider = node.provider;
+        contracts = node.contracts;
+        addresses = node.addresses;
+        publisher = node.publisher;
+        kernelOptions.publisher = publisher;
 
-            server = node.node;
-            provider = node.provider;
-            contracts = node.contracts;
-            addresses = node.addresses;
-            publisher = node.publisher;
-            kernelOptions.publisher = publisher;
-
-            pjs = new Pjs({
-                eth: {
-                    provider
-                },
-                contracts,
-                addresses
-            });
-
-            return;
-        }));
+        pjs = new Pjs({
+            eth: {
+                provider
+            },
+            contracts,
+            addresses
+        });
+    });
 
     after(done => server.close(done));
 

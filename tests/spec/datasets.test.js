@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect } = require('chai');
-const ContractsNode = require('../contracts')();
+const ContractsNode = require('../contracts');
 const Pjs = require('../../src');
 
 describe('Datasets tests:', () => {
@@ -21,37 +21,35 @@ describe('Datasets tests:', () => {
         price: 100
     };
     let datasetContractAddress;
-    
-    before(() => ContractsNode
-        .then(node => {
 
-            server = node.node;
-            provider = node.provider;
-            contracts = node.contracts;
-            addresses = node.addresses;
-            publisher = node.publisher;
-            datasetOptions.publisher = publisher;
+    before('Setup', async () => {
+        const node = await ContractsNode();
 
-            pjs = new Pjs({
-                eth: {
-                    provider
-                },
-                contracts,
-                addresses
-            });
+        server = node.node;
+        provider = node.provider;
+        contracts = node.contracts;
+        addresses = node.addresses;
+        publisher = node.publisher;
+        datasetOptions.publisher = publisher;
 
-            return pjs;
-        })
-        .then(pjs => pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions))
-        .then(address => {
-            datasetContractAddress = address;
-        }));
+        pjs = new Pjs({
+            eth: {
+                provider
+            },
+            contracts,
+            addresses
+        });
+
+        datasetContractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions);
+        await pjs.datasets.addToMarket(datasetContractAddress, publisher);
+    });
 
     after(done => server.close(done));
 
     it('#fetchCount should return a number', async () => {
         const count = await pjs.datasets.fetchCount();
         expect(count).to.be.a('number');
+        expect(count > 0).to.be.true;
     });
 
     it('#fetchAddressById', async () => {
@@ -64,8 +62,9 @@ describe('Datasets tests:', () => {
     });
 
     it('#addToMarket should resolved to an address of the added to the PandoraMarket contract', async () => {
-        const addedContractAddress = await pjs.datasets.addToMarket(datasetContractAddress, publisher);
-        expect(datasetContractAddress).to.be.equal(addedContractAddress);
+        const contractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions);
+        const addedContractAddress = await pjs.datasets.addToMarket(contractAddress, publisher);
+        expect(contractAddress).to.be.equal(addedContractAddress);
     });
 
     it('#fetchIpfsAddress shuld fetch a ipfs hash of a previously added dataset', async () => {

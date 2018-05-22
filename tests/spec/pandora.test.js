@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect } = require('chai');
-const ContractsNode = require('../contracts')();
+const ContractsNode = require('../contracts');
 const Pjs = require('../../src');
 
 describe('Pandora tests:', () => {
@@ -11,25 +11,23 @@ describe('Pandora tests:', () => {
     let provider;
     let contracts;
     let addresses;
-    
-    before(() => ContractsNode
-        .then(node => {
 
-            server = node.node;
-            provider = node.provider;
-            contracts = node.contracts;
-            addresses = node.addresses;
+    before('Setup', async () => {
+        const node = await ContractsNode();
 
-            pjs = new Pjs({
-                eth: {
-                    provider
-                },
-                contracts,
-                addresses
-            });
+        server = node.node;
+        provider = node.provider;
+        contracts = node.contracts;
+        addresses = node.addresses;
 
-            return;
-        }));
+        pjs = new Pjs({
+            eth: {
+                provider
+            },
+            contracts,
+            addresses
+        });
+    });
 
     after(done => server.close(done));
 

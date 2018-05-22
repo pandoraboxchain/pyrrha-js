@@ -10,10 +10,11 @@
 'use strict';
 
 import * as expect from './helpers/expect';
-import {
+import pjsError, {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
-    WEB3_REQUIRED
+    WEB3_REQUIRED,
+    TRANSACTION_UNSUCCESSFUL
 } from './helpers/errors';
 
 import { fetchState as fetchJobState } from './jobs';
@@ -396,3 +397,53 @@ export const eventWorkerNodeStateChanged = (address, config = {}) => {
 
     return chain;
 };
+
+/**
+ * Transition of a WorkerNode to the Idle state
+ * 
+ * @param {String} workerNodeAddress 
+ * @param {String} from
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} Promise object resolved to add status (boolean)
+ */
+export const alive = (workerNodeAddress, from, config = {}) => new Promise((resolve, reject) => {
+
+    expect.all({ workerNodeAddress, from }, {
+        'workerNodeAddress': {
+            type: 'string'
+        },
+        'from': {
+            type: 'string'
+        }
+    });
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.WorkerNode.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['WorkerNode']
+        }
+    });
+
+    const wrn = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, workerNodeAddress);
+    wrn.methods
+        .alive()
+        .send({
+            from,
+            gas: 6700000
+        })
+        .on('error', reject)
+        .on('receipt', receipt => {
+
+            if (Number(receipt.status) === 0) {
+
+                return reject(pjsError(TRANSACTION_UNSUCCESSFUL));
+            }
+
+            resolve(receipt);
+        });
+});

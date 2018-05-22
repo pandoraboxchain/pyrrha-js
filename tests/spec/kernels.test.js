@@ -1,11 +1,11 @@
 'use strict';
 
 const { expect } = require('chai');
-const ContractsNode = require('../contracts')();
+const ContractsNode = require('../contracts');
 const Pjs = require('../../src');
 
 describe('Kernels tests:', () => {
-
+    
     let pjs;
     let server;
     let provider;
@@ -20,37 +20,35 @@ describe('Kernels tests:', () => {
         price: 100
     };
     let kernelContractAddress;
-    
-    before(() => ContractsNode
-        .then(node => {
 
-            server = node.node;
-            provider = node.provider;
-            contracts = node.contracts;
-            addresses = node.addresses;
-            publisher = node.publisher;
-            kernelOptions.publisher = publisher;
+    before('Setup', async () => {
+        const node = await ContractsNode();
 
-            pjs = new Pjs({
-                eth: {
-                    provider
-                },
-                contracts,
-                addresses
-            });
+        server = node.node;
+        provider = node.provider;
+        contracts = node.contracts;
+        addresses = node.addresses;
+        publisher = node.publisher;
+        kernelOptions.publisher = publisher;
 
-            return pjs;
-        })
-        .then(pjs => pjs.kernels.deploy(kernelIpfsHash, kernelOptions))
-        .then(address => {
-            kernelContractAddress = address;
-        }));
+        pjs = new Pjs({
+            eth: {
+                provider
+            },
+            contracts,
+            addresses
+        });
+
+        kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, kernelOptions);
+        await pjs.kernels.addToMarket(kernelContractAddress, publisher);
+    });
 
     after(done => server.close(done));
 
     it('#fetchCount should return a number', async () => {
         const count = await pjs.kernels.fetchCount();
         expect(count).to.be.a('number');
+        expect(count > 0).to.be.true;
     });
 
     it('#fetchAddressById', async () => {
@@ -63,8 +61,9 @@ describe('Kernels tests:', () => {
     });
 
     it('#addToMarket should resolved to an address of the added to the PandoraMarket contract', async () => {
-        const addedContractAddress = await pjs.kernels.addToMarket(kernelContractAddress, publisher);
-        expect(kernelContractAddress).to.be.equal(addedContractAddress);
+        const contractAddress = await pjs.kernels.deploy(kernelIpfsHash, kernelOptions);
+        const addedContractAddress = await pjs.kernels.addToMarket(contractAddress, publisher);
+        expect(contractAddress).to.be.equal(addedContractAddress);
     });
 
     it('#fetchIpfsAddress shuld fetch a ipfs hash of a previously added kernel', async () => {

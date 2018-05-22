@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.6.x
+- new method: pandora.whitelistWorkerOwner
+- new method: pandora.createWorkerNode
+- new method: workers.alive
+
 ## 1.5.x
 - added "options" argument to events handlers
 - optimized async methods usage

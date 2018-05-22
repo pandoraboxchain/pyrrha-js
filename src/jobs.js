@@ -14,7 +14,8 @@ import pjsError, {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
     WEB3_REQUIRED,
-    TRANSACTION_UNSUCCESSFUL
+    TRANSACTION_UNSUCCESSFUL,
+    FAILURE_EVENT
 } from './helpers/errors';
 
 import {
@@ -258,24 +259,22 @@ export const fetchIpfsResults = async (address, config = {}) => {
         }
     });
 
-    // @fixme due to https://github.com/pandoraboxchain/pyrrha-consensus/issues/26 then uncomment the following
+    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
 
-    // const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-
-    // const ipfsResultsCount = await cog.methods
-    //     .ipfsResultsCount()
-    //     .call();
+    const ipfsResultsCount = await cog.methods
+        .ipfsResultsCount()
+        .call();
 
     let ipfsResults = [];
 
-    // for (let i=0; i < ipfsResultsCount; i++) {
+    for (let i=0; i < ipfsResultsCount; i++) {
         
-    //     const result = await cog.methods
-    //         .ipfsResults(i)
-    //         .call();
+        const result = await cog.methods
+            .ipfsResults(i)
+            .call();
 
-    //     ipfsResults.push(result);        
-    // }    
+        ipfsResults.push(result);        
+    }    
 
     return ipfsResults;
 };
@@ -399,6 +398,18 @@ export const fetchJobStore = async (address, config = {}) => {
  */
 export const create = (kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
 
+    expect.all({ kernelAddress, datasetAddress, from }, {
+        'kernelAddress': {
+            type: 'string'
+        },
+        'datasetAddress': {
+            type: 'string'
+        },
+        'from': {
+            type: 'string'
+        }
+    });
+
     expect.all(config, {
         'web3': {
             type: 'object',
@@ -420,7 +431,8 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
     pan.methods
         .createCognitiveJob(kernelAddress, datasetAddress)
         .send({
-            from
+            from,
+            gas: 6700000// because this workflow is too greedy
         })
         .on('error', reject)
         .on('receipt', receipt => {
@@ -430,7 +442,14 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
                 return reject(pjsError(TRANSACTION_UNSUCCESSFUL));
             }
 
-            resolve(receipt.contractAddress);
+            if (receipt.events.CognitiveJobCreateFailed) {
+
+                return reject(pjsError(FAILURE_EVENT, {
+                    'CognitiveJobCreateFailed': receipt.events.CognitiveJobCreateFailed
+                }));
+            }
+
+            resolve(receipt.events.CognitiveJobCreated.returnValues.cognitiveJob);
         });
 });
 

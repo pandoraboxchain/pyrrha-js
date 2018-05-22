@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect } = require('chai');
-const ContractsNode = require('../contracts')();
+const ContractsNode = require('../contracts');
 const Pjs = require('../../src');
 
 import {
@@ -28,27 +28,25 @@ describe('Core tests:', () => {
     let contracts;
     let addresses;
 
-    before(() => ContractsNode
-        .then(node => {
+    before('Setup', async () => {
+        const node = await ContractsNode();
 
-            server = node.node;
-            provider = node.provider;
-            contracts = node.contracts;
-            addresses = node.addresses;
+        server = node.node;
+        provider = node.provider;
+        contracts = node.contracts;
+        addresses = node.addresses;
 
-            pjs = new Pjs({
-                eth: {
-                    provider
-                },
-                ipfs: {
-                    ...defaultIpfsConfig
-                },
-                contracts,
-                addresses
-            });
-
-            return;
-        }));
+        pjs = new Pjs({
+            eth: {
+                provider
+            },
+            ipfs: {
+                ...defaultIpfsConfig
+            },
+            contracts,
+            addresses
+        });
+    });
 
     after(done => server.close(done));
 

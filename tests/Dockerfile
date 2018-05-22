@@ -5,6 +5,7 @@ LABEL maintainer="kostysh@gmail.com"
 ARG PYRRHA_CONSENSUS_BRANCH=master
 ARG WITH_COVERAGE=0
 ENV WITH_COVERAGE=$WITH_COVERAGE
+ENV NODE_ENV=testing
 
 RUN mkdir /pyrrha-js
 COPY ./package.json /pyrrha-js/package.json
@@ -13,8 +14,8 @@ COPY ./package.json /pyrrha-js/package.json
 WORKDIR /pyrrha-js
 RUN npm i --silent && \ 
     npm i \ 
-        ganache-sandbox@https://github.com/pandoraboxchain/ganache-sandbox.git#v0.1.1 \
-        zeppelin-solidity \
+        ganache-sandbox@https://github.com/pandoraboxchain/ganache-sandbox.git#v0.3.0 \
+        openzeppelin-solidity \
         mocha \
         mocha-lcov-reporter \
         chai \
@@ -24,8 +25,8 @@ RUN npm i --silent && \
 # Fetching of contracts sources
 WORKDIR /
 RUN git clone -b "$PYRRHA_CONSENSUS_BRANCH" https://github.com/pandoraboxchain/pyrrha-consensus.git /pyrrha-consensus && \
-    mkdir /pyrrha-js/contracts && cp -r /pyrrha-consensus/contracts /pyrrha-js/contracts && \
-    mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations /pyrrha-js/migrations
+    mkdir /pyrrha-js/contracts && cp -r /pyrrha-consensus/contracts/* /pyrrha-js/contracts && \
+    mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations/* /pyrrha-js/migrations
 
 COPY ./src /pyrrha-js/src
 COPY ./dist /pyrrha-js/dist

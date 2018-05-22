@@ -33,7 +33,7 @@ export const estimateGas = async (bytecode, args, config = {}) => {
 
     return await config.web3.eth.estimateGas({
         data: bytecode,
-        arguments: args
+        arguments: args// @fixme It seems latest web3 do not require arguments as option
     });
 };
 
