@@ -18,7 +18,9 @@ describe('Datasets tests:', () => {
     const datasetOptions = {
         dimension: 100, 
         samples: 10, 
-        price: 100
+        price: 100,
+        description: 'Test dataset',
+        tags: 'dataset,ai,test'
     };
     let datasetContractAddress;
 
@@ -87,6 +89,16 @@ describe('Datasets tests:', () => {
     it('#fetchSamplesCount should fetch samples count of a previously added dataset', async () => {
         const samplesCount = await pjs.datasets.fetchSamplesCount(datasetContractAddress);
         expect(samplesCount).to.be.equal(datasetOptions.samples);
+    });
+
+    it('#fetchDescroption should fetch description of a previously added dataset', async () => {
+        const description = await pjs.datasets.fetchDescroption(datasetContractAddress);
+        expect(description).to.be.equal(datasetOptions.description);
+    });
+
+    it('#fetchTags should fetch meta tags of a previously added dataset', async () => {
+        const tags = await pjs.datasets.fetchTags(datasetContractAddress);
+        expect(tags).to.be.equal(datasetOptions.tags);
     });
 
     it('#fetchDataset should fetch a previously added dataset', async () => {

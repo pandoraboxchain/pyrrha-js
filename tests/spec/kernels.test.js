@@ -17,7 +17,9 @@ describe('Kernels tests:', () => {
     const kernelOptions = {
         dimension: 100, 
         complexity: 100, 
-        price: 100
+        price: 100,
+        description: 'Test kernel',
+        tags: 'kernel,ai,test'
     };
     let kernelContractAddress;
 
@@ -86,6 +88,16 @@ describe('Kernels tests:', () => {
     it('#fetchComplexity should fetch complexity of a previously added kernel', async () => {
         const complexity = await pjs.kernels.fetchComplexity(kernelContractAddress);
         expect(complexity).to.be.equal(kernelOptions.complexity);
+    });
+
+    it('#fetchDescription should fetch description of a previously added kernel', async () => {
+        const description = await pjs.kernels.fetchDescription(kernelContractAddress);
+        expect(description).to.be.equal(kernelOptions.description);
+    });
+
+    it('#fetchTags should fetch meta tags of a previously added kernel', async () => {
+        const tags = await pjs.kernels.fetchTags(kernelContractAddress);
+        expect(tags).to.be.equal(kernelOptions.tags);
     });
 
     it('#fetchKernel should fetch a previously added kernel', async () => {
