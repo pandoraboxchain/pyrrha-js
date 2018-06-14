@@ -233,6 +233,76 @@ export const fetchComplexity = async (address = '', config = {}) => {
 };
 
 /**
+ * Get description from Kernel contract by the kernel address
+ * 
+ * @param {string} address
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {number}
+ */
+export const fetchDescription = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Kernel.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Kernel']
+        }
+    });
+
+    const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
+    const description = await ker.methods
+        .description()
+        .call();
+
+    return Number.parseInt(description, 10);
+};
+
+/**
+ * Get meta tags from Kernel contract by the kernel address
+ * 
+ * @param {string} address
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {number}
+ */
+export const fetchTags = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Kernel.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Kernel']
+        }
+    });
+
+    const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
+    const tags = await ker.methods
+        .tags()
+        .call();
+
+    return Number.parseInt(tags, 10);
+};
+
+/**
  * Get Kernel by the kernel address
  * 
  * @param {string} address
@@ -245,12 +315,16 @@ export const fetchKernel = async (address = '', config = {}) => {
         ipfsAddress,
         dataDim,
         currentPrice,
-        complexity
+        complexity,
+        description,
+        tags
     ] = await Promise.all([
         fetchIpfsAddress(address, config),
         fetchDataDim(address, config),
         fetchCurrentPrice(address, config),
-        fetchComplexity(address, config)
+        fetchComplexity(address, config),
+        fetchDescription(address, config),
+        fetchTags(address, config)
     ]);
 
     return {
@@ -258,7 +332,9 @@ export const fetchKernel = async (address = '', config = {}) => {
         ipfsAddress,
         dataDim,
         currentPrice,
-        complexity
+        complexity,
+        description,
+        tags
     };
 };
 
@@ -329,9 +405,9 @@ export const fetchAll = async (config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity, price }, config = {}) => {
+export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity, price, description, tags }, config = {}) => {
 
-    expect.all({ kernelIpfsHash, publisher, dimension, complexity, price }, {
+    expect.all({ kernelIpfsHash, publisher, dimension, complexity, price, description, tags }, {
         'kernelIpfsHash': {
             type: 'string'
         },
@@ -346,6 +422,12 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
         },
         'price': {
             type: 'number'
+        },
+        'description': {
+            type: 'string'
+        },
+        'tags': {
+            type: 'string'
         }
     });
 
@@ -361,7 +443,14 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
         }
     });
 
-    const args = [config.web3.utils.toHex(kernelIpfsHash), dimension, complexity, price];
+    const args = [
+        config.web3.utils.toHex(kernelIpfsHash), 
+        dimension, 
+        complexity, 
+        price, 
+        config.web3.utils.toHex(description), 
+        config.web3.utils.toHex(tags)
+    ];
         
     // Estimate required amount of gas
     const gas = await web3Helpers.estimateGas(config.contracts.Kernel.bytecode, args, config);

@@ -268,6 +268,76 @@ export const fetchBatchesCount = async (address = '', config = {}) => {
 };
 
 /**
+ * Get description from Dataset contract by the dataset address
+ * 
+ * @param {string} address
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {number}
+ */
+export const fetchDescription = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Dataset.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Dataset']
+        }
+    });
+
+    const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
+    const description = await dat.methods
+        .description()
+        .call();
+
+    return Number.parseInt(description, 10);
+};
+
+/**
+ * Get meta tags from Dataset contract by the dataset address
+ * 
+ * @param {string} address
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {number}
+ */
+export const fetchTags = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Dataset.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Dataset']
+        }
+    });
+
+    const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
+    const tags = await dat.methods
+        .tags()
+        .call();
+
+    return Number.parseInt(tags, 10);
+};
+
+/**
  * Get dataset by the dataset address
  * 
  * @param {string} address
@@ -287,13 +357,17 @@ export const fetchDataset = async (address = '', config = {}) => {
         dataDim,
         currentPrice,
         samplesCount,
-        batchesCount
+        batchesCount,
+        description,
+        tags
     ] = await Promise.all([
         fetchIpfsAddress(address, config),
         fetchDataDim(address, config),
         fetchCurrentPrice(address, config),
         fetchSamplesCount(address, config),
-        fetchBatchesCount(address, config)
+        fetchBatchesCount(address, config),
+        fetchDescription(address, config),
+        fetchTags(address, config)
     ]);
 
     return {
@@ -302,7 +376,9 @@ export const fetchDataset = async (address = '', config = {}) => {
         dataDim,
         currentPrice,
         samplesCount,
-        batchesCount
+        batchesCount,
+        description,
+        tags
     };
 };
 
@@ -373,14 +449,32 @@ export const fetchAll = async (config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price }, config = {}) => {
+export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price, description, tags }, config = {}) => {
 
-    expect.all({ datasetIpfsHash, batchesCount }, {
+    expect.all({ datasetIpfsHash, batchesCount, publisher, dimension, samples, price, description, tags }, {
         'datasetIpfsHash': {
             type: 'string'
         },
         'batchesCount': {
             type: 'number'
+        },
+        'publisher': {
+            type: 'address'
+        },
+        'dimension': {
+            type: 'number'
+        },
+        'samples': {
+            type: 'number'
+        },
+        'price': {
+            type: 'number'
+        },
+        'description': {
+            type: 'string'
+        },
+        'tags': {
+            type: 'string'
         }
     });
 
@@ -400,7 +494,15 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
         }
     });
 
-    const args = [config.web3.utils.toHex(datasetIpfsHash), dimension, samples, batchesCount, price];
+    const args = [
+        config.web3.utils.toHex(datasetIpfsHash), 
+        dimension, 
+        samples, 
+        batchesCount, 
+        price, 
+        config.web3.utils.toHex(description), 
+        config.web3.utils.toHex(tags)
+    ];
         
     // Estimate required amount of gas
     const gas = await web3Helpers.estimateGas(config.contracts.Dataset.bytecode, args, config);
@@ -505,7 +607,7 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
         'addresses.PandoraMarket': {
             type: 'address',
             code: ADDRESS_REQUIRED,
-            args: ['Kernel']
+            args: ['PandoraMarket']
         }
     });
 

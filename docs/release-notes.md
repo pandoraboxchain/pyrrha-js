@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.7.x
+- new properties for kernels and datasets: description, tags
+
 ## 1.6.x
 - expectation helper improvement, added ethereum address validation
 - new method: pandora.whitelistWorkerOwner
