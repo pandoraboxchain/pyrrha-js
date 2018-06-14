@@ -91,8 +91,8 @@ describe('Datasets tests:', () => {
         expect(samplesCount).to.be.equal(datasetOptions.samples);
     });
 
-    it('#fetchDescroption should fetch description of a previously added dataset', async () => {
-        const description = await pjs.datasets.fetchDescroption(datasetContractAddress);
+    it('#fetchDescription should fetch description of a previously added dataset', async () => {
+        const description = await pjs.datasets.fetchDescription(datasetContractAddress);
         expect(description).to.be.equal(datasetOptions.description);
     });
 
