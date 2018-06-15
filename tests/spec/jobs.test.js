@@ -18,7 +18,9 @@ describe('Jobs tests:', () => {
     const kernelOptions = {
         dimension: 1, 
         complexity: 1, 
-        price: 1
+        price: 1,
+        metadata: 'test',
+        description: 'test'
     };
     let kernelContractAddress;
 
@@ -27,7 +29,9 @@ describe('Jobs tests:', () => {
     const datasetOptions = {
         dimension: 1, 
         samples: 1, 
-        price: 1
+        price: 1,
+        metadata: 'test',
+        description: 'test'
     };
     let datasetContractAddress;
 
@@ -80,7 +84,13 @@ describe('Jobs tests:', () => {
         await pjs.pandora.whitelistWorkerOwner(publisher, accounts[2]);
         const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[2]);
         await pjs.workers.alive(workerNodeAddress, accounts[2]);
-        const jobContractAddress = await pjs.jobs.create(kernelContractAddress, datasetContractAddress, accounts[3]);
+        const jobContractAddress = await pjs.jobs.create({
+            kernelAddress: kernelContractAddress, 
+            datasetAddress: datasetContractAddress,
+            complexity: 1,
+            jobType: 0, 
+            description: 'test job'
+        }, accounts[3]);
         expect(jobContractAddress).to.be.a('string');
     });
 });

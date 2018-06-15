@@ -322,6 +322,41 @@ export const fetchIpfsResults = async (address = '', config = {}) => {
 };
 
 /**
+ * Get description from Job contract by the kernel address
+ * 
+ * @param {string} address
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {number}
+ */
+export const fetchDescription = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJob.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJob']
+        }
+    });
+
+    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
+    const description = await cog.methods
+        .description()
+        .call();
+
+    return config.web3.utils.hexToUtf8(description);
+};
+
+/**
  * Get job by the job address
  * 
  * @param {string} address 
@@ -336,14 +371,16 @@ export const fetchJob = async (address = '', config = {}) => {
         dataset,
         batches,
         progress,
-        ipfsResults
+        ipfsResults,
+        description
     ] = await Promise.all([
         fetchState(address, config),
         fetchKernel(address, config),
         fetchDataset(address, config),
         fetchBatches(address, config),
         fetchProgress(address, config),
-        fetchIpfsResults(address, config)
+        fetchIpfsResults(address, config),
+        fetchDescription(address, config)
     ]);
     
     return {
@@ -354,7 +391,8 @@ export const fetchJob = async (address = '', config = {}) => {
         batches: batches,
         progress: progress,
         ipfsResults: ipfsResults,
-        activeWorkersCount: batches
+        activeWorkersCount: batches,
+        description
     };
 };
 
@@ -432,20 +470,28 @@ export const fetchJobStore = async (address = '', config = {}) => {
 /**
  * Create cognitive job contract
  * 
- * @param {String} kernelAddress 
- * @param {String} datasetAddress 
- * @param {String} from
+ * @param {Object} options
+ * @param {String} from Publisher address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to add status (boolean)
  */
-export const create = (kernelAddress, datasetAddress, from, config = {}) => new Promise((resolve, reject) => {
+export const create = ({kernelAddress, datasetAddress, complexity, jobType, description}, from, config = {}) => new Promise((resolve, reject) => {
 
-    expect.all({ kernelAddress, datasetAddress, from }, {
+    expect.all({ kernelAddress, datasetAddress, complexity, jobType, description, from }, {
         'kernelAddress': {
             type: 'address'
         },
         'datasetAddress': {
             type: 'address'
+        },
+        'complexity': {
+            type: 'number'
+        },
+        'jobType': {
+            type: 'number'
+        },
+        'description': {
+            type: 'string'
         },
         'from': {
             type: 'address'
@@ -471,7 +517,7 @@ export const create = (kernelAddress, datasetAddress, from, config = {}) => new 
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.methods
-        .createCognitiveJob(kernelAddress, datasetAddress)
+        .createCognitiveJob(kernelAddress, datasetAddress, complexity)// @todo add description and jobType
         .send({
             from,
             gas: 6700000// because this workflow is too greedy

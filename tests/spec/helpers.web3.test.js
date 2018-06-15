@@ -18,7 +18,9 @@ describe('Helper #web3 tests:', () => {
     let kernelOptions = {
         dimension: 100, 
         complexity: 100, 
-        price: 100
+        price: 100,
+        metadata: 'test',
+        description: 'test'
     };
 
     before(async () => {
@@ -55,7 +57,9 @@ describe('Helper #web3 tests:', () => {
             pjs.api.web3.utils.toHex(kernelIpfsHash), 
             kernelOptions.dimension, 
             kernelOptions.complexity, 
-            kernelOptions.price
+            kernelOptions.price,
+            pjs.api.web3.utils.toHex(kernelOptions.metadata),
+            pjs.api.web3.utils.toHex(kernelOptions.description)
         ];
 
         const gas = await web3Helper.estimateGas(pjs.config.contracts.Kernel.bytecode, args, pjs.config);
@@ -67,7 +71,9 @@ describe('Helper #web3 tests:', () => {
             pjs.api.web3.utils.toHex(kernelIpfsHash), 
             kernelOptions.dimension, 
             kernelOptions.complexity, 
-            kernelOptions.price
+            kernelOptions.price,
+            pjs.api.web3.utils.toHex(kernelOptions.metadata),
+            pjs.api.web3.utils.toHex(kernelOptions.description)
         ];
 
         const gas = await web3Helper.estimateGas(pjs.config.contracts.Kernel.bytecode, args, pjs.config);

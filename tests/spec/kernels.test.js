@@ -18,8 +18,8 @@ describe('Kernels tests:', () => {
         dimension: 100, 
         complexity: 100, 
         price: 100,
-        description: 'Test kernel',
-        metadata: 'kernel,ai,test'
+        metadata: 'test',
+        description: 'test'
     };
     let kernelContractAddress;
 
@@ -118,7 +118,9 @@ describe('Kernels tests:', () => {
             publisher, 
             dimension: 100, 
             complexity: 100, 
-            price: 100
+            price: 100,
+            metadata: 'test',
+            description: 'test'
         };
 
         const kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, options);
@@ -142,7 +144,9 @@ describe('Kernels tests:', () => {
             publisher, 
             dimension: 100, 
             complexity: 100, 
-            price: 100
+            price: 100,
+            metadata: 'test',
+            description: 'test'
         };
 
         pjs.kernels.deploy(kernelIpfsHash, options)
@@ -169,7 +173,9 @@ describe('Kernels tests:', () => {
             publisher, 
             dimension: 100, 
             complexity: 100, 
-            price: 100
+            price: 100,
+            metadata: 'test',
+            description: 'test'
         };
 
         pjs.kernels.deploy(kernelIpfsHash, options)

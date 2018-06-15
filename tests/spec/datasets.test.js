@@ -19,8 +19,8 @@ describe('Datasets tests:', () => {
         dimension: 100, 
         samples: 10, 
         price: 100,
-        description: 'Test dataset',
-        metadata: 'dataset,ai,test'
+        metadata: 'test',
+        description: 'test'
     };
     let datasetContractAddress;
 
@@ -119,7 +119,9 @@ describe('Datasets tests:', () => {
             publisher, 
             dimension: 100, 
             samples: 10, 
-            price: 100
+            price: 100,
+            metadata: 'test',
+            description: 'test'
         };
 
         const datasetContractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, options);
@@ -143,7 +145,9 @@ describe('Datasets tests:', () => {
             publisher, 
             dimension: 100, 
             samples: 10, 
-            price: 100
+            price: 100,
+            metadata: 'test',
+            description: 'test'
         };
 
         pjs.datasets.deploy(datasetIpfsHash, batchesCount, options)
@@ -170,7 +174,9 @@ describe('Datasets tests:', () => {
             publisher, 
             dimension: 100, 
             samples: 10, 
-            price: 100
+            price: 100,
+            metadata: 'test',
+            description: 'test'
         };
 
         pjs.datasets.deploy(datasetIpfsHash, batchesCount, options)

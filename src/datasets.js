@@ -299,7 +299,7 @@ export const fetchDescription = async (address = '', config = {}) => {
         .description()
         .call();
 
-    return Number.parseInt(description, 10);
+    return config.web3.utils.hexToUtf8(description);
 };
 
 /**
@@ -334,7 +334,7 @@ export const fetchMetadata = async (address = '', config = {}) => {
         .metadata()
         .call();
 
-    return Number.parseInt(metadata, 10);
+    return config.web3.utils.hexToUtf8(metadata);
 };
 
 /**
@@ -358,16 +358,16 @@ export const fetchDataset = async (address = '', config = {}) => {
         currentPrice,
         samplesCount,
         batchesCount,
-        description,
-        metadata
+        metadata, 
+        description
     ] = await Promise.all([
         fetchIpfsAddress(address, config),
         fetchDataDim(address, config),
         fetchCurrentPrice(address, config),
         fetchSamplesCount(address, config),
         fetchBatchesCount(address, config),
-        fetchDescription(address, config),
-        fetchMetadata(address, config)
+        fetchMetadata(address, config),
+        fetchDescription(address, config)
     ]);
 
     return {
@@ -377,8 +377,8 @@ export const fetchDataset = async (address = '', config = {}) => {
         currentPrice,
         samplesCount,
         batchesCount,
-        description,
-        metadata
+        metadata,
+        description
     };
 };
 
@@ -449,9 +449,9 @@ export const fetchAll = async (config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price, description, metadata }, config = {}) => {
+export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price, metadata, description }, config = {}) => {
 
-    expect.all({ datasetIpfsHash, batchesCount, publisher, dimension, samples, price, description, metadata }, {
+    expect.all({ datasetIpfsHash, batchesCount, publisher, dimension, samples, price, metadata, description }, {
         'datasetIpfsHash': {
             type: 'string'
         },
@@ -470,12 +470,12 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
         'price': {
             type: 'number'
         },
-        'description': {
-            type: 'string'
-        },
         'metadata': {
             type: 'string'
-        }
+        },
+        'description': {
+            type: 'string'
+        }        
     });
 
     expect.all(config, {
@@ -495,13 +495,13 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
     });
 
     const args = [
-        config.web3.utils.toHex(datasetIpfsHash), 
+        config.web3.utils.utf8ToHex(datasetIpfsHash), 
         dimension, 
         samples, 
         batchesCount, 
         price, 
-        config.web3.utils.toHex(description), 
-        config.web3.utils.toHex(metadata)
+        config.web3.utils.utf8ToHex(metadata),
+        config.web3.utils.utf8ToHex(description)
     ];
         
     // Estimate required amount of gas
