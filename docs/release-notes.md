@@ -1,7 +1,7 @@
 # Release Notes
 
 ## 1.7.x
-- new properties for kernels and datasets: description, tags
+- new properties for kernels and datasets: description, metadata
 
 ## 1.6.x
 - expectation helper improvement, added ethereum address validation

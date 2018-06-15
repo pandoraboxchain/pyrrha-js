@@ -303,13 +303,13 @@ export const fetchDescription = async (address = '', config = {}) => {
 };
 
 /**
- * Get meta tags from Dataset contract by the dataset address
+ * Get metadata from Dataset contract by the dataset address
  * 
  * @param {string} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
-export const fetchTags = async (address = '', config = {}) => {
+export const fetchMetadata = async (address = '', config = {}) => {
 
     expect.all({ address }, {
         'address': {
@@ -330,11 +330,11 @@ export const fetchTags = async (address = '', config = {}) => {
     });
 
     const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
-    const tags = await dat.methods
-        .tags()
+    const metadata = await dat.methods
+        .metadata()
         .call();
 
-    return Number.parseInt(tags, 10);
+    return Number.parseInt(metadata, 10);
 };
 
 /**
@@ -359,7 +359,7 @@ export const fetchDataset = async (address = '', config = {}) => {
         samplesCount,
         batchesCount,
         description,
-        tags
+        metadata
     ] = await Promise.all([
         fetchIpfsAddress(address, config),
         fetchDataDim(address, config),
@@ -367,7 +367,7 @@ export const fetchDataset = async (address = '', config = {}) => {
         fetchSamplesCount(address, config),
         fetchBatchesCount(address, config),
         fetchDescription(address, config),
-        fetchTags(address, config)
+        fetchMetadata(address, config)
     ]);
 
     return {
@@ -378,7 +378,7 @@ export const fetchDataset = async (address = '', config = {}) => {
         samplesCount,
         batchesCount,
         description,
-        tags
+        metadata
     };
 };
 
@@ -449,9 +449,9 @@ export const fetchAll = async (config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price, description, tags }, config = {}) => {
+export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price, description, metadata }, config = {}) => {
 
-    expect.all({ datasetIpfsHash, batchesCount, publisher, dimension, samples, price, description, tags }, {
+    expect.all({ datasetIpfsHash, batchesCount, publisher, dimension, samples, price, description, metadata }, {
         'datasetIpfsHash': {
             type: 'string'
         },
@@ -473,7 +473,7 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
         'description': {
             type: 'string'
         },
-        'tags': {
+        'metadata': {
             type: 'string'
         }
     });
@@ -501,7 +501,7 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
         batchesCount, 
         price, 
         config.web3.utils.toHex(description), 
-        config.web3.utils.toHex(tags)
+        config.web3.utils.toHex(metadata)
     ];
         
     // Estimate required amount of gas

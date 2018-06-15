@@ -20,7 +20,7 @@ describe('Datasets tests:', () => {
         samples: 10, 
         price: 100,
         description: 'Test dataset',
-        tags: 'dataset,ai,test'
+        metadata: 'dataset,ai,test'
     };
     let datasetContractAddress;
 
@@ -96,9 +96,9 @@ describe('Datasets tests:', () => {
         expect(description).to.be.equal(datasetOptions.description);
     });
 
-    it('#fetchTags should fetch meta tags of a previously added dataset', async () => {
-        const tags = await pjs.datasets.fetchTags(datasetContractAddress);
-        expect(tags).to.be.equal(datasetOptions.tags);
+    it('#fetchMetadata should fetch meta metadata of a previously added dataset', async () => {
+        const metadata = await pjs.datasets.fetchMetadata(datasetContractAddress);
+        expect(metadata).to.be.equal(datasetOptions.metadata);
     });
 
     it('#fetchDataset should fetch a previously added dataset', async () => {

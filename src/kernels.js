@@ -268,13 +268,13 @@ export const fetchDescription = async (address = '', config = {}) => {
 };
 
 /**
- * Get meta tags from Kernel contract by the kernel address
+ * Get metadata from Kernel contract by the kernel address
  * 
  * @param {string} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
-export const fetchTags = async (address = '', config = {}) => {
+export const fetchMetadata = async (address = '', config = {}) => {
 
     expect.all({ address }, {
         'address': {
@@ -295,11 +295,11 @@ export const fetchTags = async (address = '', config = {}) => {
     });
 
     const ker = new config.web3.eth.Contract(config.contracts.Kernel.abi, address);
-    const tags = await ker.methods
-        .tags()
+    const metadata = await ker.methods
+        .metadata()
         .call();
 
-    return Number.parseInt(tags, 10);
+    return Number.parseInt(metadata, 10);
 };
 
 /**
@@ -317,14 +317,14 @@ export const fetchKernel = async (address = '', config = {}) => {
         currentPrice,
         complexity,
         description,
-        tags
+        metadata
     ] = await Promise.all([
         fetchIpfsAddress(address, config),
         fetchDataDim(address, config),
         fetchCurrentPrice(address, config),
         fetchComplexity(address, config),
         fetchDescription(address, config),
-        fetchTags(address, config)
+        fetchMetadata(address, config)
     ]);
 
     return {
@@ -334,7 +334,7 @@ export const fetchKernel = async (address = '', config = {}) => {
         currentPrice,
         complexity,
         description,
-        tags
+        metadata
     };
 };
 
@@ -405,9 +405,9 @@ export const fetchAll = async (config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity, price, description, tags }, config = {}) => {
+export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity, price, description, metadata }, config = {}) => {
 
-    expect.all({ kernelIpfsHash, publisher, dimension, complexity, price, description, tags }, {
+    expect.all({ kernelIpfsHash, publisher, dimension, complexity, price, description, metadata }, {
         'kernelIpfsHash': {
             type: 'string'
         },
@@ -426,7 +426,7 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
         'description': {
             type: 'string'
         },
-        'tags': {
+        'metadata': {
             type: 'string'
         }
     });
@@ -449,7 +449,7 @@ export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity,
         complexity, 
         price, 
         config.web3.utils.toHex(description), 
-        config.web3.utils.toHex(tags)
+        config.web3.utils.toHex(metadata)
     ];
         
     // Estimate required amount of gas
