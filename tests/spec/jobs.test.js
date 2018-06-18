@@ -85,8 +85,8 @@ describe('Jobs tests:', () => {
         const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[2]);
         await pjs.workers.alive(workerNodeAddress, accounts[2]);
         const jobContractAddress = await pjs.jobs.create({
-            kernelAddress: kernelContractAddress, 
-            datasetAddress: datasetContractAddress,
+            kernel: kernelContractAddress, 
+            dataset: datasetContractAddress,
             complexity: 1,
             jobType: 0, 
             description: 'test job'

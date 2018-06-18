@@ -475,13 +475,13 @@ export const fetchJobStore = async (address = '', config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to add status (boolean)
  */
-export const create = ({kernelAddress, datasetAddress, complexity, jobType, description}, from, config = {}) => new Promise((resolve, reject) => {
+export const create = ({kernel, dataset, complexity, jobType, description}, from, config = {}) => new Promise((resolve, reject) => {
 
-    expect.all({ kernelAddress, datasetAddress, complexity, jobType, description, from }, {
-        'kernelAddress': {
+    expect.all({ kernel, dataset, complexity, jobType, description, from }, {
+        'kernel': {
             type: 'address'
         },
-        'datasetAddress': {
+        'dataset': {
             type: 'address'
         },
         'complexity': {
