@@ -17,7 +17,6 @@ describe('Datasets tests:', () => {
     const batchesCount = 10;
     const datasetOptions = {
         dimension: 100, 
-        samples: 10, 
         price: 100,
         metadata: 'test',
         description: 'test'
@@ -111,7 +110,6 @@ describe('Datasets tests:', () => {
     it('#removeDataset should remove previously added dataset without errors', async () => {
         const options = {
             dimension: 100, 
-            samples: 10, 
             price: 100,
             metadata: 'test',
             description: 'test'
@@ -137,7 +135,6 @@ describe('Datasets tests:', () => {
         const options = {
             publisher, 
             dimension: 100, 
-            samples: 10, 
             price: 100,
             metadata: 'test',
             description: 'test'
@@ -166,7 +163,6 @@ describe('Datasets tests:', () => {
         const options = {
             publisher, 
             dimension: 100, 
-            samples: 10, 
             price: 100,
             metadata: 'test',
             description: 'test'

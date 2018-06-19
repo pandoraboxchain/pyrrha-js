@@ -28,7 +28,6 @@ describe('Jobs tests:', () => {
     const batchesCount = 1;
     const datasetOptions = {
         dimension: 1, 
-        samples: 1, 
         price: 1,
         metadata: 'test',
         description: 'test'

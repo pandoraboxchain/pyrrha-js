@@ -408,14 +408,14 @@ export const fetchAll = async (config = {}) => {
  * 
  * @param {String} datasetIpfsHash 
  * @param {Number} batchesCount Count of batches in dataset
- * @param {Object} options { dimension, samples, price, metadata, description } 
+ * @param {Object} options { dimension, price, metadata, description } 
  * @param {String} publisher Publisher address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (datasetIpfsHash, batchesCount, { dimension, samples, price, metadata, description }, publisher, config = {}) => {
+export const deploy = async (datasetIpfsHash, batchesCount, { dimension, price, metadata, description }, publisher, config = {}) => {
 
-    expect.all({ datasetIpfsHash, batchesCount, publisher, dimension, samples, price, metadata, description }, {
+    expect.all({ datasetIpfsHash, batchesCount, publisher, dimension, price, metadata, description }, {
         'datasetIpfsHash': {
             type: 'string'
         },
@@ -426,9 +426,6 @@ export const deploy = async (datasetIpfsHash, batchesCount, { dimension, samples
             type: 'address'
         },
         'dimension': {
-            type: 'number'
-        },
-        'samples': {
             type: 'number'
         },
         'price': {
