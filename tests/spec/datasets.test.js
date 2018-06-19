@@ -32,7 +32,6 @@ describe('Datasets tests:', () => {
         contracts = node.contracts;
         addresses = node.addresses;
         publisher = node.publisher;
-        datasetOptions.publisher = publisher;
 
         pjs = new Pjs({
             eth: {
@@ -42,7 +41,7 @@ describe('Datasets tests:', () => {
             addresses
         });
 
-        datasetContractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions);
+        datasetContractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions, publisher);
         await pjs.datasets.addToMarket(datasetContractAddress, publisher);
     });
 

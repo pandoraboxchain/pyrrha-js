@@ -401,11 +401,12 @@ export const fetchAll = async (config = {}) => {
  * Deploy Kernel contract to the network
  * 
  * @param {string} kernelIpfsHash 
- * @param {Object} options { publisher, dimension, complexity, price } 
+ * @param {Object} options { dimension, complexity, price, metadata, description } 
+ * @param {String} publisher Publisher address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (kernelIpfsHash, { publisher, dimension, complexity, price, metadata, description }, config = {}) => {
+export const deploy = async (kernelIpfsHash, { dimension, complexity, price, metadata, description }, publisher, config = {}) => {
 
     expect.all({ kernelIpfsHash, publisher, dimension, complexity, price, metadata, description }, {
         'kernelIpfsHash': {

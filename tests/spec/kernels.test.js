@@ -31,7 +31,6 @@ describe('Kernels tests:', () => {
         contracts = node.contracts;
         addresses = node.addresses;
         publisher = node.publisher;
-        kernelOptions.publisher = publisher;
 
         pjs = new Pjs({
             eth: {
@@ -41,7 +40,7 @@ describe('Kernels tests:', () => {
             addresses
         });
 
-        kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, kernelOptions);
+        kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, kernelOptions, publisher);
         await pjs.kernels.addToMarket(kernelContractAddress, publisher);
     });
 
@@ -63,7 +62,7 @@ describe('Kernels tests:', () => {
     });
 
     it('#addToMarket should resolved to an address of the added to the PandoraMarket contract', async () => {
-        const contractAddress = await pjs.kernels.deploy(kernelIpfsHash, kernelOptions);
+        const contractAddress = await pjs.kernels.deploy(kernelIpfsHash, kernelOptions, publisher);
         const addedContractAddress = await pjs.kernels.addToMarket(contractAddress, publisher);
         expect(contractAddress).to.be.equal(addedContractAddress);
     });
@@ -123,7 +122,7 @@ describe('Kernels tests:', () => {
             description: 'test'
         };
 
-        const kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, options);
+        const kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, options, publisher);
         await pjs.kernels.addToMarket(kernelContractAddress, publisher);
         await pjs.kernels.removeKernel(kernelContractAddress, publisher);
     });
@@ -141,7 +140,6 @@ describe('Kernels tests:', () => {
             .error(reject);
 
         const options = {
-            publisher, 
             dimension: 100, 
             complexity: 100, 
             price: 100,
@@ -149,7 +147,7 @@ describe('Kernels tests:', () => {
             description: 'test'
         };
 
-        pjs.kernels.deploy(kernelIpfsHash, options)
+        pjs.kernels.deploy(kernelIpfsHash, options, publisher)
             .then(kernelContractAddress => {
                 addressAdded = kernelContractAddress;
                 return pjs.kernels.addToMarket(kernelContractAddress, publisher);
@@ -170,7 +168,6 @@ describe('Kernels tests:', () => {
             .error(reject);
 
         const options = {
-            publisher, 
             dimension: 100, 
             complexity: 100, 
             price: 100,
@@ -178,7 +175,7 @@ describe('Kernels tests:', () => {
             description: 'test'
         };
 
-        pjs.kernels.deploy(kernelIpfsHash, options)
+        pjs.kernels.deploy(kernelIpfsHash, options, publisher)
             .then(kernelContractAddress => {
                 addressAdded = kernelContractAddress;
                 return pjs.kernels.addToMarket(kernelContractAddress, publisher);

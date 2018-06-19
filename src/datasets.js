@@ -444,12 +444,14 @@ export const fetchAll = async (config = {}) => {
 /**
  * Deploy Datset contract to the network
  * 
- * @param {string} datasetIpfsHash 
- * @param {Object} options { publisher, dimension, samples, price } 
+ * @param {String} datasetIpfsHash 
+ * @param {Number} batchesCount Count of batches in dataset
+ * @param {Object} options { dimension, samples, price, metadata, description } 
+ * @param {String} publisher Publisher address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to contract address
  */
-export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimension, samples, price, metadata, description }, config = {}) => {
+export const deploy = async (datasetIpfsHash, batchesCount, { dimension, samples, price, metadata, description }, publisher, config = {}) => {
 
     expect.all({ datasetIpfsHash, batchesCount, publisher, dimension, samples, price, metadata, description }, {
         'datasetIpfsHash': {
@@ -497,7 +499,6 @@ export const deploy = async (datasetIpfsHash, batchesCount, { publisher, dimensi
     const args = [
         config.web3.utils.utf8ToHex(datasetIpfsHash), 
         dimension, 
-        samples, 
         batchesCount, 
         price, 
         config.web3.utils.utf8ToHex(metadata),
