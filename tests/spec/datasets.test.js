@@ -63,7 +63,7 @@ describe('Datasets tests:', () => {
     });
 
     it('#addToMarket should resolved to an address of the added to the PandoraMarket contract', async () => {
-        const contractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions);
+        const contractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions, publisher);
         const addedContractAddress = await pjs.datasets.addToMarket(contractAddress, publisher);
         expect(contractAddress).to.be.equal(addedContractAddress);
     });
@@ -83,11 +83,6 @@ describe('Datasets tests:', () => {
         const currentPrice = await pjs.datasets.fetchCurrentPrice(datasetContractAddress);
         expect(currentPrice).to.be.a('number');
         expect(currentPrice).to.be.equal(datasetOptions.price);
-    });
-
-    it('#fetchSamplesCount should fetch samples count of a previously added dataset', async () => {
-        const samplesCount = await pjs.datasets.fetchSamplesCount(datasetContractAddress);
-        expect(samplesCount).to.be.equal(datasetOptions.samples);
     });
 
     it('#fetchDescription should fetch description of a previously added dataset', async () => {
@@ -115,7 +110,6 @@ describe('Datasets tests:', () => {
 
     it('#removeDataset should remove previously added dataset without errors', async () => {
         const options = {
-            publisher, 
             dimension: 100, 
             samples: 10, 
             price: 100,
@@ -123,7 +117,7 @@ describe('Datasets tests:', () => {
             description: 'test'
         };
 
-        const datasetContractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, options);
+        const datasetContractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, options, publisher);
         await pjs.datasets.addToMarket(datasetContractAddress, publisher);
         await pjs.datasets.removeDataset(datasetContractAddress, publisher);
     });
@@ -149,7 +143,7 @@ describe('Datasets tests:', () => {
             description: 'test'
         };
 
-        pjs.datasets.deploy(datasetIpfsHash, batchesCount, options)
+        pjs.datasets.deploy(datasetIpfsHash, batchesCount, options, publisher)
             .then(datasetContractAddress => {
                 addressAdded = datasetContractAddress;
                 return pjs.datasets.addToMarket(datasetContractAddress, publisher);
@@ -178,7 +172,7 @@ describe('Datasets tests:', () => {
             description: 'test'
         };
 
-        pjs.datasets.deploy(datasetIpfsHash, batchesCount, options)
+        pjs.datasets.deploy(datasetIpfsHash, batchesCount, options, publisher)
             .then(datasetContractAddress => {
                 addressAdded = datasetContractAddress;
                 return pjs.datasets.addToMarket(datasetContractAddress, publisher);

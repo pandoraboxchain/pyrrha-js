@@ -198,41 +198,6 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
 };
 
 /**
- * Get data samples count from Dataset contract by the dataset address
- * 
- * @param {string} address
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {number}
- */
-export const fetchSamplesCount = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
-
-    expect.all(config, {
-        'web3': {
-            type: 'object',
-            code: WEB3_REQUIRED
-        },
-        'contracts.Dataset.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['Dataset']
-        }
-    });
-
-    const dat = new config.web3.eth.Contract(config.contracts.Dataset.abi, address);
-    const samplesCount = await dat.methods
-        .samplesCount()
-        .call();
-
-    return Number.parseInt(samplesCount, 10);
-};
-
-/**
  * Get data batches count from Dataset contract by the dataset address
  * 
  * @param {string} address
@@ -356,7 +321,6 @@ export const fetchDataset = async (address = '', config = {}) => {
         ipfsAddress,
         dataDim,
         currentPrice,
-        samplesCount,
         batchesCount,
         metadata, 
         description
@@ -364,7 +328,6 @@ export const fetchDataset = async (address = '', config = {}) => {
         fetchIpfsAddress(address, config),
         fetchDataDim(address, config),
         fetchCurrentPrice(address, config),
-        fetchSamplesCount(address, config),
         fetchBatchesCount(address, config),
         fetchMetadata(address, config),
         fetchDescription(address, config)
@@ -375,7 +338,6 @@ export const fetchDataset = async (address = '', config = {}) => {
         ipfsAddress,
         dataDim,
         currentPrice,
-        samplesCount,
         batchesCount,
         metadata,
         description

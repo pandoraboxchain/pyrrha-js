@@ -27,12 +27,12 @@ import {
 } from './datasets';
 
 /**
- * Get active job count from Pandora contract
+ * Get job count from Pandora contract
  * 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number} 
  */
-export const fetchActiveCount = async (config = {}) => {
+export const fetchCognitiveJobsCount = async (config = {}) => {
 
     expect.all(config, {
         'web3': {
@@ -53,7 +53,7 @@ export const fetchActiveCount = async (config = {}) => {
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const count = await pan.methods
-        .activeJobsCount()
+        .cognitiveJobsCount()
         .call();
         
     return Number.parseInt(count, 10);
@@ -93,7 +93,7 @@ export const fetchAddressById = async (id, config = {}) => {
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const jobAddress = await pan.methods
-        .activeJobs(id)
+        .cognitiveJobs(id)
         .call();
 
     return String(jobAddress);
@@ -517,7 +517,7 @@ export const create = ({kernel, dataset, complexity, jobType, description}, from
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.methods
-        .createCognitiveJob(kernelAddress, datasetAddress, complexity)// @todo add description and jobType
+        .createCognitiveJob(kernel, dataset, complexity, config.web3.utils.utf8ToHex(`${jobType};${description}`))
         .send({
             from,
             gas: 6700000// because this workflow is too greedy

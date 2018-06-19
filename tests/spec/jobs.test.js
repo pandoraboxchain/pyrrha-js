@@ -55,17 +55,17 @@ describe('Jobs tests:', () => {
             addresses
         });
 
-        kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, kernelOptions);
+        kernelContractAddress = await pjs.kernels.deploy(kernelIpfsHash, kernelOptions, publisher);
         await pjs.kernels.addToMarket(kernelContractAddress, publisher);
 
-        datasetContractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions);
+        datasetContractAddress = await pjs.datasets.deploy(datasetIpfsHash, batchesCount, datasetOptions, publisher);
         await pjs.datasets.addToMarket(datasetContractAddress, publisher);
     });
 
     after(done => server.close(done));
 
     it('#fetchActiveCount should return a number', async () => {
-        const count = await pjs.jobs.fetchActiveCount();
+        const count = await pjs.jobs.fetchCognitiveJobsCount();
         expect(count).to.be.a('number');
     });
 
