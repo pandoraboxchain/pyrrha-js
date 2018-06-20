@@ -392,7 +392,8 @@ export const fetchJob = async (address = '', config = {}) => {
         progress: progress,
         ipfsResults: ipfsResults,
         activeWorkersCount: batches,
-        description
+        description: description.substr(2),
+        jobType: description.substr(0, 1)
     };
 };
 
@@ -408,7 +409,7 @@ export const fetchAll = async (config = {}) => {
 
     try {
 
-        const count = await fetchActiveCount(config);    
+        const count = await fetchCognitiveJobsCount(config);    
 
         for (let i=0; i < count; i++) {
             

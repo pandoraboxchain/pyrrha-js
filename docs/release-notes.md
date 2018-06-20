@@ -2,6 +2,8 @@
 
 ## 1.7.x
 - new properties for kernels and datasets: description, metadata
+- new property for job: description
+- removed samplesCount property from the kernel
 
 ## 1.6.x
 - expectation helper improvement, added ethereum address validation

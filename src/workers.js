@@ -300,6 +300,17 @@ export const fetchAll = async (config = {}) => {
 };
 
 /**
+ * Get count of workers with "idle" status
+ * 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {number}
+ */
+export const fetchIdleCount = async (config = {}) => {
+    const all = await fetchAll(config);
+    return all.reduce((acc, curr) => (curr.currentState === 2 ? acc++ : acc), 0);
+};
+
+/**
  * Handle event WorkerNodeCreated
  * 
  * @param {Object} options Event handler options
