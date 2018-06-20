@@ -307,7 +307,7 @@ export const fetchAll = async (config = {}) => {
  */
 export const fetchIdleCount = async (config = {}) => {
     const all = await fetchAll(config);
-    return all.reduce((acc, curr) => (curr.currentState === 2 ? acc++ : acc), 0);
+    return all.records.reduce((acc, curr) => (curr.currentState === 2 ? acc++ : acc), 0);
 };
 
 /**
