@@ -489,7 +489,7 @@ export const create = ({kernel, dataset, complexity, jobType, description}, from
             type: 'number'
         },
         'jobType': {
-            type: 'number'
+            type: 'string'
         },
         'description': {
             type: 'string'
