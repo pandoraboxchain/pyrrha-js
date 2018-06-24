@@ -128,41 +128,6 @@ export const fetchState = async (address = '', config = {}) => {
 };
 
 /**
- * Get worker reputation from Worker contract by the worker address
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {number}
- */
-export const fetchReputation = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
-
-    expect.all(config, {
-        'web3': {
-            type: 'object',
-            code: WEB3_REQUIRED
-        },
-        'contracts.WorkerNode.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['WorkerNode']
-        }
-    });
-
-    const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
-    const reputation = await wor.methods
-        .reputation()
-        .call();
-
-    return Number.parseInt(reputation, 10);
-};
-
-/**
  * Get worker's active job from Worker contract by the worker address
  * 
  * @param {string} address 
@@ -208,11 +173,9 @@ export const fetchWorker = async (address = '', config = {}) => {
     
     const [
         currentState,
-        reputation,
         activeJob
     ] = await Promise.all([
         fetchState(address, config),
-        fetchReputation(address, config),
         fetchActiveJobAddress(address, config)
     ]);
 
