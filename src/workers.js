@@ -195,7 +195,6 @@ export const fetchWorker = async (address = '', config = {}) => {
     return {
         address,
         currentState,
-        reputation,
         currentJob,
         currentJobStatus: jobState
     };
