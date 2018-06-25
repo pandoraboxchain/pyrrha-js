@@ -476,9 +476,9 @@ export const fetchJobStore = async (address = '', config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to add status (boolean)
  */
-export const create = ({kernel, dataset, complexity, jobType, description}, from, config = {}) => new Promise((resolve, reject) => {
+export const create = ({kernel, dataset, complexity, jobType, description, deposit}, from, config = {}) => new Promise((resolve, reject) => {
 
-    expect.all({ kernel, dataset, complexity, jobType, description, from }, {
+    expect.all({ kernel, dataset, complexity, jobType, description, deposit, from }, {
         'kernel': {
             type: 'address'
         },
@@ -493,6 +493,9 @@ export const create = ({kernel, dataset, complexity, jobType, description}, from
         },
         'description': {
             type: 'string'
+        },
+        'deposit': {
+            type: 'number'
         },
         'from': {
             type: 'address'
@@ -520,6 +523,7 @@ export const create = ({kernel, dataset, complexity, jobType, description}, from
     pan.methods
         .createCognitiveJob(kernel, dataset, complexity, config.web3.utils.utf8ToHex(`${jobType};${description}`))
         .send({
+            value: config.web3.utils.toWei(String(deposit)),
             from,
             gas: 6700000// because this workflow is too greedy
         })

@@ -87,8 +87,9 @@ describe('Jobs tests:', () => {
             kernel: kernelContractAddress, 
             dataset: datasetContractAddress,
             complexity: 1,
-            jobType: 0, 
-            description: 'test job'
+            jobType: '0', 
+            description: 'test job',
+            deposit: 1
         }, accounts[3]);
         expect(jobContractAddress).to.be.a('string');
     });
