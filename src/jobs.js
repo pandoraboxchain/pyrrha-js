@@ -315,7 +315,10 @@ export const fetchIpfsResults = async (address = '', config = {}) => {
             .ipfsResults(i)
             .call();
 
-        ipfsResults.push(result);        
+        if (result) {
+
+            ipfsResults.push(config.web3.utils.hexToUtf8(result));
+        }        
     }    
 
     return ipfsResults;
