@@ -1,6 +1,6 @@
 {
   "name": "pyrrha-js",
-  "version": "1.7.9",
+  "version": "1.8.0",
   "description": "Pandora Pyrrha functions and utilities library for JavaScript-based applications",
   "private": true,
   "main": "dist/index.js",
@@ -21,19 +21,19 @@
   },
   "homepage": "https://github.com/pandoraboxchain/pyrrha-js",
   "dependencies": {
-    "ipfs-api": "^22.0.2",
+    "ipfs-api": "^22.2.4",
     "web3": "1.0.0-beta.34"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.51",
-    "@babel/core": "^7.0.0-beta.51",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.51",
-    "@babel/plugin-syntax-object-rest-spread": "^7.0.0-beta.51",
-    "@babel/polyfill": "^7.0.0-beta.51",
-    "@babel/preset-env": "^7.0.0-beta.51",
-    "@babel/register": "^7.0.0-beta.51",
+    "@babel/cli": "^7.0.0-beta.54",
+    "@babel/core": "^7.0.0-beta.54",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.54",
+    "@babel/plugin-syntax-object-rest-spread": "^7.0.0-beta.54",
+    "@babel/polyfill": "^7.0.0-beta.54",
+    "@babel/preset-env": "^7.0.0-beta.54",
+    "@babel/register": "^7.0.0-beta.54",
     "cpy-cli": "^2.0.0",
-    "eslint": "^4.19.1",
+    "eslint": "^5.1.0",
     "rimraf": "^2.6.2",
     "github-utils": "git+https://github.com/pandoraboxchain/github-utils.git#v0.1.4"
   },
