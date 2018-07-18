@@ -624,11 +624,15 @@ export const eventKernelAdded = (options = {}, config = {}) => {
         error: (cb = () => {}) => {
             callbacks.onError = cb;
             return chain;
+        },
+        subscribed: (cb = () => {}) => {
+            callbacks.onSubscribed = cb;
+            return chain;
         }
     };
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    mar.events.KernelAdded(options)
+    chain.event = mar.events.KernelAdded(options)
         .on('data', async res => {
 
             try {
@@ -698,7 +702,7 @@ export const eventKernelRemoved = (options = {}, config = {}) => {
     };
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    mar.events.KernelRemoved(options)
+    chain.event = mar.events.KernelRemoved(options)
         .on('data', async res => {
 
             callbacks.onData({

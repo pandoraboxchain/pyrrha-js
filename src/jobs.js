@@ -598,7 +598,7 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
     };
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    pan.events.CognitiveJobCreated(options)
+    chain.event = pan.events.CognitiveJobCreated(options)
         .on('data', async res => {
 
             try {
@@ -623,10 +623,11 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
  * Handle event StateChanged for CognitiveJob
  * 
  * @param {string} address
+ * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventCognitiveJobStateChanged = (address, config = {}) => {
+export const eventCognitiveJobStateChanged = (address, options = {}, config = {}) => {
 
     expect.all({ address }, {
         'address': {
@@ -663,7 +664,7 @@ export const eventCognitiveJobStateChanged = (address, config = {}) => {
     };
 
     const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    cog.events.StateChanged()
+    chain.event = cog.events.StateChanged(options)
         .on('data', async res => {
 
             try {
