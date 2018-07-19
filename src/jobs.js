@@ -669,10 +669,10 @@ export const eventCognitiveJobStateChanged = (address, options = {}, config = {}
 
             try {
 
-                const store = await fetchJobStore(res.returnValues.cognitiveJob);
+                const job = await fetchJobStore(res.returnValues.cognitiveJob);
                 callbacks.onData({
                     address: res.returnValues.cognitiveJob,
-                    store,
+                    job,
                     status: 'changed',
                     event: 'CognitiveJob.StateChanged'
                 });
