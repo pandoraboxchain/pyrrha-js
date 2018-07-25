@@ -20,6 +20,8 @@ export const IPFS_NOT_CONNECTED = 'IPFS_NOT_CONNECTED';
 export const WEB3_METAMASK_REQUIRED = 'WEB3_METAMASK_REQUIRED';
 export const TRANSACTION_UNSUCCESSFUL = 'TRANSACTION_UNSUCCESSFUL';
 export const FAILURE_EVENT = 'FAILURE_EVENT';
+export const EXPECT_NOT_A_MEMBER = 'EXPECT_NOT_A_MEMBER';
+export const EXPECT_TYPE_OPTIONS_REQUIRED = 'EXPECT_TYPE_OPTIONS_REQUIRED';
 
 export default (code, key, type, value, ...args) => {
     let message = 'Unknown error';

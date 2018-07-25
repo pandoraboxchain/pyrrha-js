@@ -26,449 +26,208 @@ import {
     fetchDataset as fetchDatasetByDatasetAddress
 } from './datasets';
 
+const localCache = new Map();
+
 /**
- * Get job count from Pandora contract
+ * Get job controller address
  * 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {number} 
+ * @returns {Promise<{String}>} 
  */
-export const fetchCognitiveJobsCount = async (config = {}) => {
+export const fetchJobControllerAddress = async (config = {}) => {
 
     expect.all(config, {
         'web3': {
             type: 'object',
             code: WEB3_REQUIRED
         },
-        'contracts.Pandora.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['Pandora']
-        },
         'addresses.Pandora': {
             type: 'address',
             code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
             args: ['Pandora']
         }
     });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    const count = await pan.methods
-        .cognitiveJobsCount()
+    const jobController = await pan.methods
+        .jobController()
+        .call();
+
+    // save for later use
+    localCache.set('jobController', jobController);
+        
+    return jobController;
+};
+
+/**
+ * Get active jobs count 
+ * 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise<{Number}>} 
+ */
+export const fetchActiveJobsCount = async (config = {}) => {
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJobController.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJobController']
+        }
+    });
+
+    let jobController = localCache.get('jobController');
+
+    if (!jobController) {
+
+        jobController = await fetchJobControllerAddress(config);
+    }
+
+    const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
+    const count = await jctrl.methods
+        .activeJobsCount()
         .call();
         
     return Number.parseInt(count, 10);
 };
 
 /**
- * Get worker by the worker's id
+ * Get completed jobs count 
  * 
- * @param {integer} id 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string}
+ * @returns {Promise<{Number}>} 
  */
-export const fetchAddressById = async (id, config = {}) => {
-
-    expect.all({ id }, {
-        'id': {
-            type: 'number'
-        }
-    });
+export const fetchCompletedJobsCount = async (config = {}) => {
 
     expect.all(config, {
         'web3': {
             type: 'object',
             code: WEB3_REQUIRED
         },
-        'contracts.Pandora.abi': {
+        'contracts.CognitiveJobController.abi': {
             type: 'object',
             code: CONTRACT_REQUIRED,
-            args: ['Pandora']
-        },
-        'addresses.Pandora': {
-            type: 'address',
-            code: ADDRESS_REQUIRED,
-            args: ['Pandora']
+            args: ['CognitiveJobController']
         }
     });
 
-    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    const jobAddress = await pan.methods
-        .cognitiveJobs(id)
+    let jobController = localCache.get('jobController');
+
+    if (!jobController) {
+
+        jobController = await fetchJobControllerAddress(config);
+    }
+
+    const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
+    const count = await jctrl.methods
+        .completedJobsCount()
         .call();
-
-    return String(jobAddress);
-};
-
-/**
- * Get job state from Cognitive Job contract by the job address
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {integer} 
- */
-export const fetchState = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
-
-    expect.all(config, {
-        'web3': {
-            type: 'object',
-            code: WEB3_REQUIRED
-        },
-        'contracts.CognitiveJob.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['CognitiveJob']
-        }
-    });
-
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    const state = await cog.methods
-        .currentState()
-        .call();
-
-    return Number.parseInt(state, 10);
-};
-
-/**
- * Get job kernel from Cognitive Job contract by the job address
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string} 
- */
-export const fetchKernel = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
-
-    expect.all(config, {
-        'web3': {
-            type: 'object',
-            code: WEB3_REQUIRED
-        },
-        'contracts.CognitiveJob.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['CognitiveJob']
-        }
-    });
-
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    const kernel = await cog.methods
-        .kernel()
-        .call();
-
-    return String(kernel);
-};
-
-/**
- * Get job dataset from Cognitive Job contract by the job address
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string} 
- */
-export const fetchDataset = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
-
-    expect.all(config, {
-        'web3': {
-            type: 'object',
-            code: WEB3_REQUIRED
-        },
-        'contracts.CognitiveJob.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['CognitiveJob']
-        }
-    });
-
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    const dataset = await cog.methods
-        .dataset()
-        .call();
-
-    return String(dataset);
-};
-
-/**
- * Get job batches count from Cognitive Job contract by the job address
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {number} 
- */
-export const fetchBatches = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
-
-    expect.all(config, {
-        'web3': {
-            type: 'object',
-            code: WEB3_REQUIRED
-        },
-        'contracts.CognitiveJob.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['CognitiveJob']
-        }
-    });
-
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    const batches = await cog.methods
-        .batches()
-        .call();
-
-    return Number.parseInt(batches, 10);
-};
-
-/**
- * Get job progress from Cognitive Job contract by the job address
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {number} 
- */
-export const fetchProgress = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
-
-    expect.all(config, {
-        'web3': {
-            type: 'object',
-            code: WEB3_REQUIRED
-        },
-        'contracts.CognitiveJob.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['CognitiveJob']
-        }
-    });
-
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    const progress = await cog.methods
-        .progress()
-        .call();
-
-    return Number.parseInt(progress, 10);
-};
-
-/**
- * Get job's ipfsResults from Cognitive Job contract by the job address
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string[]} 
- */
-export const fetchIpfsResults = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
-
-    expect.all(config, {
-        'web3': {
-            type: 'object',
-            code: WEB3_REQUIRED
-        },
-        'contracts.CognitiveJob.abi': {
-            type: 'object',
-            code: CONTRACT_REQUIRED,
-            args: ['CognitiveJob']
-        }
-    });
-
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-
-    const ipfsResultsCount = await cog.methods
-        .ipfsResultsCount()
-        .call();
-
-    let ipfsResults = [];
-
-    for (let i=0; i < ipfsResultsCount; i++) {
         
-        const result = await cog.methods
-            .ipfsResults(i)
-            .call();
-
-        if (result) {
-
-            ipfsResults.push(config.web3.utils.hexToUtf8(result));
-        }        
-    }    
-
-    return ipfsResults;
+    return Number.parseInt(count, 10);
 };
 
 /**
- * Get description from Job contract by the kernel address
+ * Get job details 
  * 
- * @param {string} address
+ * @param {String} address Job address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {number}
+ * @returns {Promise<{Number}>} 
  */
-export const fetchDescription = async (address = '', config = {}) => {
-
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
-        }
-    });
+export const fetchJobDetails = async (address, config = {}) => {
 
     expect.all(config, {
         'web3': {
             type: 'object',
             code: WEB3_REQUIRED
         },
-        'contracts.CognitiveJob.abi': {
+        'contracts.CognitiveJobController.abi': {
             type: 'object',
             code: CONTRACT_REQUIRED,
-            args: ['CognitiveJob']
+            args: ['CognitiveJobController']
         }
     });
 
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    const description = await cog.methods
-        .description()
+    let jobController = localCache.get('jobController');
+
+    if (!jobController) {
+
+        jobController = await fetchJobControllerAddress(config);
+    }
+
+    const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
+    
+    const { kernel, dataset, complexity, description, activeWorkers, progress, state } = await jctrl.methods
+        .getCognitiveJobDetails(address)
         .call();
+    const ipfsResults = await Promise.all(activeWorkers.map((_, index) => jctrl.methods.getCognitiveJobResults(address, index).call()));
+    
+    const utf8description = description ? config.web3.utils.hexToUtf8(description) : '';
 
-    return config.web3.utils.hexToUtf8(description);
-};
-
-/**
- * Get job by the job address
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {Object} 
- */
-export const fetchJob = async (address = '', config = {}) => {
-
-    const [
-        state,
+    return {
+        address, 
         kernel,
         dataset,
-        batches,
-        progress,
-        ipfsResults,
-        description
-    ] = await Promise.all([
-        fetchState(address, config),
-        fetchKernel(address, config),
-        fetchDataset(address, config),
-        fetchBatches(address, config),
-        fetchProgress(address, config),
-        fetchIpfsResults(address, config),
-        fetchDescription(address, config)
-    ]);
-    
-    return {
-        address: address,
-        jobStatus: state,
-        kernel: kernel,
-        dataset: dataset,
-        batches: batches,
-        progress: progress,
-        ipfsResults: ipfsResults,
-        activeWorkersCount: batches,
-        description: description.substr(2),
-        jobType: description.substr(0, 1)
+        activeWorkers,
+        ipfsResults: ipfsResults.map(result => result ? config.web3.utils.hexToUtf8(result) : result).filter(res => res),
+        complexity: Number(complexity),
+        progress: Number(progress),
+        state: Number(state),
+        description: utf8description.substr(2),
+        jobType: utf8description.substr(0, 1)
     };
 };
 
 /**
- * Get all jobs
+ * Get jobs Id from the "source"
  * 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {Object[]} 
+ * @param {String} from source activeJobs or completedJobs
+ * @param {Number} count
+ * @param {Object} options
+ * @returns {Promise<[{String}]>} 
  */
-export const fetchAll = async (config = {}) => {
-    let records = [];
-    let error = [];
+export const fetchJobsIds = async (source, count = 0, config = {}) => {
 
-    try {
-
-        const count = await fetchCognitiveJobsCount(config);    
-
-        for (let i=0; i < count; i++) {
-            
-            const address = await fetchAddressById(i, config);
-
-            try {
-
-                const job = await fetchJob(address, config);
-
-                records.push({
-                    id: i,
-                    ...job
-                });
-            } catch(err) {
-                error.push({
-                    address,
-                    message: err.message
-                });
-            }        
+    expect.all({ source }, {
+        'source': {
+            type: 'enum',
+            values: ['activeJobs', 'completedJobs']
         }
-    } catch(err) {
-        error.push({
-            error: err.message
-        });
-    }   
+    });
 
-    return {
-        records,
-        error
-    };
-};
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJobController.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJobController']
+        }
+    });    
 
-/**
- * Get job store
- * 
- * @param {string} address 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {Object} 
- */
-export const fetchJobStore = async (address = '', config = {}) => {
+    let jobController = localCache.get('jobController');
 
-    const job = await fetchJob(address, config);
+    if (!jobController) {
 
-    const [
-        kernel,
-        dataset
-    ] = await Promise.all([
-        fetchIpfsAddressByKernelAddress(job.kernel, config),
-        fetchDatasetByDatasetAddress(job.dataset, config)
-    ]);
-    
-    return {
-        job,
-        kernel,
-        dataset
-    };
+        jobController = await fetchJobControllerAddress(config);
+    }
+
+    // numbers sequence from 0 to count
+    const counts = [...Array(count).keys()];
+
+    const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
+    const addresses = await Promise.all(counts.map(index => jctrl.methods.getJobId(index, source === 'activeJobs').call()));
+        
+    return addresses;
 };
 
 /**
@@ -533,21 +292,71 @@ export const create = ({kernel, dataset, complexity, jobType, description, depos
         .on('error', reject)
         .on('receipt', receipt => {
 
-            if (Number(receipt.status) === 0) {
+            try {
 
-                return reject(pjsError(TRANSACTION_UNSUCCESSFUL));
+                if (Number(receipt.status) === 0) {
+
+                    return reject(pjsError(TRANSACTION_UNSUCCESSFUL));
+                }
+
+                if (receipt.events.CognitiveJobQueued) {
+    
+                    return resolve(receipt.events.CognitiveJobQueued.returnValues.jobId);
+                }
+    
+                resolve(receipt.events.CognitiveJobCreated.returnValues.jobId);
+            } catch (err) {
+                reject(err);
             }
-
-            if (receipt.events.CognitiveJobCreateFailed) {
-
-                return reject(pjsError(FAILURE_EVENT, {
-                    'CognitiveJobCreateFailed': receipt.events.CognitiveJobCreateFailed
-                }));
-            }
-
-            resolve(receipt.events.CognitiveJobCreated.returnValues.cognitiveJob);
         });
 });
+
+/**
+ * Get all jobs
+ * 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object[]} 
+ */
+export const fetchAll = async (config = {}) => {
+    let records = [];
+    let error = [];
+
+    try {
+
+        const [
+            activeCount,
+            completedCount
+        ] = await Promise.all([
+            fetchActiveJobsCount(config),
+            fetchCompletedJobsCount(config)
+        ]);
+
+        const [
+            activeJobsIds,
+            completedJobsIds
+        ] = await Promise.all([
+            fetchJobsIds('activeJobs', activeCount, config),
+            fetchJobsIds('completedJobs', completedCount, config)
+        ]);
+
+        const allJobsIds = [
+            ...activeJobsIds,
+            ...completedJobsIds
+        ];
+
+        records = await Promise.all(allJobsIds.map(jobId => fetchJobDetails(jobId, config)));
+        
+    } catch(err) {
+        error.push({
+            error: err.message
+        });
+    }   
+
+    return {
+        records,
+        error
+    };
+};
 
 /**
  * Handle event CognitiveJobCreated
@@ -603,12 +412,9 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
 
             try {
 
-                const store = await fetchJobStore(res.returnValues.cognitiveJob);
+                const jobDetails = await fetchJobDetails(res.returnValues.jobId, config);
                 callbacks.onData({
-                    address: res.returnValues.cognitiveJob,
-                    store,
-                    status: 'created',
-                    event: 'Pandora.CognitiveJobCreated'
+                    records: [jobDetails]
                 });
             } catch(err) {
                 callbacks.onError(err);
@@ -620,18 +426,17 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
 };
 
 /**
- * Handle event StateChanged for CognitiveJob
+ * Handle event JobStateChanged
  * 
- * @param {string} address
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventCognitiveJobStateChanged = (address, options = {}, config = {}) => {
+export const eventJobStateChanged = (options = {}, config = {}) => {
 
-    expect.all({ address }, {
-        'address': {
-            type: 'address'
+    expect.all({ options }, {
+        'options': {
+            type: 'object'
         }
     });
 
@@ -640,10 +445,15 @@ export const eventCognitiveJobStateChanged = (address, options = {}, config = {}
             type: 'object',
             code: WEB3_REQUIRED
         },
-        'contracts.CognitiveJob.abi': {
+        'contracts.Pandora.abi': {
             type: 'object',
             code: CONTRACT_REQUIRED,
-            args: ['CognitiveJob']
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'address',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
         }
     });
 
@@ -663,24 +473,31 @@ export const eventCognitiveJobStateChanged = (address, options = {}, config = {}
         }
     };
 
-    const cog = new config.web3.eth.Contract(config.contracts.CognitiveJob.abi, address);
-    chain.event = cog.events.StateChanged(options)
-        .on('data', async res => {
+    (async () => {
+        
+        let jobController = localCache.get('jobController');
 
-            try {
+        if (!jobController) {
 
-                const job = await fetchJobStore(res.returnValues.cognitiveJob);
-                callbacks.onData({
-                    address: res.returnValues.cognitiveJob,
-                    job,
-                    status: 'changed',
-                    event: 'CognitiveJob.StateChanged'
-                });
-            } catch(err) {
-                callbacks.onError(err);
-            }
-        })
-        .on('error', callbacks.onError);
+            jobController = await fetchJobControllerAddress(config);
+        }
+
+        const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
+        chain.event = jctrl.events.JobStateChanged(options)
+            .on('data', async res => {
+
+                try {
+
+                    const jobDetails = await fetchJobDetails(res.returnValues.jobId, config);
+                    callbacks.onData({
+                        records: [jobDetails]
+                    });
+                } catch(err) {
+                    callbacks.onError(err);
+                }            
+            })
+            .on('error', callbacks.onError);
+    })();
 
     return chain;
 };

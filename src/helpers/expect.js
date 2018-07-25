@@ -12,7 +12,9 @@
 import PjsError, {
     OPTIONS_REQUIRED,
     WRONG_TYPE,
-    ADDRESS_REQUIRED
+    ADDRESS_REQUIRED,
+    EXPECT_NOT_A_MEMBER,
+    EXPECT_TYPE_OPTIONS_REQUIRED
 } from './errors';
 
 export const all = (options = {}, model = {}) => {
@@ -28,26 +30,93 @@ export const all = (options = {}, model = {}) => {
             return acc[part] !== undefined ? acc[part] : null;
         }, options);
 
-        if (model[key].type && model[key].type === 'address' && !(new RegExp('^0x[a-fA-F0-9]{40}$').test(value))) {
+        let memberValue;
 
-            throw PjsError.apply(undefined, [
-                model[key].code || ADDRESS_REQUIRED, 
-                key, 
-                model[key].type, 
-                value,
-                ...(model[key].args ? model[key].args : [undefined])
-            ]);
-        }
+        switch (model[key].type) {
+            case 'enum':
 
-        if (model[key].type && model[key].type !== 'address' && typeof value !== model[key].type) {
+                if (!model[key].values || !Array.isArray(model[key].values)) {
 
-            throw PjsError.apply(undefined, [
-                model[key].code || WRONG_TYPE, 
-                key, 
-                model[key].type, 
-                value,
-                ...(model[key].args ? model[key].args : [undefined])
-            ]);
-        }
+                    throw PjsError.apply(undefined, [
+                        model[key].code || EXPECT_TYPE_OPTIONS_REQUIRED, 
+                        key, 
+                        model[key].type,
+                        value,
+                        ...(model[key].args ? model[key].args : [undefined])
+                    ]);
+                }
+
+                if (!model[key].values.includes(value)) {
+
+                    throw PjsError.apply(undefined, [
+                        model[key].code || WRONG_TYPE, 
+                        key, 
+                        model[key].type,
+                        value,
+                        ...(model[key].args ? model[key].args : [undefined])
+                    ]);
+                }
+
+                break;
+
+            case 'address':
+
+                if (!new RegExp('^0x[a-fA-F0-9]{40}$').test(value)) {
+
+                    throw PjsError.apply(undefined, [
+                        model[key].code || ADDRESS_REQUIRED, 
+                        key, 
+                        model[key].type, 
+                        value,
+                        ...(model[key].args ? model[key].args : [undefined])
+                    ]);
+                }
+
+                break;
+
+            case 'member':
+                
+                if (!model[key].provider || typeof model[key].provider !== 'object') {
+
+                    throw PjsError.apply(undefined, [
+                        model[key].code || `Provider object must be defined as "provider" model option for "${key}"`, 
+                        key, 
+                        model[key].type, 
+                        value,
+                        ...(model[key].args ? model[key].args : [undefined])
+                    ]);
+                }
+
+                memberValue = value.split('.').reduce((acc, part) => {
+                    return acc && acc[part] !== undefined ? acc[part] : null;
+                }, model[key].provider);
+
+                if (!memberValue) {
+
+                    throw PjsError.apply(undefined, [
+                        model[key].code || EXPECT_NOT_A_MEMBER, 
+                        key, 
+                        model[key].type, 
+                        value,
+                        ...(model[key].args ? model[key].args : [undefined])
+                    ]);
+                }
+
+                break;
+
+            default:
+                
+                if (typeof value !== model[key].type && 
+                    (model[key].required === true || model[key].required === undefined)) {
+
+                    throw PjsError.apply(undefined, [
+                        model[key].code || WRONG_TYPE, 
+                        key, 
+                        model[key].type, 
+                        value,
+                        ...(model[key].args ? model[key].args : [undefined])
+                    ]);
+                }
+        }        
     }
 };
