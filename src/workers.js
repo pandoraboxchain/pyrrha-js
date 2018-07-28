@@ -345,11 +345,12 @@ export const eventWorkerNodeCreated = (options = {}, config = {}) => {
 /**
  * Handle event StateChanged for WorkerNode
  * 
- * @param {string} address
+ * @param {String} address
+ * @param {Object} options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Object} Object with chained callbacks #data and #error
  */
-export const eventWorkerNodeStateChanged = (address = '', config = {}) => {
+export const eventWorkerNodeStateChanged = (address = '', options = {}, config = {}) => {
 
     expect.all({ address }, {
         'address': {
@@ -386,7 +387,7 @@ export const eventWorkerNodeStateChanged = (address = '', config = {}) => {
     };
 
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
-    chain.event = wor.events.StateChanged()
+    chain.event = wor.events.StateChanged(options)
         .on('data', async res => {
 
             try {
