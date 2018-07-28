@@ -433,9 +433,9 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} Object with chained callbacks #data and #error
  */
-export const eventJobStateChanged = (options = {}, config = {}) => {
+export const eventJobStateChanged = async (options = {}, config = {}) => {
 
     expect.all({ options }, {
         'options': {
@@ -476,31 +476,28 @@ export const eventJobStateChanged = (options = {}, config = {}) => {
         }
     };
 
-    (async () => {
-        
-        let jobController = localCache.get('jobController');
+    let jobController = localCache.get('jobController');
 
-        if (!jobController) {
+    if (!jobController) {
 
-            jobController = await fetchJobControllerAddress(config);
-        }
+        jobController = await fetchJobControllerAddress(config);
+    }
 
-        const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
-        chain.event = jctrl.events.JobStateChanged(options)
-            .on('data', async res => {
+    const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
+    chain.event = jctrl.events.JobStateChanged(options)
+        .on('data', async res => {
 
-                try {
+            try {
 
-                    const jobDetails = await fetchJobDetails(res.returnValues.jobId, config);
-                    callbacks.onData({
-                        records: [jobDetails]
-                    });
-                } catch(err) {
-                    callbacks.onError(err);
-                }            
-            })
-            .on('error', callbacks.onError);
-    })();
+                const jobDetails = await fetchJobDetails(res.returnValues.jobId, config);
+                callbacks.onData({
+                    records: [jobDetails]
+                });
+            } catch(err) {
+                callbacks.onError(err);
+            }            
+        })
+        .on('error', callbacks.onError);
 
     return chain;
 };
