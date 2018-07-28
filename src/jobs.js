@@ -14,8 +14,7 @@ import pjsError, {
     CONTRACT_REQUIRED,
     ADDRESS_REQUIRED,
     WEB3_REQUIRED,
-    TRANSACTION_UNSUCCESSFUL,
-    FAILURE_EVENT
+    TRANSACTION_UNSUCCESSFUL
 } from './helpers/errors';
 
 import {
@@ -23,7 +22,7 @@ import {
 } from './kernels';
 
 import {
-    fetchDataset as fetchDatasetByDatasetAddress
+    fetchIpfsAddress as fetchIpfsAddressByDatasetAddress
 } from './datasets';
 
 const localCache = new Map();
@@ -167,6 +166,8 @@ export const fetchJobDetails = async (address, config = {}) => {
     const { kernel, dataset, complexity, description, activeWorkers, progress, state } = await jctrl.methods
         .getCognitiveJobDetails(address)
         .call();
+    const kernelIpfs = await fetchIpfsAddressByKernelAddress(kernel, config);
+    const datasetIpfs = await fetchIpfsAddressByDatasetAddress(dataset, config);
     const ipfsResults = await Promise.all(activeWorkers.map((_, index) => jctrl.methods.getCognitiveJobResults(address, index).call()));
     
     const utf8description = description ? config.web3.utils.hexToUtf8(description) : '';
@@ -174,7 +175,9 @@ export const fetchJobDetails = async (address, config = {}) => {
     return {
         address, 
         kernel,
+        kernelIpfs,
         dataset,
+        datasetIpfs,
         activeWorkers,
         ipfsResults: ipfsResults.map(result => result ? config.web3.utils.hexToUtf8(result) : result).filter(res => res),
         complexity: Number(complexity),

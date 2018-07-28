@@ -142,8 +142,12 @@ describe('Jobs tests:', () => {
         }, accounts[3]);
 
         const jobDetails = await pjs.jobs.fetchJobDetails(jobContractAddress);
+
         expect(jobDetails).to.be.an('object');
         expect(jobDetails.kernel).to.be.equal(kernelContractAddress);
+        expect(jobDetails.dataset).to.be.equal(datasetContractAddress);
+        expect(jobDetails.kernelIpfs).to.be.a('string');
+        expect(jobDetails.datasetIpfs).to.be.a('string');
     });
 
     it('#fetchAll should fetch all jobs', async () => {
