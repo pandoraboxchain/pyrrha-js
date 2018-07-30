@@ -392,12 +392,9 @@ export const eventWorkerNodeStateChanged = (address = '', options = {}, config =
 
             try {
 
-                const worker = await fetchWorker(res.returnValues.workerNode, config);
+                const worker = await fetchWorker(address, config);
                 callbacks.onData({
-                    address: res.returnValues.workerNode,
-                    worker,
-                    status: 'changed',
-                    event: 'WorkerNode.StateChanged'
+                    records: [worker]
                 });
             } catch(err) {
                 callbacks.onError(err);

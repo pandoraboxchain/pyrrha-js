@@ -22,18 +22,18 @@
   "homepage": "https://github.com/pandoraboxchain/pyrrha-js",
   "dependencies": {
     "ipfs-api": "^22.2.4",
-    "web3": "1.0.0-beta.34"
+    "web3": "1.0.0-beta.35"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.54",
-    "@babel/core": "^7.0.0-beta.54",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.54",
-    "@babel/plugin-syntax-object-rest-spread": "^7.0.0-beta.54",
-    "@babel/polyfill": "^7.0.0-beta.54",
-    "@babel/preset-env": "^7.0.0-beta.54",
-    "@babel/register": "^7.0.0-beta.54",
+    "@babel/cli": "^7.0.0-beta.55",
+    "@babel/core": "^7.0.0-beta.55",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.55",
+    "@babel/plugin-syntax-object-rest-spread": "^7.0.0-beta.55",
+    "@babel/polyfill": "^7.0.0-beta.55",
+    "@babel/preset-env": "^7.0.0-beta.55",
+    "@babel/register": "^7.0.0-beta.55",
     "cpy-cli": "^2.0.0",
-    "eslint": "^5.1.0",
+    "eslint": "^5.2.0",
     "rimraf": "^2.6.2",
     "github-utils": "git+https://github.com/pandoraboxchain/github-utils.git#v0.1.4"
   },
