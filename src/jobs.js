@@ -168,8 +168,7 @@ export const fetchJobDetails = async (address, config = {}) => {
         .call();
     const kernelIpfs = await fetchIpfsAddressByKernelAddress(kernel, config);
     const datasetIpfs = await fetchIpfsAddressByDatasetAddress(dataset, config);
-    const ipfsResults = await Promise.all(activeWorkers.map((_, index) => jctrl.methods.getCognitiveJobResults(address, index).call()));
-    
+    const ipfsResults = await Promise.all(activeWorkers.map((_, index) => jctrl.methods.getCognitiveJobResults(address, index).call()));    
     const utf8description = description ? config.web3.utils.hexToUtf8(description) : '';
 
     return {
@@ -241,7 +240,7 @@ export const fetchJobsIds = async (source, count = 0, config = {}) => {
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to add status (boolean)
  */
-export const create = ({kernel, dataset, complexity, jobType, description, deposit}, from, config = {}) => new Promise((resolve, reject) => {
+export const create = ({kernel, dataset, complexity, jobType, description, deposit}, from, config = {}) => new Promise(async (resolve, reject) => {
 
     expect.all({ kernel, dataset, complexity, jobType, description, deposit, from }, {
         'kernel': {
@@ -285,11 +284,13 @@ export const create = ({kernel, dataset, complexity, jobType, description, depos
     });
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
+    const gasPrice = await config.web3.eth.getGasPrice();
     pan.methods
         .createCognitiveJob(kernel, dataset, complexity, config.web3.utils.utf8ToHex(`${jobType};${description}`))
         .send({
             value: config.web3.utils.toWei(String(deposit)),
             from,
+            gasPrice,
             gas: 6700000// because this workflow is too greedy
         })
         .on('error', reject)

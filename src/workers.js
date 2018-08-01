@@ -17,7 +17,7 @@ import pjsError, {
     TRANSACTION_UNSUCCESSFUL
 } from './helpers/errors';
 
-import { fetchState as fetchJobState } from './jobs';
+import { fetchJobDetails } from './jobs';
 
 /**
  * Get worker nodes count from Pandora contract
@@ -186,7 +186,8 @@ export const fetchWorker = async (address = '', config = {}) => {
     // Check is not 0x0
     if (+activeJob !== 0) {
 
-        jobState = await fetchJobState(activeJob, config);
+        const jobDetails = await fetchJobDetails(activeJob, config);
+        jobState = jobDetails.state;
     } else {
         currentJob = null;
         jobState = -1;
@@ -322,16 +323,14 @@ export const eventWorkerNodeCreated = (options = {}, config = {}) => {
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     chain.event = pan.events.WorkerNodeCreated(options)
-        .on('data', async res => {
+        .on('data', async event => {
 
             try {
 
-                const worker = await fetchWorker(res.returnValues.workerNode, config);
+                const worker = await fetchWorker(event.returnValues.workerNode, config);
                 callbacks.onData({
-                    address: res.returnValues.workerNode,
-                    worker,
-                    status: 'created',
-                    event: 'Pandora.WorkerNodeCreated'
+                    records: [worker],
+                    event
                 });
             } catch(err) {
                 callbacks.onError(err);
@@ -388,13 +387,14 @@ export const eventWorkerNodeStateChanged = (address = '', options = {}, config =
 
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
     chain.event = wor.events.StateChanged(options)
-        .on('data', async res => {
+        .on('data', async event => {
 
             try {
 
                 const worker = await fetchWorker(address, config);
                 callbacks.onData({
-                    records: [worker]
+                    records: [worker],
+                    event
                 });
             } catch(err) {
                 callbacks.onError(err);
@@ -413,7 +413,7 @@ export const eventWorkerNodeStateChanged = (address = '', options = {}, config =
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to add status (boolean)
  */
-export const alive = (workerNodeAddress, from, config = {}) => new Promise((resolve, reject) => {
+export const alive = (workerNodeAddress, from, config = {}) => new Promise(async (resolve, reject) => {
 
     expect.all({ workerNodeAddress, from }, {
         'workerNodeAddress': {
@@ -437,10 +437,12 @@ export const alive = (workerNodeAddress, from, config = {}) => new Promise((reso
     });
 
     const wrn = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, workerNodeAddress);
+    const gasPrice = await config.web3.eth.getGasPrice();
     wrn.methods
         .alive()
         .send({
             from,
+            gasPrice,
             gas: 6700000
         })
         .on('error', reject)

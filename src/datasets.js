@@ -485,7 +485,7 @@ export const deploy = async (datasetIpfsHash, batchesCount, { dimension, price, 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to {string} contractAddress
  */
-export const addToMarket = (datasetContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
+export const addToMarket = (datasetContractAddress, publisherAddress, config = {}) => new Promise(async (resolve, reject) => {
 
     expect.all({ datasetContractAddress, publisherAddress }, {
         'datasetContractAddress': {
@@ -518,10 +518,12 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
     });
 
     const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
+    const gasPrice = await config.web3.eth.getGasPrice();
     market.methods
         .addDataset(datasetContractAddress)
         .send({
-            from: publisherAddress
+            from: publisherAddress,
+            gasPrice
         })
         .on('error', reject)
         .on('receipt', receipt => {
@@ -543,7 +545,7 @@ export const addToMarket = (datasetContractAddress, publisherAddress, config = {
  * @param {String} publisherAddress 
  * @param {Object} config Library config (provided by the proxy but can be overridden) 
  */
-export const removeDataset = (datasetAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
+export const removeDataset = (datasetAddress, publisherAddress, config = {}) => new Promise(async (resolve, reject) => {
 
     expect.all({ datasetAddress, publisherAddress }, {
         'datasetAddress': {
@@ -572,10 +574,12 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
     });
 
     const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
+    const gasPrice = await config.web3.eth.getGasPrice();
     market.methods
         .removeDataset(datasetAddress)
         .send({
-            from: publisherAddress
+            from: publisherAddress,
+            gasPrice
         })
         .on('error', reject)
         .on('receipt', receipt => {

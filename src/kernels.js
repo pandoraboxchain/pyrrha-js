@@ -474,7 +474,7 @@ export const deploy = async (kernelIpfsHash, { dimension, complexity, price, met
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object resolved to {string} contractAddress // can be null if used ganache-cli environment
  */
-export const addToMarket = (kernelContractAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
+export const addToMarket = (kernelContractAddress, publisherAddress, config = {}) => new Promise(async (resolve, reject) => {
 
     expect.all({ kernelContractAddress, publisherAddress }, {
         'kernelContractAddress': {
@@ -507,10 +507,12 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
     });
 
     const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
+    const gasPrice = await config.web3.eth.getGasPrice();
     market.methods
         .addKernel(kernelContractAddress)
         .send({
-            from: publisherAddress
+            from: publisherAddress,
+            gasPrice
         })
         .on('error', reject)
         .on('receipt', receipt => {
@@ -533,7 +535,7 @@ export const addToMarket = (kernelContractAddress, publisherAddress, config = {}
  * @param {Object} config Library config (provided by the proxy but can be overridden) 
  * @returns {Promise} Promise object resolved to {String} contractAddress
  */
-export const removeKernel = (kernelAddress, publisherAddress, config = {}) => new Promise((resolve, reject) => {
+export const removeKernel = (kernelAddress, publisherAddress, config = {}) => new Promise(async (resolve, reject) => {
 
     expect.all({ kernelAddress, publisherAddress }, {
         'kernelAddress': {
@@ -562,10 +564,12 @@ export const removeKernel = (kernelAddress, publisherAddress, config = {}) => ne
     });
 
     const market = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
+    const gasPrice = await config.web3.eth.getGasPrice();
     market.methods
         .removeKernel(kernelAddress)
         .send({
-            from: publisherAddress
+            from: publisherAddress,
+            gasPrice
         })
         .on('error', reject)
         .on('receipt', receipt => {
