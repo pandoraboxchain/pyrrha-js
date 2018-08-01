@@ -412,13 +412,14 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     chain.event = pan.events.CognitiveJobCreated(options)
-        .on('data', async res => {
+        .on('data', async (event) => {
 
             try {
 
-                const jobDetails = await fetchJobDetails(res.returnValues.jobId, config);
+                const jobDetails = await fetchJobDetails(event.returnValues.jobId, config);
                 callbacks.onData({
-                    records: [jobDetails]
+                    records: [jobDetails],
+                    event
                 });
             } catch(err) {
                 callbacks.onError(err);
@@ -488,13 +489,14 @@ export const eventJobStateChanged = (options = {}, config = {}) => {
     
         const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
         chain.event = jctrl.events.JobStateChanged(options)
-            .on('data', async res => {
+            .on('data', async event => {
     
                 try {
     
-                    const jobDetails = await fetchJobDetails(res.returnValues.jobId, config);
+                    const jobDetails = await fetchJobDetails(event.returnValues.jobId, config);
                     callbacks.onData({
-                        records: [jobDetails]
+                        records: [jobDetails],
+                        event
                     });
                 } catch(err) {
                     callbacks.onError(err);

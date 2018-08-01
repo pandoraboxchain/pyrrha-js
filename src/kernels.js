@@ -637,16 +637,14 @@ export const eventKernelAdded = (options = {}, config = {}) => {
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     chain.event = mar.events.KernelAdded(options)
-        .on('data', async res => {
+        .on('data', async event => {
 
             try {
 
-                const kernel = await fetchKernel(res.returnValues.kernel, config);
+                const kernel = await fetchKernel(event.returnValues.kernel, config);
                 callbacks.onData({
-                    address: res.returnValues.kernel,
-                    kernel,
-                    status: 'created',
-                    event: 'PandoraMarket.KernelAdded'
+                    records: [kernel],
+                    event
                 });
             } catch(err) {
                 callbacks.onError(err);
@@ -707,12 +705,11 @@ export const eventKernelRemoved = (options = {}, config = {}) => {
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     chain.event = mar.events.KernelRemoved(options)
-        .on('data', async res => {
+        .on('data', async event => {
 
             callbacks.onData({
-                address: res.returnValues.kernel,
-                status: 'removed',
-                event: 'PandoraMarket.KernelRemoved'
+                records: [{address: event.returnValues.kernel}],
+                event
             });            
         })
         .on('error', callbacks.onError);

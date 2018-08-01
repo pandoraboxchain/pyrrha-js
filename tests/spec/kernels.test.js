@@ -133,7 +133,7 @@ describe('Kernels tests:', () => {
 
         pjs.kernels.eventKernelAdded({})
             .data(result => {
-                expect(result.address === addressAdded).to.be.true;
+                expect(result.records[0].address === addressAdded).to.be.true;
                 clearTimeout(timeout);
                 resolve();
             })
@@ -161,7 +161,7 @@ describe('Kernels tests:', () => {
 
         pjs.kernels.eventKernelRemoved({})
             .data(result => {
-                expect(result.address === addressAdded).to.be.true;
+                expect(result.records[0].address === addressAdded).to.be.true;
                 clearTimeout(timeout);
                 resolve();
             })

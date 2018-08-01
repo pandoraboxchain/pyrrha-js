@@ -643,16 +643,14 @@ export const eventDatasetAdded = (options = {}, config = {}) => {
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     chain.event = mar.events.DatasetAdded(options)
-        .on('data', async res => {
+        .on('data', async event => {
 
             try {
 
-                const dataset = await fetchDataset(res.returnValues.dataset, config);
+                const dataset = await fetchDataset(event.returnValues.dataset, config);
                 callbacks.onData({
-                    address: res.returnValues.dataset,
-                    dataset,
-                    status: 'created',
-                    event: 'PandoraMarket.DatasetAdded'
+                    records: [dataset],
+                    event
                 });
             } catch(err) {
                 callbacks.onError(err);
@@ -713,12 +711,11 @@ export const eventDatasetRemoved = (options = {}, config = {}) => {
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
     chain.event = mar.events.DatasetRemoved(options)
-        .on('data', async res => {
+        .on('data', async event => {
 
             callbacks.onData({
-                address: res.returnValues.dataset,
-                status: 'removed',
-                event: 'PandoraMarket.DatasetRemoved'
+                records: [{address: event.returnValues.dataset}],
+                event
             });            
         })
         .on('error', callbacks.onError);
