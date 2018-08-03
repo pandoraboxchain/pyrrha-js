@@ -9,6 +9,7 @@
 
 'use strict';
 
+import '@babel/polyfill';
 import Web3 from 'web3';
 import ipfsAPI from 'ipfs-api';
 
