@@ -134,6 +134,46 @@ export const fetchCompletedJobsCount = async (config = {}) => {
 };
 
 /**
+ * Get job service info 
+ * 
+ * @param {String} address Job address
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise<{Number}>} 
+ */
+export const fetchServiceInfo = async (address, config = {}) => {
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.CognitiveJobController.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['CognitiveJobController']
+        }
+    });
+
+    let jobController = localCache.get('jobController');
+
+    if (!jobController) {
+
+        jobController = await fetchJobControllerAddress(config);
+    }
+
+    const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
+
+    const { responseTimestamps, responseFlags } = await jctrl.methods
+        .getCognitiveJobServiceInfo(address)
+        .call();
+
+    return { 
+        responseTimestamps, 
+        responseFlags 
+    };
+};
+
+/**
  * Get job details 
  * 
  * @param {String} address Job address
@@ -170,6 +210,7 @@ export const fetchJobDetails = async (address, config = {}) => {
     const datasetIpfs = await fetchIpfsAddressByDatasetAddress(dataset, config);
     const ipfsResults = await Promise.all(activeWorkers.map((_, index) => jctrl.methods.getCognitiveJobResults(address, index).call()));    
     const utf8description = description ? config.web3.utils.hexToUtf8(description) : '';
+    const serviceInfo = await fetchServiceInfo(address, config);
 
     return {
         address, 
@@ -183,7 +224,8 @@ export const fetchJobDetails = async (address, config = {}) => {
         progress: Number(progress),
         state: Number(state),
         description: utf8description.substr(2),
-        jobType: utf8description.substr(0, 1)
+        jobType: utf8description.substr(0, 1),
+        serviceInfo
     };
 };
 
@@ -286,7 +328,7 @@ export const create = ({kernel, dataset, complexity, jobType, description, depos
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     const gasPrice = await config.web3.eth.getGasPrice();
     pan.methods
-        .createCognitiveJob(kernel, dataset, complexity, config.web3.utils.utf8ToHex(`${jobType};${description}`))
+        .createCognitiveJob(kernel, dataset, complexity, config.web3.utils.utf8ToHex(`${jobType};${description.trim()}`))
         .send({
             value: config.web3.utils.toWei(String(deposit)),
             from,
