@@ -215,7 +215,7 @@ export const fetchJobDetails = async (address, config = {}) => {
     const utf8description = description ? config.web3.utils.hexToUtf8(description) : '';
     const serviceInfo = await fetchServiceInfo(address, config);
 
-    const progress = Math.ceil(ipfsResults.reduce(async (progressPromise, result, index) => {
+    const progress = Math.ceil(await ipfsResults.reduce(async (progressPromise, result, index) => {
         const commonProgress = await progressPromise;
         let partProgress = 100 / ipfsResults.length;
 
