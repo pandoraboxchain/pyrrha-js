@@ -148,6 +148,7 @@ describe('Jobs tests:', () => {
         expect(jobDetails.dataset).to.be.equal(datasetContractAddress);
         expect(jobDetails.kernelIpfs).to.be.a('string');
         expect(jobDetails.datasetIpfs).to.be.a('string');
+        expect(jobDetails.progress).to.be.a('number');
     });
 
     it('#fetchAll should fetch all jobs', async () => {

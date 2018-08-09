@@ -27,6 +27,8 @@ describe('Workers tests:', () => {
             contracts,
             addresses
         });
+
+        await new Promise(resolve => setTimeout(resolve, 500));
     });
 
     after(done => server.close(done));

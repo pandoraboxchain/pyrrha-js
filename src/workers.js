@@ -274,6 +274,41 @@ export const fetchIdleCount = async (config = {}) => {
 };
 
 /**
+ * Fetch progress of active job for the worker
+ *
+ * @param {String} address Worker's address
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise<{Number}>} A Promise object represents the progress value
+ */
+export const fetchJobProgress = async (address = '', config = {}) => {
+
+    expect.all({ address }, {
+        'address': {
+            type: 'address'
+        }
+    });
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.WorkerNode.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['WorkerNode']
+        }
+    });
+
+    const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);    
+    const state = await wor.methods
+        .jobProgress()
+        .call();
+
+    return Math.ceil(Number.parseInt(state, 10));
+};
+
+/**
  * Handle event WorkerNodeCreated
  * 
  * @param {Object} options Event handler options

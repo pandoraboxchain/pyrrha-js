@@ -24,6 +24,9 @@ import {
 import {
     fetchIpfsAddress as fetchIpfsAddressByDatasetAddress
 } from './datasets';
+import {
+    fetchJobProgress as fetchWorkersActiveJobProgress
+} from './workers';
 
 const localCache = new Map();
 
@@ -203,7 +206,7 @@ export const fetchJobDetails = async (address, config = {}) => {
 
     const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
     
-    const { kernel, dataset, complexity, description, activeWorkers, progress, state } = await jctrl.methods
+    const { kernel, dataset, complexity, description, activeWorkers, state } = await jctrl.methods
         .getCognitiveJobDetails(address)
         .call();
     const kernelIpfs = await fetchIpfsAddressByKernelAddress(kernel, config);
@@ -211,6 +214,20 @@ export const fetchJobDetails = async (address, config = {}) => {
     const ipfsResults = await Promise.all(activeWorkers.map((_, index) => jctrl.methods.getCognitiveJobResults(address, index).call()));    
     const utf8description = description ? config.web3.utils.hexToUtf8(description) : '';
     const serviceInfo = await fetchServiceInfo(address, config);
+
+    const progress = Math.ceil(ipfsResults.reduce(async (progressPromise, result, index) => {
+        const commonProgress = await progressPromise;
+        let partProgress = 100 / ipfsResults.length;
+
+        if (!result) {
+
+            // If result not been provided by the worker 
+            // then we fetching progress value from its contract
+            partProgress = await fetchWorkersActiveJobProgress(activeWorkers[index], config);
+        }
+
+        return commonProgress + partProgress;
+    }, Promise.resolve(0)));
 
     return {
         address, 
@@ -221,7 +238,7 @@ export const fetchJobDetails = async (address, config = {}) => {
         activeWorkers,
         ipfsResults: ipfsResults.map(result => result ? config.web3.utils.hexToUtf8(result) : result).filter(res => res),
         complexity: Number(complexity),
-        progress: Number(progress),
+        progress: progress > 100 ? 100 : progress,
         state: Number(state),
         description: utf8description.substr(2),
         jobType: utf8description.substr(0, 1),
@@ -520,6 +537,20 @@ export const eventJobStateChanged = (options = {}, config = {}) => {
         }
     };
 
+    const eventHandler = async event => {
+    
+        try {
+
+            const jobDetails = await fetchJobDetails(event.returnValues.jobId, config);
+            callbacks.onData({
+                records: [jobDetails],
+                event
+            });
+        } catch(err) {
+            callbacks.onError(err);
+        }            
+    };
+
     (async () => {
 
         let jobController = localCache.get('jobController');
@@ -530,21 +561,15 @@ export const eventJobStateChanged = (options = {}, config = {}) => {
         }
     
         const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
-        chain.event = jctrl.events.JobStateChanged(options)
-            .on('data', async event => {
-    
-                try {
-    
-                    const jobDetails = await fetchJobDetails(event.returnValues.jobId, config);
-                    callbacks.onData({
-                        records: [jobDetails],
-                        event
-                    });
-                } catch(err) {
-                    callbacks.onError(err);
-                }            
-            })
-            .on('error', callbacks.onError);
+        
+        // We listen for two events because of their nature means almost the same
+        chain.event = [];
+        chain.event.push(jctrl.events.JobStateChanged(options)
+            .on('data', eventHandler)
+            .on('error', callbacks.onError));
+        chain.event.push(jctrl.events.CognitionProgressed(options)
+            .on('data', eventHandler)
+            .on('error', callbacks.onError));
     })();
 
     return chain;

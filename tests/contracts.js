@@ -11,9 +11,12 @@ module.exports = async () => {
         path: path.join(__dirname, '..'),
         gas: 0xfffffffffff,
         copy, 
-        extract
+        extract,
+        timeout: 15000,
+        debug: true,
+        maxServers: 10
     });
-    
+
     const [ server, provider, contracts, addresses, accounts, publisher ] = await Promise.all([
         node.server,
         node.provider,
@@ -22,7 +25,7 @@ module.exports = async () => {
         node.accounts,
         node.publisher
     ]);
-    
+
     return {
         node,
         server,
