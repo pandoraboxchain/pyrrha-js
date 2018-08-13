@@ -485,6 +485,7 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
             }            
         })
         .on('error', callbacks.onError);
+    chain.event.name = 'CognitiveJobCreated';
 
     return chain;
 };
@@ -567,9 +568,11 @@ export const eventJobStateChanged = (options = {}, config = {}) => {
         chain.event.push(jctrl.events.JobStateChanged(options)
             .on('data', eventHandler)
             .on('error', callbacks.onError));
+        chain.event[0].name = 'JobStateChanged';
         chain.event.push(jctrl.events.CognitionProgressed(options)
             .on('data', eventHandler)
             .on('error', callbacks.onError));
+        chain.event[1].name = 'CognitionProgressed';
     })();
 
     return chain;

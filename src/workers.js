@@ -372,6 +372,7 @@ export const eventWorkerNodeCreated = (options = {}, config = {}) => {
             }            
         })
         .on('error', callbacks.onError);
+    chain.event.name = 'WorkerNodeCreated';
 
     return chain;
 };
@@ -436,6 +437,7 @@ export const eventWorkerNodeStateChanged = (address = '', options = {}, config =
             }
         })
         .on('error', callbacks.onError);
+    chain.event.name = 'StateChanged';
 
     return chain;
 };

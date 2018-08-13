@@ -657,6 +657,7 @@ export const eventDatasetAdded = (options = {}, config = {}) => {
             }            
         })
         .on('error', callbacks.onError);
+    chain.event.name = 'DatasetAdded';
 
     return chain;
 };
@@ -719,6 +720,7 @@ export const eventDatasetRemoved = (options = {}, config = {}) => {
             });            
         })
         .on('error', callbacks.onError);
+    chain.event.name = 'DatasetRemoved';
 
     return chain;
 };

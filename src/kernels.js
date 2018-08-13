@@ -651,6 +651,7 @@ export const eventKernelAdded = (options = {}, config = {}) => {
             }            
         })
         .on('error', callbacks.onError);
+    chain.event.name = 'KernelAdded';
 
     return chain;
 };
@@ -713,6 +714,7 @@ export const eventKernelRemoved = (options = {}, config = {}) => {
             });            
         })
         .on('error', callbacks.onError);
+    chain.event.name = 'KernelRemoved';
 
     return chain;
 };
