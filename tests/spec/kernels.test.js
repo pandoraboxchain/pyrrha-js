@@ -127,11 +127,12 @@ describe('Kernels tests:', () => {
         await pjs.kernels.removeKernel(kernelContractAddress, publisher);
     });
 
-    it('#eventKernelAdded should handle KernelAdded event', () => new Promise((resolve, reject) => {
+    it('#eventKernelAdded should handle KernelAdded event', () => new Promise(async (resolve, reject) => {
         let addressAdded;
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
-        pjs.kernels.eventKernelAdded({})
+        const kernelAdded = await pjs.kernels.eventKernelAdded({});
+        kernelAdded
             .data(result => {
                 expect(result.records[0].address === addressAdded).to.be.true;
                 clearTimeout(timeout);
@@ -155,11 +156,12 @@ describe('Kernels tests:', () => {
             .catch(reject);
     }));
 
-    it('#eventKernelRemoved should handle KernelRemoved event', () => new Promise((resolve, reject) => {
+    it('#eventKernelRemoved should handle KernelRemoved event', () => new Promise(async (resolve, reject) => {
         let addressAdded;
         let timeout = setTimeout(() => reject(new Error('Event timeout of 5 sec exceeded')), 5000);
 
-        pjs.kernels.eventKernelRemoved({})
+        const kernelRemoved = await pjs.kernels.eventKernelRemoved({});
+        kernelRemoved
             .data(result => {
                 expect(result.records[0].address === addressAdded).to.be.true;
                 clearTimeout(timeout);

@@ -158,22 +158,24 @@ describe('Jobs tests:', () => {
 
     it('#eventCognitiveJobCreated should handle new job creation', done => {
         const timeout = setTimeout(() => done(new Error('event CognitiveJobCreated not emmited during timeout')), 3000);
-        let jobContractAddress;
-
-        pjs.jobs.eventCognitiveJobCreated({})
-            .error(err => {
-                clearTimeout(timeout);
-                done(err);
-            })
-            .data(data => {
-                clearTimeout(timeout);
-                expect(Array.isArray(data.records)).to.be.true;
-                expect(data.records.length).to.be.equal(1);
-                expect(data.records[0].address).to.be.equal(jobContractAddress);                
-                done();
-            });
-
+        
         (async () => {
+            let jobContractAddress;
+            
+            const cognitiveJobCreated = await pjs.jobs.eventCognitiveJobCreated({});
+            cognitiveJobCreated
+                .error(err => {
+                    clearTimeout(timeout);
+                    done(err);
+                })
+                .data(data => {
+                    clearTimeout(timeout);
+                    expect(Array.isArray(data.records)).to.be.true;
+                    expect(data.records.length).to.be.equal(1);
+                    expect(data.records[0].address).to.be.equal(jobContractAddress);                
+                    done();
+                });
+
             const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[6]);
             await pjs.workers.alive(workerNodeAddress, accounts[6]);
 
