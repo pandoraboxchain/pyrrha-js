@@ -313,9 +313,9 @@ export const fetchJobProgress = async (address = '', config = {}) => {
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} PPromise object resolved to the object with chained callbacks #data and #error
  */
-export const eventWorkerNodeCreated = (options = {}, config = {}) => {
+export const eventWorkerNodeCreated = async (options = {}, config = {}) => {
 
     expect.all({ options }, {
         'options': {
@@ -383,9 +383,9 @@ export const eventWorkerNodeCreated = (options = {}, config = {}) => {
  * @param {String} address
  * @param {Object} options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} PPromise object resolved to the object with chained callbacks #data and #error
  */
-export const eventWorkerNodeStateChanged = (address = '', options = {}, config = {}) => {
+export const eventWorkerNodeStateChanged = async (address = '', options = {}, config = {}) => {
 
     expect.all({ address }, {
         'address': {

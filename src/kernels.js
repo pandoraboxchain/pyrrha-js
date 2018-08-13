@@ -588,9 +588,9 @@ export const removeKernel = (kernelAddress, publisherAddress, config = {}) => ne
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} PPromise object resolved to the object with chained callbacks #data and #error
  */
-export const eventKernelAdded = (options = {}, config = {}) => {
+export const eventKernelAdded = async (options = {}, config = {}) => {
 
     expect.all({ options }, {
         'options': {
@@ -661,9 +661,9 @@ export const eventKernelAdded = (options = {}, config = {}) => {
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} PPromise object resolved to the object with chained callbacks #data and #error
  */
-export const eventKernelRemoved = (options = {}, config = {}) => {
+export const eventKernelRemoved = async (options = {}, config = {}) => {
 
     expect.all({ options }, {
         'options': {

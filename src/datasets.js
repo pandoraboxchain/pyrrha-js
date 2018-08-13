@@ -598,9 +598,9 @@ export const removeDataset = (datasetAddress, publisherAddress, config = {}) => 
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} PPromise object resolved to the object with chained callbacks #data and #error
  */
-export const eventDatasetAdded = (options = {}, config = {}) => {
+export const eventDatasetAdded = async (options = {}, config = {}) => {
 
     expect.all({ options }, {
         'options': {
@@ -667,9 +667,9 @@ export const eventDatasetAdded = (options = {}, config = {}) => {
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} PPromise object resolved to the object with chained callbacks #data and #error
  */
-export const eventDatasetRemoved = (options = {}, config = {}) => {
+export const eventDatasetRemoved = async (options = {}, config = {}) => {
 
     expect.all({ options }, {
         'options': {

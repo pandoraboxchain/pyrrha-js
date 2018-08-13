@@ -426,9 +426,9 @@ export const fetchAll = async (config = {}) => {
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} PPromise object resolved to the object with chained callbacks #data and #error
  */
-export const eventCognitiveJobCreated = (options = {}, config = {}) => {
+export const eventCognitiveJobCreated = async (options = {}, config = {}) => {
 
     expect.all({ options }, {
         'options': {
@@ -495,9 +495,9 @@ export const eventCognitiveJobCreated = (options = {}, config = {}) => {
  * 
  * @param {Object} options Event handler options
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Object} Object with chained callbacks #data and #error
+ * @returns {Promise<{Object}>} PPromise object resolved to the object with chained callbacks #data and #error
  */
-export const eventJobStateChanged = (options = {}, config = {}) => {
+export const eventJobStateChanged = async (options = {}, config = {}) => {
 
     expect.all({ options }, {
         'options': {
@@ -552,28 +552,27 @@ export const eventJobStateChanged = (options = {}, config = {}) => {
         }            
     };
 
-    (async () => {
+    let jobController = localCache.get('jobController');
 
-        let jobController = localCache.get('jobController');
+    if (!jobController) {
 
-        if (!jobController) {
+        jobController = await fetchJobControllerAddress(config);
+    }
 
-            jobController = await fetchJobControllerAddress(config);
-        }
+    const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
     
-        const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
-        
-        // We listen for two events because of their nature means almost the same
-        chain.event = [];
-        chain.event.push(jctrl.events.JobStateChanged(options)
-            .on('data', eventHandler)
-            .on('error', callbacks.onError));
-        chain.event[0].name = 'JobStateChanged';
-        chain.event.push(jctrl.events.CognitionProgressed(options)
-            .on('data', eventHandler)
-            .on('error', callbacks.onError));
-        chain.event[1].name = 'CognitionProgressed';
-    })();
+    // We listen for two events because of their nature means almost the same
+    chain.event = [];
+    
+    chain.event.push(jctrl.events.JobStateChanged(options)
+        .on('data', eventHandler)
+        .on('error', callbacks.onError));
+    chain.event[0].name = 'JobStateChanged';
+
+    chain.event.push(jctrl.events.CognitionProgressed(options)
+        .on('data', eventHandler)
+        .on('error', callbacks.onError));
+    chain.event[1].name = 'CognitionProgressed';
 
     return chain;
 };
