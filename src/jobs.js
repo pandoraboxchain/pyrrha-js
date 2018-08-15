@@ -292,6 +292,53 @@ export const fetchJobsIds = async (source, count = 0, config = {}) => {
 };
 
 /**
+ * Get all jobs
+ * 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ * @returns {Promise} A Promise object represents the {Object[]} 
+ */
+export const fetchAll = async (config = {}) => {
+    let records = [];
+    let error = [];
+
+    try {
+
+        const [
+            activeCount,
+            completedCount
+        ] = await Promise.all([
+            fetchActiveJobsCount(config),
+            fetchCompletedJobsCount(config)
+        ]);
+
+        const [
+            activeJobsIds,
+            completedJobsIds
+        ] = await Promise.all([
+            fetchJobsIds('activeJobs', activeCount, config),
+            fetchJobsIds('completedJobs', completedCount, config)
+        ]);
+
+        const allJobsIds = [
+            ...activeJobsIds,
+            ...completedJobsIds
+        ];
+
+        records = await Promise.all(allJobsIds.map(jobId => fetchJobDetails(jobId, config)));
+        
+    } catch(err) {
+        error.push({
+            error: err.message
+        });
+    }   
+
+    return {
+        records,
+        error
+    };
+};
+
+/**
  * Create cognitive job contract
  * 
  * @param {Object} options
@@ -375,53 +422,6 @@ export const create = ({kernel, dataset, complexity, jobType, description, depos
 });
 
 /**
- * Get all jobs
- * 
- * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {Object[]} 
- */
-export const fetchAll = async (config = {}) => {
-    let records = [];
-    let error = [];
-
-    try {
-
-        const [
-            activeCount,
-            completedCount
-        ] = await Promise.all([
-            fetchActiveJobsCount(config),
-            fetchCompletedJobsCount(config)
-        ]);
-
-        const [
-            activeJobsIds,
-            completedJobsIds
-        ] = await Promise.all([
-            fetchJobsIds('activeJobs', activeCount, config),
-            fetchJobsIds('completedJobs', completedCount, config)
-        ]);
-
-        const allJobsIds = [
-            ...activeJobsIds,
-            ...completedJobsIds
-        ];
-
-        records = await Promise.all(allJobsIds.map(jobId => fetchJobDetails(jobId, config)));
-        
-    } catch(err) {
-        error.push({
-            error: err.message
-        });
-    }   
-
-    return {
-        records,
-        error
-    };
-};
-
-/**
  * Handle event CognitiveJobCreated
  * 
  * @param {Object} options Event handler options
@@ -470,7 +470,8 @@ export const eventCognitiveJobCreated = async (options = {}, config = {}) => {
     };
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    chain.event = pan.events.CognitiveJobCreated(options)
+    chain.event = [];
+    chain.event[0] = pan.events.CognitiveJobCreated(options)
         .on('data', async (event) => {
 
             try {
@@ -485,7 +486,7 @@ export const eventCognitiveJobCreated = async (options = {}, config = {}) => {
             }            
         })
         .on('error', callbacks.onError);
-    chain.event.name = 'CognitiveJobCreated';
+    chain.event[0].name = 'CognitiveJobCreated';
 
     return chain;
 };
@@ -562,8 +563,7 @@ export const eventJobStateChanged = async (options = {}, config = {}) => {
     const jctrl = new config.web3.eth.Contract(config.contracts.CognitiveJobController.abi, jobController);
     
     // We listen for two events because of their nature means almost the same
-    chain.event = [];
-    
+    chain.event = [];    
     chain.event.push(jctrl.events.JobStateChanged(options)
         .on('data', eventHandler)
         .on('error', callbacks.onError));

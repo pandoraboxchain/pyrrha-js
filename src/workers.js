@@ -357,7 +357,8 @@ export const eventWorkerNodeCreated = async (options = {}, config = {}) => {
     };
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
-    chain.event = pan.events.WorkerNodeCreated(options)
+    chain.event = [];
+    chain.event[0] = pan.events.WorkerNodeCreated(options)
         .on('data', async event => {
 
             try {
@@ -372,7 +373,7 @@ export const eventWorkerNodeCreated = async (options = {}, config = {}) => {
             }            
         })
         .on('error', callbacks.onError);
-    chain.event.name = 'WorkerNodeCreated';
+    chain.event[0].name = 'WorkerNodeCreated';
 
     return chain;
 };
@@ -422,7 +423,8 @@ export const eventWorkerNodeStateChanged = async (address = '', options = {}, co
     };
 
     const wor = new config.web3.eth.Contract(config.contracts.WorkerNode.abi, address);
-    chain.event = wor.events.StateChanged(options)
+    chain.event = [];
+    chain.event[0] = wor.events.StateChanged(options)
         .on('data', async event => {
 
             try {
@@ -437,7 +439,7 @@ export const eventWorkerNodeStateChanged = async (address = '', options = {}, co
             }
         })
         .on('error', callbacks.onError);
-    chain.event.name = 'StateChanged';
+    chain.event[0].name = 'StateChanged';
 
     return chain;
 };

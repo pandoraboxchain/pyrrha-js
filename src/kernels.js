@@ -629,14 +629,15 @@ export const eventKernelAdded = async (options = {}, config = {}) => {
             callbacks.onError = cb;
             return chain;
         },
-        subscribed: (cb = () => {}) => {
+        subscribed: (cb = () => {}) => {// @todo Remove subscribed callback
             callbacks.onSubscribed = cb;
             return chain;
         }
     };
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    chain.event = mar.events.KernelAdded(options)
+    chain.event = [];
+    chain.event[0] = mar.events.KernelAdded(options)
         .on('data', async event => {
 
             try {
@@ -651,7 +652,7 @@ export const eventKernelAdded = async (options = {}, config = {}) => {
             }            
         })
         .on('error', callbacks.onError);
-    chain.event.name = 'KernelAdded';
+    chain.event[0].name = 'KernelAdded';
 
     return chain;
 };
@@ -705,7 +706,8 @@ export const eventKernelRemoved = async (options = {}, config = {}) => {
     };
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    chain.event = mar.events.KernelRemoved(options)
+    chain.event = [];
+    chain.event[0] = mar.events.KernelRemoved(options)
         .on('data', async event => {
 
             callbacks.onData({
@@ -714,7 +716,7 @@ export const eventKernelRemoved = async (options = {}, config = {}) => {
             });            
         })
         .on('error', callbacks.onError);
-    chain.event.name = 'KernelRemoved';
+    chain.event[0].name = 'KernelRemoved';
 
     return chain;
 };

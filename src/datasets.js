@@ -642,7 +642,8 @@ export const eventDatasetAdded = async (options = {}, config = {}) => {
     };
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    chain.event = mar.events.DatasetAdded(options)
+    chain.event = [];
+    chain.event[0] = mar.events.DatasetAdded(options)
         .on('data', async event => {
 
             try {
@@ -657,7 +658,7 @@ export const eventDatasetAdded = async (options = {}, config = {}) => {
             }            
         })
         .on('error', callbacks.onError);
-    chain.event.name = 'DatasetAdded';
+    chain.event[0].name = 'DatasetAdded';
 
     return chain;
 };
@@ -711,7 +712,8 @@ export const eventDatasetRemoved = async (options = {}, config = {}) => {
     };
 
     const mar = new config.web3.eth.Contract(config.contracts.PandoraMarket.abi, config.addresses.PandoraMarket);
-    chain.event = mar.events.DatasetRemoved(options)
+    chain.event = [];
+    chain.event[0] = mar.events.DatasetRemoved(options)
         .on('data', async event => {
 
             callbacks.onData({
@@ -720,7 +722,7 @@ export const eventDatasetRemoved = async (options = {}, config = {}) => {
             });            
         })
         .on('error', callbacks.onError);
-    chain.event.name = 'DatasetRemoved';
+    chain.event[0].name = 'DatasetRemoved';
 
     return chain;
 };
