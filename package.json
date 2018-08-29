@@ -5,7 +5,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "test:build": "docker build --tag pyrrha_js_tests --file ./tests/Dockerfile --build-arg PYRRHA_CONSENSUS_BRANCH=develop .",
+    "test:build": "docker build --tag pyrrha_js_tests --file ./tests/Dockerfile --build-arg PYRRHA_CONSENSUS_BRANCH=master .",
     "pretest": "npm run build && npm run test:build",
     "pretest-with-coverage": "npm run test:build",
     "test": "docker run -e WITH_COVERAGE=0 -it pyrrha_js_tests",
