@@ -57,7 +57,7 @@ export const fetchCount = async (config = {}) => {
  * 
  * @param {integer} id Worker Id
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string} 
+ * @returns {Promise} A Promise object represents the {String} 
  */
 export const fetchAddressById = async (id, config = {}) => {
 
@@ -95,7 +95,7 @@ export const fetchAddressById = async (id, config = {}) => {
 /**
  * Get worker state from Worker contract by the worker address
  * 
- * @param {string} address 
+ * @param {String} address 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -130,9 +130,9 @@ export const fetchState = async (address = '', config = {}) => {
 /**
  * Get worker's active job from Worker contract by the worker address
  * 
- * @param {string} address 
+ * @param {String} address 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string}
+ * @returns {Promise} A Promise object represents the {String}
  */
 export const fetchActiveJobAddress = async (address = '', config = {}) => {
 
@@ -165,7 +165,7 @@ export const fetchActiveJobAddress = async (address = '', config = {}) => {
 /**
  * Get worker by the worker's address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {Object}
  */

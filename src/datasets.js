@@ -57,7 +57,7 @@ export const fetchCount = async (config = {}) => {
  * 
  * @param {number} id
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string}
+ * @returns {Promise} A Promise object represents the {String}
  */
 export const fetchAddressById = async (id, config = {}) => {
 
@@ -95,9 +95,9 @@ export const fetchAddressById = async (id, config = {}) => {
 /**
  * Get IPFS address from Dataset contract by the dataset address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string}
+ * @returns {Promise} A Promise object represents the {String}
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
 
@@ -130,7 +130,7 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
 /**
  * Get data dim from Dataset contract by the dataset address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -165,7 +165,7 @@ export const fetchDataDim = async (address = '', config = {}) => {
 /**
  * Get current price from Dataset contract by the dataset address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -200,7 +200,7 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
 /**
  * Get data batches count from Dataset contract by the dataset address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -235,7 +235,7 @@ export const fetchBatchesCount = async (address = '', config = {}) => {
 /**
  * Get description from Dataset contract by the dataset address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -270,7 +270,7 @@ export const fetchDescription = async (address = '', config = {}) => {
 /**
  * Get metadata from Dataset contract by the dataset address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -305,7 +305,7 @@ export const fetchMetadata = async (address = '', config = {}) => {
 /**
  * Get dataset by the dataset address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
@@ -483,7 +483,7 @@ export const deploy = async (datasetIpfsHash, batchesCount, { dimension, price, 
  * @param {String} datasetContractAddress 
  * @param {String} publisherAddress 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} Promise object resolved to {string} contractAddress
+ * @returns {Promise} Promise object resolved to {String} contractAddress
  */
 export const addToMarket = (datasetContractAddress, publisherAddress, config = {}) => new Promise(async (resolve, reject) => {
 

@@ -57,7 +57,7 @@ export const fetchCount = async (config = {}) => {
  * 
  * @param {number} id
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string}
+ * @returns {Promise} A Promise object represents the {String}
  */
 export const fetchAddressById = async (id, config = {}) => {
 
@@ -95,9 +95,9 @@ export const fetchAddressById = async (id, config = {}) => {
 /**
  * Get IPFS address from Kernel contract by the kernel address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} A Promise object represents the {string}
+ * @returns {Promise} A Promise object represents the {String}
  */
 export const fetchIpfsAddress = async (address = '', config = {}) => {
 
@@ -130,7 +130,7 @@ export const fetchIpfsAddress = async (address = '', config = {}) => {
 /**
  * Get data dim from Kernel contract by the kernel address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -165,7 +165,7 @@ export const fetchDataDim = async (address = '', config = {}) => {
 /**
  * Get current price from Kernel contract by the kernel address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -200,7 +200,7 @@ export const fetchCurrentPrice = async (address = '', config = {}) => {
 /**
  * Get complexity from Kernel contract by the kernel address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -235,7 +235,7 @@ export const fetchComplexity = async (address = '', config = {}) => {
 /**
  * Get description from Kernel contract by the kernel address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -270,7 +270,7 @@ export const fetchDescription = async (address = '', config = {}) => {
 /**
  * Get metadata from Kernel contract by the kernel address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} A Promise object represents the {number}
  */
@@ -305,7 +305,7 @@ export const fetchMetadata = async (address = '', config = {}) => {
 /**
  * Get Kernel by the kernel address
  * 
- * @param {string} address
+ * @param {String} address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
  * @returns {Promise} Promise object represents the {Object[]}
  */
@@ -400,7 +400,7 @@ export const fetchAll = async (config = {}) => {
 /**
  * Deploy Kernel contract to the network
  * 
- * @param {string} kernelIpfsHash 
+ * @param {String} kernelIpfsHash 
  * @param {Object} options { dimension, complexity, price, metadata, description } 
  * @param {String} publisher Publisher address
  * @param {Object} config Library config (provided by the proxy but can be overridden)
@@ -472,7 +472,7 @@ export const deploy = async (kernelIpfsHash, { dimension, complexity, price, met
  * @param {String} kernelContractAddress 
  * @param {String} publisherAddress 
  * @param {Object} config Library config (provided by the proxy but can be overridden)
- * @returns {Promise} Promise object resolved to {string} contractAddress // can be null if used ganache-cli environment
+ * @returns {Promise} Promise object resolved to {String} contractAddress // can be null if used ganache-cli environment
  */
 export const addToMarket = (kernelContractAddress, publisherAddress, config = {}) => new Promise(async (resolve, reject) => {
 

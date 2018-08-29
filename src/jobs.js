@@ -252,7 +252,7 @@ export const fetchJobDetails = async (address, config = {}) => {
  * @param {String} from source activeJobs or completedJobs
  * @param {Number} count
  * @param {Object} options
- * @returns {Promise<[{String}]>} 
+ * @returns {Promise<{String[]}>} 
  */
 export const fetchJobsIds = async (source, count = 0, config = {}) => {
 
