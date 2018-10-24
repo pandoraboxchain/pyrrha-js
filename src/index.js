@@ -25,7 +25,7 @@ import * as workers from './workers';
 import * as ipfs from './ipfs';
 
 /** Pjs class */
-class Pjs {
+export default class Pjs {
 
     // Native Web3 object
     static get Web3() {
@@ -223,5 +223,3 @@ class Pjs {
         }
     }
 }
-
-module.exports = Pjs;

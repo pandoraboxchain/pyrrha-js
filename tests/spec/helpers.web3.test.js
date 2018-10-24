@@ -1,9 +1,7 @@
-'use strict';
-
-const { expect } = require('chai');
-const web3Helper = require('../../src/helpers/web3');
-const ContractsNode = require('../contracts');
-const Pjs = require('../../src');
+import { expect } from 'chai';
+import * as web3Helper from '../../dist/helpers/web3';
+import ContractsNode from '../contracts';
+import Pjs from '../../dist';
 
 describe('Helper #web3 tests:', () => {
 

@@ -1,8 +1,6 @@
-'use strict';
-
-const { expect } = require('chai');
-const ContractsNode = require('../contracts');
-const Pjs = require('../../src');
+import { expect } from 'chai';
+import ContractsNode from '../contracts';
+import Pjs from '../../dist';
 
 describe('Kernels tests:', () => {
     

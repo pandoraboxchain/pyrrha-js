@@ -1,7 +1,6 @@
-'use strict';
+import path from 'path';
+import GanacheNode from 'ganache-sandbox';
 
-const path = require('path');
-const GanacheNode = require('ganache-sandbox');
 const copy = ['node_modules/openzeppelin-solidity'];
 const extract = ['Pandora', 'PandoraMarket'];
 

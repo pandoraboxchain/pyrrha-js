@@ -1,18 +1,16 @@
-'use strict';
-
-const { expect } = require('chai');
-const ContractsNode = require('../contracts');
-const Pjs = require('../../src');
+import { expect } from 'chai';
+import ContractsNode from '../contracts';
+import Pjs from '../../dist';
 
 import {
     WEB3_NOT_CONNECTED
-} from '../../src/helpers/errors';
+} from '../../dist/helpers/errors';
 
-const pandora = require('../../src/pandora');
-const datasets = require('../../src/datasets');
-const kernels = require('../../src/kernels');
-const jobs = require('../../src/jobs');
-const ipfs = require('../../src/ipfs');
+const pandora = require('../../dist/pandora');
+const datasets = require('../../dist/datasets');
+const kernels = require('../../dist/kernels');
+const jobs = require('../../dist/jobs');
+const ipfs = require('../../dist/ipfs');
 
 const defaultIpfsConfig = {
     protocol: 'http',
@@ -169,7 +167,7 @@ describe('Core tests:', () => {
             addresses
         });
 
-        expect(pjsNoIpfs).not.to.have.property(ipfs);
+        expect(pjsNoIpfs).not.to.have.property('ipfs');
     });
 
     it('Should not have kernels/datasets/jobs members if no eth config option provided', () => {

@@ -1,8 +1,6 @@
-'use strict';
-
-const { expect } = require('chai');
-const Pjs = require('../../src');
-const { version } = require('../../dist/package.json');
+import { expect } from 'chai';
+import Pjs from '../../dist';
+import { version } from '../../dist/package.json';
 
 describe('Distribution tests:', () => {
 

@@ -14,7 +14,7 @@ COPY ./package.json /pyrrha-js/package.json
 WORKDIR /pyrrha-js
 RUN npm i --silent && \ 
     npm i \ 
-        ganache-sandbox@https://github.com/pandoraboxchain/ganache-sandbox.git#v0.3.9 \
+        ganache-sandbox@https://github.com/pandoraboxchain/ganache-sandbox.git#v0.3.10 \
         openzeppelin-solidity \
         mocha \
         mocha-lcov-reporter \
@@ -28,7 +28,6 @@ RUN git clone -b "$PYRRHA_CONSENSUS_BRANCH" https://github.com/pandoraboxchain/p
     mkdir /pyrrha-js/contracts && cp -r /pyrrha-consensus/contracts/* /pyrrha-js/contracts && \
     mkdir /pyrrha-js/migrations && cp -r /pyrrha-consensus/migrations/* /pyrrha-js/migrations
 
-COPY ./src /pyrrha-js/src
 COPY ./dist /pyrrha-js/dist
 COPY ./tests /pyrrha-js/tests
 COPY ./tests/truffle.js /pyrrha-js/truffle.js

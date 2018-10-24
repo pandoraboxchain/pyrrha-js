@@ -1,8 +1,6 @@
-'use strict';
-
-const { expect } = require('chai');
-const expectHelper = require('../../src/helpers/expect');
-const errorsHelper = require('../../src/helpers/errors');
+import { expect } from 'chai';
+import * as expectHelper from '../../dist/helpers/expect';
+import * as errorsHelper from '../../dist/helpers/errors';
 
 describe('Helper #expect tests:', () => {
 

@@ -5,7 +5,7 @@ set -o errexit
 
 if [ "$WITH_COVERAGE" -eq 0 ]; then 
     echo "Running tests without coverage"
-    npx mocha --exit --require @babel/register -R spec --timeout 70000 ./tests/spec/**/*.test.js
+    npx mocha --exit --require @babel/register -R spec --timeout 70000 ./tests/spec/**/*.test.js 
 
 else 
     echo "Running tests with coverage"
