@@ -32,21 +32,21 @@ export const DISCONNECTED = 'DISCONNECTED';
 export default class PjsWsConnector extends EventEmitter {
 
     get pjs() {
-        return this.pjs;
+        return this._pjs;
     }
 
     get lastBlock() {
-        return this.lastBlock;
+        return this._lastBlock;
     }
 
     get readyState() {
 
-        if (this.connecting) {
+        if (this._connecting) {
 
             return CONNECTING;
         }
 
-        if (this.connected) {
+        if (this._connected) {
 
             return CONNECTED;
         }
@@ -68,7 +68,7 @@ export default class PjsWsConnector extends EventEmitter {
             throw PjsError(PJS_REQUIRED);
         }
 
-        this.config = {
+        this._config = {
             protocol: 'wss',
             host: 'localhost',
             port: 8545,
@@ -80,9 +80,9 @@ export default class PjsWsConnector extends EventEmitter {
         };
 
         this._setStopped(true);
-        this.lastBlock = 0;
-        this.Pjs = Pjs;
-        this.pjs = null;
+        this._lastBlock = 0;
+        this._Pjs = Pjs;
+        this._pjs = null;
 
         this.on('timeout', () => this._connect());
 
@@ -94,12 +94,12 @@ export default class PjsWsConnector extends EventEmitter {
 
     // Set STOPPED state
     _setStopped(silent = false) {
-        this.connected = false;
-        this.connecting = false;
-        this.shouldStopped = false;
-        this.stopped = true;
-        clearInterval(this.watchingInterval);
-        this.watchingInterval = null;
+        this._connected = false;
+        this._connecting = false;
+        this._shouldStopped = false;
+        this._stopped = true;
+        clearInterval(this._watchingInterval);
+        this._watchingInterval = null;
 
         if (!silent) {
 
@@ -111,9 +111,9 @@ export default class PjsWsConnector extends EventEmitter {
 
     // Set CONNECTING state
     _setConnecting() {
-        this.stopped = false;
-        this.connected = false;
-        this.connecting = true;
+        this._stopped = false;
+        this._connected = false;
+        this._connecting = true;
         this.emit('connecting', {
             date: Date.now()
         });
@@ -121,65 +121,65 @@ export default class PjsWsConnector extends EventEmitter {
 
     // Set DISCONNECTED state and emit timeout event
     _setTimeoutExceeded() {
-        this.stopped = false;
-        this.connected = false;
-        this.connecting = false;
-        this.emit('timeout', PjsError(WEB3_CONNECTION_TIMEOUT, this.config.wstimeout));        
+        this._stopped = false;
+        this._connected = false;
+        this._connecting = false;
+        this.emit('timeout', PjsError(WEB3_CONNECTION_TIMEOUT, this._config.wstimeout));        
     }
 
     // Set CONNECTED state
     _setConnected() {
-        this.stopped = false;
-        this.connected = true;
-        this.connecting = false;
+        this._stopped = false;
+        this._connected = true;
+        this._connecting = false;
         this.emit('connected', {
             date: Date.now()
         });
-        this.config.provider.on('error', err => this.emit('error', err));
-        this.config.provider.on('end', () => this._connect());
+        this._config.provider.on('error', err => this.emit('error', err));
+        this._config.provider.on('end', () => this._connect());
         this._watchConnection();
     }
 
     // Watch for connection via getting last block number
     _watchConnection() {
 
-        this.watchingInterval = setInterval(() => {
+        this._watchingInterval = setInterval(() => {
 
-            if (this.shouldStopped) {
+            if (this._shouldStopped) {
 
-                this.config.provider.connection.on('close', () => this._setStopped());
-                this.config.provider.connection.close();
+                this._config.provider.connection.on('close', () => this._setStopped());
+                this._config.provider.connection.close();
                 return;
             }
 
-            const timeout = setTimeout(() => this._setTimeoutExceeded(), this.config.wstimeout);
+            const timeout = setTimeout(() => this._setTimeoutExceeded(), this._config.wstimeout);
 
-            this.pjs.api.web3.getBlockNumber()
+            this._pjs.api.web3.getBlockNumber()
                 .then(blockNumber => {
-                    this.lastBlock = blockNumber;
+                    this._lastBlock = blockNumber;
                     clearTimeout(timeout);
-                    this.emit('lastBlockNumber', this.lastBlock);
+                    this.emit('lastBlockNumber', this._lastBlock);
                 })
                 .catch(err => {
                     this.emit('error', err);
                     clearTimeout(timeout);
                     this._setTimeoutExceeded();                    
                 });
-        }, this.config.wstimeout * 1.1);
+        }, this._config.wstimeout * 1.1);
     }
 
     // Trying to establish connection using websocket provider
     _connect() {
 
-        if (this.connecting) {
+        if (this._connecting) {
 
             return;
         }
 
         // Disable previous watching interval
-        clearInterval(this.watchingInterval);
+        clearInterval(this._watchingInterval);
 
-        let url = `${this.config.protocol}://${this.config.host}${this.config.port ? ':' + this.config.port : ''}`;
+        let url = `${this._config.protocol}://${this._config.host}${this._config.port ? ':' + this._config.port : ''}`;
 
         // Override url for testing purposes
         if (process.env.NODE_ENV === 'testing' && process.env.TESTING_PROVIDER_URL) {
@@ -191,30 +191,30 @@ export default class PjsWsConnector extends EventEmitter {
         this._setConnecting();
 
         // Create new WS provider
-        this.config.provider = new this.Pjs.Web3.providers.WebsocketProvider(url);
+        this._config.provider = new this._Pjs.Web3.providers.WebsocketProvider(url);
 
-        if (!this.pjs) {
+        if (!this._pjs) {
 
-            this.pjs = new this.Pjs({
+            this._pjs = new this._Pjs({
                 eth: {
-                    provider: this.config.provider
+                    provider: this._config.provider
                 },
-                contracts: this.config.contracts,
-                addresses: this.config.addresses
+                contracts: this._config.contracts,
+                addresses: this._config.addresses
             });
         } else {
 
-            this.pjs.api.web3.setProvider(this.config.provider);
+            this._pjs.api.web3.setProvider(this._config.provider);
         }
         
-        if (this.config.provider.connection.readyState === this.config.provider.connection.OPEN) {
+        if (this._config.provider.connection.readyState === this._config.provider.connection.OPEN) {
 
             return this._setConnected();
         }
 
-        const connectionTimeout = setTimeout(() => this._setTimeoutExceeded(), this.config.wstimeout);
+        const connectionTimeout = setTimeout(() => this._setTimeoutExceeded(), this._config.wstimeout);
         
-        this.config.provider.on('connect', () => {
+        this._config.provider.on('connect', () => {
             clearTimeout(connectionTimeout);                        
             this._setConnected();// Moving to CONNECTED state
         });
@@ -223,7 +223,7 @@ export default class PjsWsConnector extends EventEmitter {
     async connect() {
         return new Promise((resolve, reject) => {
 
-            if (this.connected) {
+            if (this._connected) {
 
                 return resolve();
             }
@@ -241,7 +241,7 @@ export default class PjsWsConnector extends EventEmitter {
             this.once('connected', onConnected);
             this.once('error', onError);
 
-            if (!this.connecting) {
+            if (!this._connecting) {
 
                 this._connect();
             }
@@ -251,7 +251,7 @@ export default class PjsWsConnector extends EventEmitter {
     async close() {
         return new Promise((resolve, reject) => {
 
-            if (this.stopped) {
+            if (this._stopped) {
 
                 return resolve();
             }
@@ -269,9 +269,9 @@ export default class PjsWsConnector extends EventEmitter {
             this.once('stopped', onStopped);
             this.once('error', onError);
 
-            if (!this.shouldStopped) {
+            if (!this._shouldStopped) {
 
-                this.shouldStopped = true;
+                this._shouldStopped = true;
             }            
         });
     }
