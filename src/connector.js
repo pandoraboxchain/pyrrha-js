@@ -176,7 +176,7 @@ export default class PjsWsConnector extends EventEmitter {
 
             if (this._shouldStopped) {
 
-                this._config.provider.connection.on('close', () => this._setStopped());
+                this._config.provider.on('close', () => this._setStopped());
                 this._config.provider.connection.close();
                 return;
             }
@@ -241,7 +241,7 @@ export default class PjsWsConnector extends EventEmitter {
 
         const connectionTimeout = setTimeout(() => this._setTimeoutExceeded(), this._config.wstimeout);
         
-        this._config.provider.connection.on('connect', () => {
+        this._config.provider.on('connect', () => {
             clearTimeout(connectionTimeout);                        
             this._setConnected();// Moving to CONNECTED state
         });
