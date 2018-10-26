@@ -92,6 +92,19 @@ export default class PjsWsConnector extends EventEmitter {
         }        
     }
 
+    _getBlockNumber(cb = () => {}) {
+
+        const timeout = setTimeout(() => this._setTimeoutExceeded(), this._config.wstimeout);
+
+        this._pjs.api.web3.getBlockNumber()
+            .then(blockNumber => {
+                this._lastBlock = blockNumber;
+                clearTimeout(timeout);
+                cb(null, blockNumber);
+            })
+            .catch(cb);
+    }
+
     // Set STOPPED state
     _setStopped(silent = false) {
         this._connected = false;
@@ -132,12 +145,23 @@ export default class PjsWsConnector extends EventEmitter {
         this._stopped = false;
         this._connected = true;
         this._connecting = false;
-        this.emit('connected', {
-            date: Date.now()
-        });
         this._config.provider.on('error', err => this.emit('error', err));
-        this._config.provider.on('end', () => this._connect());
+        this._config.provider.on('end', () => this._setTimeoutExceeded());
         this._watchConnection();
+        this._getBlockNumber((err, blockNumber) => {
+
+            if (err) {
+
+                this.emit('error', err);
+                this._setTimeoutExceeded();
+                return;
+            }
+
+            this.emit('connected', {
+                date: Date.now(),
+                blockNumber
+            });
+        });
     }
 
     // Watch for connection via getting last block number
@@ -152,19 +176,17 @@ export default class PjsWsConnector extends EventEmitter {
                 return;
             }
 
-            const timeout = setTimeout(() => this._setTimeoutExceeded(), this._config.wstimeout);
+            this._getBlockNumber((err, blockNumber) => {
 
-            this._pjs.api.web3.getBlockNumber()
-                .then(blockNumber => {
-                    this._lastBlock = blockNumber;
-                    clearTimeout(timeout);
-                    this.emit('lastBlockNumber', this._lastBlock);
-                })
-                .catch(err => {
+                if (err) {
+    
                     this.emit('error', err);
-                    clearTimeout(timeout);
-                    this._setTimeoutExceeded();                    
-                });
+                    this._setTimeoutExceeded();
+                    return;
+                }
+    
+                this.emit('lastBlockNumber', blockNumber);
+            });
         }, this._config.wstimeout * 1.1);
     }
 
