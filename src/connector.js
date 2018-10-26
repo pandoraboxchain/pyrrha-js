@@ -150,8 +150,6 @@ export default class PjsWsConnector extends EventEmitter {
         this._stopped = false;
         this._connected = true;
         this._connecting = false;
-        this._config.provider.on('error', err => this.emit('error', err));
-        this._config.provider.on('end', () => this._setTimeoutExceeded());
         this._watchConnection();
         this._getBlockNumber((err, blockNumber) => {
 
@@ -219,6 +217,8 @@ export default class PjsWsConnector extends EventEmitter {
 
         // Create new WS provider
         this._config.provider = new this._Pjs.Web3.providers.WebsocketProvider(url);
+        this._config.provider.on('error', err => this.emit('error', err));
+        this._config.provider.on('end', () => this._setTimeoutExceeded());
 
         if (!this._pjs) {
 
