@@ -101,7 +101,7 @@ export default class PjsWsConnector extends EventEmitter {
 
         const timeout = setTimeout(() => this._setTimeoutExceeded(), this._config.wstimeout);
 
-        this._pjs.api.web3.getBlockNumber()
+        this._pjs.api.web3.eth.getBlockNumber()
             .then(blockNumber => {
                 this._lastBlock = blockNumber;
                 clearTimeout(timeout);
