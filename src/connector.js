@@ -178,8 +178,15 @@ export default class PjsWsConnector extends EventEmitter {
 
             if (this._shouldStopped) {
 
-                this._config.provider.on('close', () => this._setStopped());
-                this._config.provider.connection.close();
+                if (this._config.provider.connection.readyState === this._config.provider.connection.OPEN) {
+
+                    this._config.provider.on('close', () => this._setStopped());
+                    this._config.provider.connection.close();
+                } else  {
+
+                    this._setStopped();
+                }
+                
                 return;
             }
 
