@@ -142,7 +142,11 @@ export default class PjsWsConnector extends EventEmitter {
         this._stopped = false;
         this._connected = false;
         this._connecting = false;
-        this.emit('timeout', PjsError(WEB3_CONNECTION_TIMEOUT, this._config.wstimeout));        
+
+        if (!this._shouldStopped) {
+
+            this.emit('timeout', PjsError(WEB3_CONNECTION_TIMEOUT, this._config.wstimeout));
+        }                
     }
 
     // Set CONNECTED state

@@ -1,6 +1,6 @@
 {
   "name": "pyrrha-js",
-  "version": "1.8.1-beta1",
+  "version": "1.8.1-beta9",
   "description": "Pandora Pyrrha functions and utilities library for JavaScript-based applications",
   "private": true,
   "main": "dist/index.js",
@@ -21,19 +21,19 @@
   },
   "homepage": "https://github.com/pandoraboxchain/pyrrha-js",
   "dependencies": {
-    "ipfs-api": "25.0.0",
+    "ipfs-api": "26.1.2",
     "web3": "1.0.0-beta.36"
   },
   "devDependencies": {
-    "@babel/cli": "7.1.2",
-    "@babel/core": "7.1.2",
+    "@babel/cli": "7.1.5",
+    "@babel/core": "7.1.5",
     "@babel/plugin-proposal-object-rest-spread": "7.0.0",
     "@babel/plugin-syntax-object-rest-spread": "7.0.0",
     "@babel/polyfill": "7.0.0",
-    "@babel/preset-env": "7.1.0",
+    "@babel/preset-env": "7.1.5",
     "@babel/register": "7.0.0",
     "cpy-cli": "2.0.0",
-    "eslint": "5.7.0",
+    "eslint": "5.8.0",
     "rimraf": "2.6.2",
     "github-utils": "git+https://github.com/pandoraboxchain/github-utils.git#v0.1.4"
   },
