@@ -448,7 +448,7 @@ export const deploy = async (kernelIpfsHash, { dimension, complexity, price, met
         config.web3.utils.utf8ToHex(kernelIpfsHash), 
         dimension, 
         complexity, 
-        price, 
+        config.web3.utils.toHex(price), 
         config.web3.utils.utf8ToHex(metadata),
         config.web3.utils.utf8ToHex(description)
     ];

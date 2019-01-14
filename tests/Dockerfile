@@ -14,8 +14,8 @@ COPY ./package.json /pyrrha-js/package.json
 WORKDIR /pyrrha-js
 RUN npm i --silent && \ 
     npm i \ 
-        ganache-sandbox@https://github.com/pandoraboxchain/ganache-sandbox.git#v0.3.10 \
-        openzeppelin-solidity \
+        ganache-sandbox@https://github.com/pandoraboxchain/ganache-sandbox.git#v0.3.11 \
+        openzeppelin-solidity@2.0.0 \
         mocha \
         mocha-lcov-reporter \
         chai \

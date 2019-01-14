@@ -459,7 +459,7 @@ export const deploy = async (datasetIpfsHash, batchesCount, { dimension, price, 
         config.web3.utils.utf8ToHex(datasetIpfsHash), 
         dimension, 
         batchesCount, 
-        price, 
+        config.web3.utils.toHex(price), 
         config.web3.utils.utf8ToHex(metadata),
         config.web3.utils.utf8ToHex(description)
     ];

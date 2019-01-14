@@ -31,15 +31,9 @@ describe('Workers tests:', () => {
 
     after(done => server.close(done));
 
-    it('#fetchCount should return count of workers', done => {
-
-        pjs.workers.fetchCount()
-            .then(count => {
-
-                expect(count).to.be.a('number');
-                expect(count >= 0).to.be.true;
-                done();
-            })
-            .catch(done);
+    it('#fetchCount should return count of workers', async () => {
+        const count = await pjs.workers.fetchCount();
+        expect(count).to.be.a('number');
+        expect(count >= 0).to.be.true;
     });
 });

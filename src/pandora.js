@@ -100,10 +100,11 @@ export const whitelistWorkerOwner = (publisher, ownerAddress, config = {}) => ne
  * Creates, registers and returns a new worker node owned by the caller of the contract. 
  * Can be called only by the whitelisted node owner address
  * 
- * @param {any} publisher 
- * @param {any} [config={}] 
+ * @param {Number} computingPrice
+ * @param {String} publisher 
+ * @param {Object} config
  */
-export const createWorkerNode = (publisher, config = {}) => new Promise((resolve, reject) => {
+export const createWorkerNode = (computingPrice, publisher, config = {}) => new Promise((resolve, reject) => {
 
     expect.all({ publisher }, {
         'publisher': {
@@ -127,7 +128,7 @@ export const createWorkerNode = (publisher, config = {}) => new Promise((resolve
 
     const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
     pan.methods
-        .createWorkerNode()
+        .createWorkerNode(config.web3.utils.toHex(computingPrice))
         .send({
             from: publisher,
             gas: 6700000// because this workflow is too greedy
@@ -146,3 +147,35 @@ export const createWorkerNode = (publisher, config = {}) => new Promise((resolve
             resolve(receipt.events.WorkerNodeCreated.returnValues.workerNode);// address of created WorkerNode
         });
 });
+
+/**
+ * Return maximum value of the computing price
+ * 
+ * @param {Object} config Library config (provided by the proxy but can be overridden)
+ */
+export const getMaximumWorkerPrice = async (config = {}) => {
+
+    expect.all(config, {
+        'web3': {
+            type: 'object',
+            code: WEB3_REQUIRED
+        },
+        'contracts.Pandora.abi': {
+            type: 'object',
+            code: CONTRACT_REQUIRED,
+            args: ['Pandora']
+        },
+        'addresses.Pandora': {
+            type: 'address',
+            code: ADDRESS_REQUIRED,
+            args: ['Pandora']
+        }
+    });
+
+    const pan = new config.web3.eth.Contract(config.contracts.Pandora.abi, config.addresses.Pandora);
+    const price = await pan.methods
+        .getMaximumWorkerPrice()
+        .call();
+        
+    return Number.parseInt(price, 10);
+};

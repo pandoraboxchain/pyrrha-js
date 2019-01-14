@@ -2,7 +2,7 @@ import path from 'path';
 import GanacheNode from 'ganache-sandbox';
 
 const copy = ['node_modules/openzeppelin-solidity'];
-const extract = ['Pandora', 'PandoraMarket'];
+const extract = ['Pandora', 'PandoraMarket', 'EconomicController', 'Pan'];
 
 module.exports = async () => {
 

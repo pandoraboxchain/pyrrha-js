@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import toPan from '../helpers/toPan';
 import ContractsNode from '../contracts';
 import Pjs from '../../dist';
 
@@ -42,12 +43,15 @@ describe('Pandora tests:', () => {
 
     it('#whitelistWorkerOwner should resolve to an object', async () => {
         const receipt = await pjs.pandora.whitelistWorkerOwner(publisher, publisher);
-        expect(receipt).to.be.an('object');//resolved to transaction receipt
+        expect(receipt.status).to.be.true;
     });
 
     it('#createWorkerNode should create a workerNode contract', async () => {
         await pjs.pandora.whitelistWorkerOwner(publisher, accounts[1]);
-        const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[1]);
+        const nodeStake = toPan(100);
+        await pjs.pan.transfer(publisher, accounts[1], nodeStake);
+        await pjs.pan.approve(accounts[1], addresses.EconomicController, nodeStake);
+        const workerNodeAddress = await pjs.pandora.createWorkerNode(nodeStake, accounts[1]);
         expect(workerNodeAddress).to.be.a('string');
     });
 });

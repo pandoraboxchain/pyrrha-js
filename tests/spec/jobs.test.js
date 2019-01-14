@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import toPan from '../helpers/toPan';
 import ContractsNode from '../contracts';
 import Pjs from '../../dist';
 
@@ -16,7 +17,7 @@ describe('Jobs tests:', () => {
     const kernelOptions = {
         dimension: 1, 
         complexity: 1, 
-        price: 1,
+        price: toPan(1),
         metadata: 'test',
         description: 'test'
     };
@@ -26,11 +27,13 @@ describe('Jobs tests:', () => {
     const batchesCount = 1;
     const datasetOptions = {
         dimension: 1, 
-        price: 1,
+        price: toPan(1),
         metadata: 'test',
         description: 'test'
     };
     let datasetContractAddress;
+
+    const computingPrice = toPan(1);
 
     before('Setup', async () => {
         const node = await ContractsNode();
@@ -82,7 +85,14 @@ describe('Jobs tests:', () => {
     });
 
     it('#create should create a job', async () => {
-        
+        let maxWorkerPrice = await pjs.pandora.getMaximumWorkerPrice();
+        const datasetPrice = await pjs.datasets.fetchCurrentPrice(datasetContractAddress);
+        const kernelPrice = await pjs.kernels.fetchCurrentPrice(kernelContractAddress);
+        const batchesCount = await pjs.datasets.fetchBatchesCount(datasetContractAddress);
+        let totalJobPrice = datasetPrice + kernelPrice + (maxWorkerPrice * batchesCount);
+        await pjs.pan.transfer(publisher, accounts[3], totalJobPrice);
+        await pjs.pan.approve(accounts[3], addresses.EconomicController, totalJobPrice);
+
         const queuedJobAddress = await pjs.jobs.create({
             kernel: kernelContractAddress, 
             dataset: datasetContractAddress,
@@ -92,9 +102,17 @@ describe('Jobs tests:', () => {
             deposit: 1
         }, accounts[3]);
         expect(queuedJobAddress).to.be.a('string');
-        
-        const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[2]);
+
+        const stakeValue = await pjs.economic.minimumWorkerNodeStake();
+        await pjs.pan.transfer(publisher, accounts[2], stakeValue);
+        await pjs.pan.approve(accounts[2], addresses.EconomicController, stakeValue);
+        const workerNodeAddress = await pjs.pandora.createWorkerNode(computingPrice, accounts[2]);
         await pjs.workers.alive(workerNodeAddress, accounts[2]);
+
+        maxWorkerPrice = await pjs.pandora.getMaximumWorkerPrice();
+        totalJobPrice = datasetPrice + kernelPrice + (maxWorkerPrice * batchesCount);
+        await pjs.pan.transfer(publisher, accounts[3], totalJobPrice);
+        await pjs.pan.approve(accounts[3], addresses.EconomicController, totalJobPrice);
 
         const jobContractAddress = await pjs.jobs.create({
             kernel: kernelContractAddress, 
@@ -104,13 +122,24 @@ describe('Jobs tests:', () => {
             description: 'test job',
             deposit: 1
         }, accounts[3]);        
-        expect(jobContractAddress).to.be.a('string');        
+        expect(jobContractAddress).to.be.a('string');
     });
 
     it('#fetchJobsIds<activeJobs> should return active jobs addresses', async () => {
-        const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[4]);
+        const stakeValue = await pjs.economic.minimumWorkerNodeStake();
+        await pjs.pan.transfer(publisher, accounts[4], stakeValue);
+        await pjs.pan.approve(accounts[4], addresses.EconomicController, stakeValue);
+        const workerNodeAddress = await pjs.pandora.createWorkerNode(computingPrice, accounts[4]);
         await pjs.workers.alive(workerNodeAddress, accounts[4]);
+        
+        const maxWorkerPrice = await pjs.pandora.getMaximumWorkerPrice();
+        const datasetPrice = await pjs.datasets.fetchCurrentPrice(datasetContractAddress);
+        const kernelPrice = await pjs.kernels.fetchCurrentPrice(kernelContractAddress);
+        const batchesCount = await pjs.datasets.fetchBatchesCount(datasetContractAddress);
+        const totalJobPrice = datasetPrice + kernelPrice + (maxWorkerPrice * batchesCount);
 
+        await pjs.pan.transfer(publisher, accounts[3], totalJobPrice);
+        await pjs.pan.approve(accounts[3], addresses.EconomicController, totalJobPrice);
         const jobContractAddress = await pjs.jobs.create({
             kernel: kernelContractAddress, 
             dataset: datasetContractAddress,
@@ -121,15 +150,25 @@ describe('Jobs tests:', () => {
         }, accounts[3]);
         
         const activeJobsCount = await pjs.jobs.fetchActiveJobsCount();
-        const addresses = await pjs.jobs.fetchJobsIds('activeJobs', activeJobsCount);
+        const jobAddresses = await pjs.jobs.fetchJobsIds('activeJobs', activeJobsCount);
 
-        expect(addresses.includes(jobContractAddress)).to.be.true;
+        expect(jobAddresses.includes(jobContractAddress)).to.be.true;
     });
 
     it('#fetchJobDetails should return job details by address', async () => {
-        const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[5]);
+        const stakeValue = await pjs.economic.minimumWorkerNodeStake();
+        await pjs.pan.transfer(publisher, accounts[5], stakeValue);
+        await pjs.pan.approve(accounts[5], addresses.EconomicController, stakeValue);
+        const workerNodeAddress = await pjs.pandora.createWorkerNode(computingPrice, accounts[5]);      
         await pjs.workers.alive(workerNodeAddress, accounts[5]);
 
+        const maxWorkerPrice = await pjs.pandora.getMaximumWorkerPrice();
+        const datasetPrice = await pjs.datasets.fetchCurrentPrice(datasetContractAddress);
+        const kernelPrice = await pjs.kernels.fetchCurrentPrice(kernelContractAddress);
+        const batchesCount = await pjs.datasets.fetchBatchesCount(datasetContractAddress);
+        const totalJobPrice = datasetPrice + kernelPrice + (maxWorkerPrice * batchesCount);
+        await pjs.pan.transfer(publisher, accounts[3], totalJobPrice);
+        await pjs.pan.approve(accounts[3], addresses.EconomicController, totalJobPrice);
         const jobContractAddress = await pjs.jobs.create({
             kernel: kernelContractAddress, 
             dataset: datasetContractAddress,
@@ -173,10 +212,20 @@ describe('Jobs tests:', () => {
                     expect(data.records[0].address).to.be.equal(jobContractAddress);                
                     done();
                 });
-
-            const workerNodeAddress = await pjs.pandora.createWorkerNode(accounts[6]);
+            
+            const stakeValue = await pjs.economic.minimumWorkerNodeStake();
+            await pjs.pan.transfer(publisher, accounts[6], stakeValue);
+            await pjs.pan.approve(accounts[6], addresses.EconomicController, stakeValue);
+            const workerNodeAddress = await pjs.pandora.createWorkerNode(computingPrice, accounts[6]);
             await pjs.workers.alive(workerNodeAddress, accounts[6]);
-
+            
+            const maxWorkerPrice = await pjs.pandora.getMaximumWorkerPrice();
+            const datasetPrice = await pjs.datasets.fetchCurrentPrice(datasetContractAddress);
+            const kernelPrice = await pjs.kernels.fetchCurrentPrice(kernelContractAddress);
+            const batchesCount = await pjs.datasets.fetchBatchesCount(datasetContractAddress);
+            const totalJobPrice = datasetPrice + kernelPrice + (maxWorkerPrice * batchesCount);
+            await pjs.pan.transfer(publisher, accounts[3], totalJobPrice);
+            await pjs.pan.approve(accounts[3], addresses.EconomicController, totalJobPrice);
             jobContractAddress = await pjs.jobs.create({
                 kernel: kernelContractAddress, 
                 dataset: datasetContractAddress,

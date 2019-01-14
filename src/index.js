@@ -23,6 +23,8 @@ import * as datasets from './datasets';
 import * as jobs from './jobs';
 import * as workers from './workers';
 import * as ipfs from './ipfs';
+import * as pan from './pan';
+import * as economic from './economic';
 
 /** Pjs class */
 export default class Pjs {
@@ -119,6 +121,8 @@ export default class Pjs {
             this._addMembers('datasets', datasets);
             this._addMembers('jobs', jobs);
             this._addMembers('workers', workers);
+            this._addMembers('pan', pan);
+            this._addMembers('economic', economic);
         }
 
         if (options.ipfs) {
