@@ -4,13 +4,16 @@
             "@babel/preset-env",
             {
                 "targets": {
-                    "browsers": ["last 2 versions", "safari >= 7"]
+                    "browsers": ["last 4 versions", "safari >= 7"]
                 },
                 "useBuiltIns": "usage"
             }
         ]
     ],
     "plugins":[
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-syntax-class-properties",
+        "@babel/plugin-transform-classes",
         "@babel/plugin-syntax-object-rest-spread",
         "@babel/plugin-proposal-object-rest-spread"
     ],
