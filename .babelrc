@@ -4,7 +4,8 @@
             "@babel/preset-env",
             {
                 "targets": {
-                    "browsers": ["last 4 versions", "safari >= 7"]
+                    // "browsers": ["last 4 versions", "safari >= 7"]
+                    "node": "10.15.0"
                 },
                 "useBuiltIns": "usage"
             }
