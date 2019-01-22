@@ -1,6 +1,6 @@
 {
   "name": "pyrrha-js",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "description": "Pandora Pyrrha functions and utilities library for JavaScript-based applications",
   "private": true,
   "main": "dist/index.js",
@@ -22,7 +22,8 @@
   "homepage": "https://github.com/pandoraboxchain/pyrrha-js",
   "dependencies": {
     "ipfs-api": "26.1.2",
-    "web3": "1.0.0-beta.37"
+    "web3": "1.0.0-beta.37",
+    "@babel/polyfill": "7.2.5"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",
@@ -30,10 +31,9 @@
     "@babel/plugin-proposal-class-properties": "7.3.0",
     "@babel/plugin-syntax-class-properties": "7.2.0",
     "@babel/plugin-transform-classes": "7.2.2",
-    "@babel/plugin-proposal-object-rest-spread": "7.3.0",
+    "@babel/plugin-proposal-object-rest-spread": "7.3.1",
     "@babel/plugin-syntax-object-rest-spread": "7.2.0",
-    "@babel/polyfill": "7.2.5",
-    "@babel/preset-env": "7.3.0",
+    "@babel/preset-env": "7.3.1",
     "@babel/register": "7.0.0",
     "cpy-cli": "2.0.0",
     "eslint": "5.12.1",
