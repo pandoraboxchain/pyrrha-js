@@ -143,42 +143,43 @@ export default class Pjs {
 
     // direct apis references
     _addApiMembers() {
+        let self = this;
 
-        Object.defineProperty(this, 'api', {
+        Object.defineProperty(self, 'api', {
             value: {},
             writable: false,
-            enumerable: false,
+            enumerable: true,
             configurable: false
         });
 
-        if (this.config.web3) {
+        if (self.config.web3) {
 
-            let web3 = new Proxy(this.config.web3, {
+            let web3 = new Proxy(self.config.web3, {
                 get: function(target, property, receiver) {
                     return Reflect.get(target, property, receiver);
                 }
             });
 
-            Object.defineProperty(this.api, 'web3', {
+            Object.defineProperty(self.api, 'web3', {
                 value: web3,
                 writable: false,
-                enumerable: false,
+                enumerable: true,
                 configurable: false
             });
         }
 
-        if (this.config.ipfs) {
+        if (self.config.ipfs) {
 
-            let ipfs = new Proxy(this.config.ipfs, {
+            let ipfs = new Proxy(self.config.ipfs, {
                 get: function(target, property, receiver) {
                     return Reflect.get(target, property, receiver);
                 }
             });
 
-            Object.defineProperty(this.api, 'ipfs', {
+            Object.defineProperty(self.api, 'ipfs', {
                 value: ipfs,
                 writable: false,
-                enumerable: false,
+                enumerable: true,
                 configurable: false
             });
         }
@@ -218,10 +219,10 @@ export default class Pjs {
                 });
             }
 
-            Object.defineProperty(this[subject], key, {
+            Object.defineProperty(self[subject], key, {
                 value: member,
                 writable: false,
-                enumerable: false,
+                enumerable: true,
                 configurable: false
             });
         }
