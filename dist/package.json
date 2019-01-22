@@ -1,6 +1,6 @@
 {
   "name": "pyrrha-js",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "description": "Pandora Pyrrha functions and utilities library for JavaScript-based applications",
   "private": true,
   "main": "dist/index.js",
